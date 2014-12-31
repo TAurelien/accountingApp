@@ -1,4 +1,4 @@
-'use-strict';
+'use strict';
 /* jshint unused:false */
 
 // modules =====================================================================
@@ -11,13 +11,8 @@ var methodOverride = require('method-override');
 
 // configuration ===============================================================
 
-// config files
-
 // set our port
 var port = process.env.PORT || 8080;
-
-// connect to our mongoDB database
-// mongoose.connect(db.url);
 
 // get all data/stuff of the body (POST) parameters
 // --- parse application/json
