@@ -11,3 +11,4 @@ dist/
 src/public/assets/libs/
 *.sublime-project
 *.sublime-workspace
+*.sublime-grunt.cache
