@@ -1,7 +1,11 @@
 'use-strict';
 /* jshint unused:false */
 
+require('./config/init')();
+
+
 // modules =====================================================================
+var config         = require('./config/config');
 var express        = require('express');
 var app            = express();
 var mongoose       = require('mongoose');
@@ -10,11 +14,6 @@ var methodOverride = require('method-override');
 
 
 // configuration ===============================================================
-
-// config files
-
-// set our port
-var port = process.env.PORT || 8080;
 
 // connect to our mongoDB database
 // mongoose.connect(db.url);
@@ -41,6 +40,7 @@ require('./app/routes')(app);
 
 
 // start app ===================================================================
-app.listen(port);
-console.log('Server started on port ' + port);
+app.listen(config.port);
+console.log(config.app.title + ' started on port ' + config.port);
+
 exports = module.exports = app;
