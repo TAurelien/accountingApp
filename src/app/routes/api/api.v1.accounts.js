@@ -1,32 +1,38 @@
 'use strict';
 
-module.exports = function(express) {
+module.exports = function(apiV1Router) {
 
-	var version = 'v1';
+	// Accounts ----------------------------------------------------------------
 
-	var apiRouter = express.Router();
-
-	// Accounts
-	apiRouter.route('/' + version + '/accounts')
-
-		.all(function(req, res, next) {
-			next(new Error('Not implemented'));
-		})
+	apiV1Router.route('/accounts')
 
 		.get(function(req, res, next) {
+			// TODO
 			next(new Error('Not implemented'));
 		})
 
 		.post(function(req, res, next) {
+			// TODO
+			next(new Error('Not implemented'));
+		});
+
+
+	apiV1Router.route('/accounts/:id')
+
+		.get(function(req, res, next) {
+			// TODO
 			next(new Error('Not implemented'));
 		})
 
 		.put(function(req, res, next) {
+			// TODO
 			next(new Error('Not implemented'));
 		})
 
 		.delete(function(req, res, next) {
+			// TODO
 			next(new Error('Not implemented'));
 		});
+
 
 };
