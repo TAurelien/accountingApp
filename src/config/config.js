@@ -34,13 +34,15 @@ module.exports.initPreDBConnection = function() {
 
 module.exports.connectDB = function() {
 
-	console.log('Connecting to db ' + this.db.url + ' ...');
-	var db = mongoose.connect(this.db.url, function(err) {
+	var dbUrl = this.db.url;
+
+	console.log('Connecting to db ' + dbUrl + ' ...');
+	var db = mongoose.connect(dbUrl, function(err) {
 		if (err) {
-			console.error('\x1b[31m', 'Could not connect to database : ' + this.db.url);
+			console.error('\x1b[31m', 'Could not connect to database : ' + dbUrl);
 			console.log(err);
 		} else {
-			console.log('Database connection successful');
+			console.log('Successful connection to db ' + dbUrl);
 		}
 	});
 

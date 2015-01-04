@@ -13,7 +13,7 @@ module.exports = {
 	},
 
 	db : {
-		url: 'mongodb://localhost/accounting_app-dev'
+		url: 'mongodb://localhost/accounting_app-dev' // TODO extract url to a private file
 	}
 
 };
