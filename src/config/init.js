@@ -4,6 +4,7 @@ var glob = require('glob');
 
 module.exports = function() {
 
+	// FIXME Fix glob search not finding the environment file
 	var environmentFiles = glob.sync('./env/' + process.env.NODE_ENV + '.js');
 
 	if (!environmentFiles.length) {

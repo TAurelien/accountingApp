@@ -1,8 +1,8 @@
 'use-strict';
 /* jshint unused:false */
 
+// Initial initialization of NODE_ENV if undefined
 require('./config/init')();
-
 
 // modules =====================================================================
 var config         = require('./config/config');
@@ -14,6 +14,7 @@ var methodOverride = require('method-override');
 
 
 // configuration ===============================================================
+config.init();
 
 // connect to our mongoDB database
 // mongoose.connect(db.url);
@@ -40,7 +41,7 @@ require('./app/routes')(app);
 
 
 // start app ===================================================================
-app.listen(config.port);
-console.log(config.app.title + ' started on port ' + config.port);
+app.listen(config.server.port);
+console.log(config.app.title + ' started on port ' + config.server.port);
 
 exports = module.exports = app;
