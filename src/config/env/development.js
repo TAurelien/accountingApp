@@ -1,5 +1,9 @@
 'use strict';
 
+// MODULES =====================================================================
+var logger = require('../logger');
+
+
 // EXPORTED OBJECT =============================================================
 
 module.exports = {
@@ -23,7 +27,7 @@ module.exports = {
 
 function setupDB() {
 
-	console.log('Setting up the Dev DB ...');
+	logger.debug('Setting up the Dev DB ...');
 
 }
 
@@ -32,13 +36,13 @@ function setupDB() {
 
 module.exports.initEnvPreDBConnection = function() {
 
-	console.log('Pre-DB connection configuration initialization of development environment');
+	logger.debug('Pre-DB connection configuration initialization of development environment');
 
 };
 
 module.exports.initEnvPostDBConnection = function() {
 
-	console.log('Post-DB connection configuration initialization of development environment');
+	logger.debug('Post-DB connection configuration initialization of development environment');
 	setupDB();
 
 };

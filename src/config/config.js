@@ -1,10 +1,15 @@
 'use strict';
 
+// MODULES =====================================================================
+var logger   = require('./logger');
 var _        = require('lodash');
 var glob     = require('glob');
 var mongoose = require('mongoose');
 
 
+// EXPORT ======================================================================
+
+// Export objects from environment definitions ---------------------------------
 module.exports = _.extend(
 
 	require('./env/all'),
@@ -12,9 +17,10 @@ module.exports = _.extend(
 
 );
 
+
 module.exports.init = function() {
 
-	console.log('Global initialization of configuration');
+	logger.debug('Global initialization of configuration');
 
 	this.initPreDBConnection();
 	this.connectDB();
@@ -25,7 +31,7 @@ module.exports.init = function() {
 
 module.exports.initPreDBConnection = function() {
 
-	console.log('Pre DB connection scripts');
+	logger.debug('Pre DB connection scripts');
 
 	this.initAllPreDBConnection();
 	this.initEnvPreDBConnection();
@@ -36,13 +42,13 @@ module.exports.connectDB = function() {
 
 	var dbUrl = this.db.url;
 
-	console.log('Connecting to db ' + dbUrl + ' ...');
+	logger.debug('Connecting to db ' + dbUrl + ' ...');
 	var db = mongoose.connect(dbUrl, function(err) {
 		if (err) {
-			console.error('\x1b[31m', 'Could not connect to database : ' + dbUrl);
-			console.log(err);
+			logger.error('Could not connect to database : ' + dbUrl);
+			logger.error( { error: err } );
 		} else {
-			console.log('Successful connection to db ' + dbUrl);
+			logger.info('Successful connection to db ' + dbUrl);
 		}
 	});
 
@@ -52,14 +58,15 @@ module.exports.connectDB = function() {
 
 module.exports.initPostDBConnection = function() {
 
-	console.log('Post db connection scripts');
+	logger.debug('Post db connection scripts');
 
 	this.initAllPostDBConnection();
 	this.initEnvPostDBConnection();
 
 };
 
-module.exports.getGlobbedFiles = function(globPatterns, removeRoot) {
+
+module.exports.searchFiles = function(globPatterns, removeRoot) {
 
 	var _this = this;
 
@@ -72,7 +79,7 @@ module.exports.getGlobbedFiles = function(globPatterns, removeRoot) {
 
 		globPatterns.forEach(function(globPattern) {
 
-			output = _.union(output, _this.getGlobbedFiles(globPattern, removeRoot));
+			output = _.union(output, _this.searchFiles(globPattern, removeRoot));
 
 		});
 
@@ -84,6 +91,7 @@ module.exports.getGlobbedFiles = function(globPatterns, removeRoot) {
 
 		} else {
 
+			// TODO Change to the sync function of glob
 			glob(globPatterns, {
 				sync: true
 			}, function(err, files) {

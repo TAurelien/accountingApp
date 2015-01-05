@@ -1,10 +1,10 @@
 'use strict';
 
-// modules =====================================================================
+// MODULES =====================================================================
 var express        = require('express');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
-var morgan         = require('morgan');
+var morgan         = require('morgan'); // TODO remove morgan and set a custom middleware using the logger
 
 
 module.exports = function() {
@@ -41,7 +41,7 @@ module.exports = function() {
 
 	app.disable('x-powered-by');
 
-	// routes ======================================================================
+	// ROUTES ======================================================================
 	require('../app/routes')(app);
 
 	return app;
