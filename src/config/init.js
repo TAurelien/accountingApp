@@ -1,22 +1,56 @@
 'use strict';
 
+// MODULES =====================================================================
 var glob = require('glob');
+
 
 module.exports = function() {
 
+	// Look for environment definition -----------------------------------------
+	
+	var env = process.env.NODE_ENV;
+	var status;
+
 	// FIXME Fix glob search not finding the environment file
-	var environmentFiles = glob.sync('./env/' + process.env.NODE_ENV + '.js');
+	var environmentFiles = glob.sync('./env/' + env + '.js');
 
 	if (!environmentFiles.length) {
-		if (process.env.NODE_ENV) {
-			console.error('No configuration file found for "' + process.env.NODE_ENV + '" environment using development instead');
+
+		if (env) {
+			status ='ENV_NotFound';
 		} else {
-			console.error('NODE_ENV is not defined! Using default development environment');
+			status ='ENV_Undefined';
 		}
 
-		process.env.NODE_ENV = 'development';
+		env = process.env.NODE_ENV = 'development';
+
 	} else {
-		console.log('Application loaded using the "' + process.env.NODE_ENV + '" environment configuration');
+		status ='ENV_Found';
+	}
+
+	var logger = require('./logger');
+
+	switch (status){
+	case 'ENV_NotFound':
+
+		logger.warn('No configuration file found for "' + env + '" environment using development instead');
+		break;
+
+	case 'ENV_Undefined':
+
+		logger.warn('NODE_ENV is not defined! Using default development environment');
+		break;
+
+	case 'ENV_Found':
+
+		logger.info('Application loaded using the "' + env + '" environment configuration');
+		break;
+
+	default:
+
+		logger.error('Issue on initialization of environnement lookup, no status!');
+		break;
+
 	}
 
 };

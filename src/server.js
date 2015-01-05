@@ -4,17 +4,18 @@
 require('./config/init')();
 
 
-// modules =====================================================================
+// MODULES =====================================================================
+var logger = require('./config/logger');
 var config = require('./config/config');
 
 
-// configuration ===============================================================
+// CONFIGURATION ===============================================================
 config.init();
 
 // initialize the express application
 var app = require('./config/express')();
 
 
-// start app ===================================================================
+// START APP ===================================================================
 app.listen(config.server.port);
-console.log(config.app.title + ' started on port ' + config.server.port);
+logger.info(config.app.title + ' started on port ' + config.server.port);
