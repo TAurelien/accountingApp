@@ -134,10 +134,28 @@ module.exports = function(grunt) {
 
 
 		nodemon: {
-			dev: {
+			default: {
+				script: binDir + 'server.js',
+				options: {
+					nodeArgs: [''],
+					ext: 'js',
+					watch: srcFiles.serverJS,
+					delay: 5000
+				}
+			},
+			debug: {
 				script: binDir + 'server.js',
 				options: {
 					nodeArgs: ['--debug'],
+					ext: 'js',
+					watch: srcFiles.serverJS,
+					delay: 5000
+				}
+			},
+			debugbrk: {
+				script: binDir + 'server.js',
+				options: {
+					nodeArgs: ['--debug-brk'],
 					ext: 'js',
 					watch: srcFiles.serverJS,
 					delay: 5000
@@ -162,13 +180,25 @@ module.exports = function(grunt) {
 
 
 		concurrent: {
-			default: ['nodemon', 'watch'],
-			debug: ['nodemon', 'watch', 'node-inspector'],
+			default: ['nodemon:default', 'watch'],
+			debug: ['nodemon:debug', 'watch', 'node-inspector'],
+			debugbrk: ['nodemon:debugbrk', 'watch', 'node-inspector'],
 			options: {
 				logConcurrentOutput: true,
 				limit: 10
 			}
+		},
+
+
+		env: {
+			dev: {
+				NODE_ENV: 'development'
+			},
+			test: {
+				NODE_ENV: 'test'
+			}
 		}
+
 
 	});
 
@@ -188,10 +218,13 @@ module.exports = function(grunt) {
 	grunt.registerTask('init', ['lint', 'clean:all', 'copy:all']);
 
 	// Default task(s).
-	grunt.registerTask('default', ['init', 'concurrent:default']);
+	grunt.registerTask('default', ['env:dev', 'init', 'concurrent:default']);
 
 	// Debug task.
-	grunt.registerTask('debug', ['init', 'concurrent:debug']);
+	grunt.registerTask('debug', ['env:dev', 'init', 'concurrent:debug']);
+
+	// Debug task, start paused.
+	grunt.registerTask('debugbrk', ['env:dev', 'init', 'concurrent:debugbrk']);
 
 	// Build task(s).
 	grunt.registerTask('build', ['lint', 'uglify', 'cssmin']);
