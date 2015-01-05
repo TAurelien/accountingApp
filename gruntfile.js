@@ -1,5 +1,7 @@
 'use strict';
 
+var binDir = 'dist/';
+
 module.exports = function(grunt) {
 
 	// Unified Watch Object
@@ -49,10 +51,10 @@ module.exports = function(grunt) {
 
 
 		clean:{
-			all:['dist/*'],
-			js:['dist/**/*.js', '!dist/public/assets/libs/**/*/js'],
-			css:['dist/**/*.css', '!dist/public/assets/libs/**/*/css'],
-			libs:['dist/public/assets/libs/**/*']
+			all:[binDir + '*'],
+			js:[binDir + '**/*.js', '!' + binDir + 'public/assets/libs/**/*/js'],
+			css:[binDir + '**/*.css', '!' + binDir + 'public/assets/libs/**/*/css'],
+			libs:[binDir + 'public/assets/libs/**/*']
 		},
 
 
@@ -61,31 +63,31 @@ module.exports = function(grunt) {
 				expand: true,
 				cwd: 'src/',
 				src: ['**'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			serverJS:{
 				expand: true,
 				cwd: 'src/',
 				src: ['server.js', 'config/**/*.js', 'app/**/*.js'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			clientViews:{
 				expand: true,
 				cwd: 'src/',
 				src: ['public/**/*.html'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			clientJS:{
 				expand: true,
 				cwd: 'src/',
 				src: ['public/assets/js/**/*.js', 'public/app/**/*.js'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			clientCSS:{
 				expand: true,
 				cwd: 'src/',
 				src: ['public/assets/css/**/*.css'],
-				dest: 'dist/'
+				dest: binDir
 			}
 		},
 
@@ -116,7 +118,7 @@ module.exports = function(grunt) {
 					mangle: false
 				},
 				files: {
-					'public/dist/application.min.js': 'public/dist/application.js'
+					'': ''
 				}
 			}
 		},
@@ -125,19 +127,38 @@ module.exports = function(grunt) {
 		cssmin: {
 			combine: {
 				files: {
-					'public/dist/application.min.css': '<%= applicationCSSFiles %>'
+					'': '<%= applicationCSSFiles %>'
 				}
 			}
 		},
 
 
 		nodemon: {
-			dev: {
-				script: 'dist/server.js',
+			default: {
+				script: binDir + 'server.js',
+				options: {
+					nodeArgs: [''],
+					ext: 'js',
+					watch: srcFiles.serverJS,
+					delay: 5000
+				}
+			},
+			debug: {
+				script: binDir + 'server.js',
 				options: {
 					nodeArgs: ['--debug'],
 					ext: 'js',
-					watch: srcFiles.serverJS
+					watch: srcFiles.serverJS,
+					delay: 5000
+				}
+			},
+			debugbrk: {
+				script: binDir + 'server.js',
+				options: {
+					nodeArgs: ['--debug-brk'],
+					ext: 'js',
+					watch: srcFiles.serverJS,
+					delay: 5000
 				}
 			}
 		},
@@ -159,13 +180,25 @@ module.exports = function(grunt) {
 
 
 		concurrent: {
-			default: ['nodemon', 'watch'],
-			debug: ['nodemon', 'watch', 'node-inspector'],
+			default: ['nodemon:default', 'watch'],
+			debug: ['nodemon:debug', 'watch', 'node-inspector'],
+			debugbrk: ['nodemon:debugbrk', 'watch', 'node-inspector'],
 			options: {
 				logConcurrentOutput: true,
 				limit: 10
 			}
+		},
+
+
+		env: {
+			dev: {
+				NODE_ENV: 'development'
+			},
+			test: {
+				NODE_ENV: 'test'
+			}
 		}
+
 
 	});
 
@@ -185,10 +218,13 @@ module.exports = function(grunt) {
 	grunt.registerTask('init', ['lint', 'clean:all', 'copy:all']);
 
 	// Default task(s).
-	grunt.registerTask('default', ['init', 'concurrent:default']);
+	grunt.registerTask('default', ['env:dev', 'init', 'concurrent:default']);
 
 	// Debug task.
-	grunt.registerTask('debug', ['init', 'concurrent:debug']);
+	grunt.registerTask('debug', ['env:dev', 'init', 'concurrent:debug']);
+
+	// Debug task, start paused.
+	grunt.registerTask('debugbrk', ['env:dev', 'init', 'concurrent:debugbrk']);
 
 	// Build task(s).
 	grunt.registerTask('build', ['lint', 'uglify', 'cssmin']);

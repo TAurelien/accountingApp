@@ -1,41 +1,21 @@
-'use strict';
-/* jshint unused:false */
+'use-strict';
+
+// Initial initialization of NODE_ENV if undefined
+require('./config/init')();
+
 
 // MODULES =====================================================================
-console.log('Loading modules ...');
-var express        = require('express');
-var app            = express();
-var mongoose       = require('mongoose');
-var bodyParser     = require('body-parser');
-var methodOverride = require('method-override');
+var logger = require('./config/logger');
+var config = require('./config/config');
 
 
 // CONFIGURATION ===============================================================
-console.log('Configuring the middlewares ...');
-// set the port
-var port = process.env.PORT || 8080;
+config.init();
 
-// get all data/stuff of the body (POST) parameters
-// --- parse application/json
-app.use(bodyParser.json());
-// --- parse application/vnd.api+json as json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-// --- parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// override with the X-HTTP-Method-Override header in the request
-app.use(methodOverride('X-HTTP-Method-Override'));
-
-// set the static files location
-app.use(express.static(__dirname + '/public'));
+// initialize the express application
+var app = require('./config/express')();
 
 
-// ROUTES ======================================================================
-console.log('Defining the routing ...');
-require('./app/routes/routes')(app, express);
-
-
-// START =======================================================================
-console.log('Starting the application ...');
-app.listen(port);
-console.log('Server started on port ' + port);
+// START APP ===================================================================
+app.listen(config.server.port);
+logger.info(config.app.title + ' started on port ' + config.server.port);
