@@ -42,7 +42,7 @@ module.exports = function() {
 	app.disable('x-powered-by');
 
 	// ROUTES ======================================================================
-	require('../app/routes')(app);
+	require('../app/routes/routes')(app, express);
 
 	return app;
 
