@@ -2,17 +2,17 @@
 
 // MODULES =====================================================================
 var glob = require('glob');
+var path = require('path');
 
 
 module.exports = function() {
 
 	// Look for environment definition -----------------------------------------
-	
+
 	var env = process.env.NODE_ENV;
 	var status;
 
-	// FIXME Fix glob search not finding the environment file
-	var environmentFiles = glob.sync('./env/' + env + '.js');
+	var environmentFiles = glob.sync(path.resolve(__dirname, './env/' + env + '.js'));
 
 	if (!environmentFiles.length) {
 
