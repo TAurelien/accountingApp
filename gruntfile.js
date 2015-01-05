@@ -1,5 +1,7 @@
 'use strict';
 
+var binDir = 'dist/';
+
 module.exports = function(grunt) {
 
 	// Unified Watch Object
@@ -49,10 +51,10 @@ module.exports = function(grunt) {
 
 
 		clean:{
-			all:['dist/*'],
-			js:['dist/**/*.js', '!dist/public/assets/libs/**/*/js'],
-			css:['dist/**/*.css', '!dist/public/assets/libs/**/*/css'],
-			libs:['dist/public/assets/libs/**/*']
+			all:[binDir + '*'],
+			js:[binDir + '**/*.js', '!' + binDir + 'public/assets/libs/**/*/js'],
+			css:[binDir + '**/*.css', '!' + binDir + 'public/assets/libs/**/*/css'],
+			libs:[binDir + 'public/assets/libs/**/*']
 		},
 
 
@@ -61,31 +63,31 @@ module.exports = function(grunt) {
 				expand: true,
 				cwd: 'src/',
 				src: ['**'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			serverJS:{
 				expand: true,
 				cwd: 'src/',
 				src: ['server.js', 'config/**/*.js', 'app/**/*.js'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			clientViews:{
 				expand: true,
 				cwd: 'src/',
 				src: ['public/**/*.html'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			clientJS:{
 				expand: true,
 				cwd: 'src/',
 				src: ['public/assets/js/**/*.js', 'public/app/**/*.js'],
-				dest: 'dist/'
+				dest: binDir
 			},
 			clientCSS:{
 				expand: true,
 				cwd: 'src/',
 				src: ['public/assets/css/**/*.css'],
-				dest: 'dist/'
+				dest: binDir
 			}
 		},
 
@@ -116,7 +118,7 @@ module.exports = function(grunt) {
 					mangle: false
 				},
 				files: {
-					'public/dist/application.min.js': 'public/dist/application.js'
+					'': ''
 				}
 			}
 		},
@@ -125,7 +127,7 @@ module.exports = function(grunt) {
 		cssmin: {
 			combine: {
 				files: {
-					'public/dist/application.min.css': '<%= applicationCSSFiles %>'
+					'': '<%= applicationCSSFiles %>'
 				}
 			}
 		},
@@ -133,11 +135,12 @@ module.exports = function(grunt) {
 
 		nodemon: {
 			dev: {
-				script: 'dist/server.js',
+				script: binDir + 'server.js',
 				options: {
 					nodeArgs: ['--debug'],
 					ext: 'js',
-					watch: srcFiles.serverJS
+					watch: srcFiles.serverJS,
+					delay: 5000
 				}
 			}
 		},
