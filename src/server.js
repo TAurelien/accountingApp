@@ -1,21 +1,37 @@
-'use-strict';
+/** @module Server */
+'use strict';
 
-// Initial initialization of NODE_ENV if undefined
+var path = require('path');
+
+// Define the logger path in gobal variable
+process.env.LOGGER = path.join(__dirname, '/config/logger');
+
+
+// Initialization of the environment
 require('./config/init')();
 
 
-// MODULES =====================================================================
-var logger = require('./config/logger');
+// Get the logger
+var logger = require(process.env.LOGGER)('Server');
+
+
+// Configure the application
 var config = require('./config/config');
-
-
-// CONFIGURATION ===============================================================
 config.init();
 
-// initialize the express application
+// Connect to the database
+var db = config.connectDB();
+
+// Configure the application, post db connection
+db.connection.on('open', function() {
+	config.initPostDBConnection();
+});
+
+
+// Define the express application
 var app = require('./config/express')();
 
 
-// START APP ===================================================================
+// Start the app
 app.listen(config.server.port);
 logger.info(config.app.title + ' started on port ' + config.server.port);

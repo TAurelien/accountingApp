@@ -1,11 +1,16 @@
+/** @module Env Dev */
 'use strict';
 
-// MODULES =====================================================================
-var logger = require('../logger');
+var logger = require(process.env.LOGGER)('Env Dev');
 
 
-// EXPORTED OBJECT =============================================================
+// EXPORTED OBJECT ============================================================
 
+/**
+ *  [exports description]
+ *
+ *  @type  {Object}
+ */
 module.exports = {
 
 	app: {
@@ -23,8 +28,11 @@ module.exports = {
 };
 
 
-// PRIVATE FUNCTIONS ===========================================================
+// PRIVATE FUNCTIONS ==========================================================
 
+/**
+ * [setupDB description]
+ */
 function setupDB() {
 
 	logger.debug('Setting up the Dev DB ...');
@@ -32,14 +40,22 @@ function setupDB() {
 }
 
 
-// EXPORTED FUNCTIONS ==========================================================
 
-module.exports.initEnvPreDBConnection = function() {
+// EXPORTED FUNCTIONS =========================================================
 
-	logger.debug('Pre-DB connection configuration initialization of development environment');
+/**
+ * [initEnv description]
+ */
+module.exports.initEnv = function() {
+
+	logger.debug('Configuration initialization of development environment');
 
 };
 
+
+/**
+ * [initEnvPostDBConnection description]
+ */
 module.exports.initEnvPostDBConnection = function() {
 
 	logger.debug('Post-DB connection configuration initialization of development environment');
