@@ -4,139 +4,204 @@
 var logger = require(process.env.LOGGER)('Accounts Ctrl');
 
 
+var Account = require('../../models/account.model');
+
+var _ = require('lodash');
+
+
 /**
- * [create description]
+ * Check the http request and set the account fields from request values
  *
- * @param  {[type]} req [description]
- * @param  {[type]} res [description]
+ * @param  Object req The http request
+ * @param  Object account The mongoose schema model of account
+ */
+function setAccountFields(req, account) {
+
+	if (_.isUndefined(req) | _.isNull(req)) return;
+	if (_.isUndefined(account) | _.isNull(account)) return;
+
+	if (req.body.name) {
+		account.name         = req.body.name;
+	}
+	if (req.body.description) {
+		account.description  = req.body.description;
+	}
+	if (req.body.type) {
+		account.type         = req.body.type;
+	}
+	if (req.body.code) {
+		account.code         = req.body.code;
+	}
+	if (req.body.commodity) {
+		account.commodity    = req.body.commodity;
+	}
+	if (req.body.balance) {
+		account.balance      = req.body.balance;
+	}
+	if (req.body.placeholder) {
+		account.placeholder  = req.body.placeholder;
+	}
+	if (req.body.closed) {
+		account.closed       = req.body.closed;
+	}
+	if (req.body.parent) {
+		account.parent       = req.body.parent;
+	}
+
+}
+
+
+/**
+ * Create a new account
  *
- * @return {[type]}     [description]
+ * @param  Object req The http request
+ * @param  Object res The http response
  */
 exports.create = function(req, res) {
 
-	logger.info('Creating a new account');
+	logger.debug('Creating a new account');
 
-	logger.debug('Displaying req.body:');
-	logger.debug(req.body);
-	logger.debug('Displaying req.params:');
-	logger.debug(req.params);
+	var account = new Account();
 
-	var account = req.body;
-	logger.debug('New account');
-	logger.debug(account);
+	setAccountFields(req, account);
 
-	res.json({
-		status : 'success',
-		message: 'Account created!'
+	account.save(function(err) {
+
+		if (err) {
+			logger.error('Account creation failed!');
+			res.send(err);
+		}
+
+		logger.info('Account creation successful');
+
+		res.json({ message: 'Account created!' });
+
 	});
+
 
 };
 
 
 /**
- * [get description]
+ * Get and send a specific account
  *
- * @param  {[type]} req [description]
- * @param  {[type]} res [description]
- *
- * @return {[type]}     [description]
+ * @param  Object req The http request
+ * @param  Object res The http response
  */
 exports.get = function(req, res) {
 
-	logger.info('Getting a specific account');
-
-	logger.debug('Displaying req.body:');
-	logger.debug(req.body);
-	logger.debug('Displaying req.params:');
-	logger.debug(req.params);
+	logger.debug('Getting a specific account');
 
 	var accountID = req.params.id;
-	logger.debug('Account id: ' + accountID);
 
-	res.json({
-		status : 'success',
-		message: 'Account with id = ' + accountID
+	Account.findById(accountID, function(err, account) {
+
+		if (err){
+			logger.error('Getting the account ' + accountID + ' failed!');
+			res.send(err);
+		}
+
+		// TODO Check if account is null
+		logger.info('Success of getting the account ' + accountID);
+
+		res.json(account);
+
 	});
 
 };
 
 
 /**
- * [list description]
+ * Get and send all accounts
  *
- * @param  {[type]} req [description]
- * @param  {[type]} res [description]
- *
- * @return {[type]}     [description]
+ * @param  Object req The http request
+ * @param  Object res The http response
  */
 exports.list = function(req, res) {
 
 	logger.debug('Getting a list of all accounts');
 
-	logger.debug('Displaying req.body:');
-	logger.debug(req.body);
-	logger.debug('Displaying req.params:');
-	logger.debug(req.params);
+	Account.find(function(err, accounts){
+		if (err){
+			logger.error('Getting all accounts failed!');
+			res.send(err);
+		}
 
-	res.json({
-		status : 'success',
-		message: 'List of accounts.'
+		// TODO Check if accounts is null
+		logger.info('Success of getting all accounts');
+
+		res.json(accounts);
+
 	});
 
 };
 
 
 /**
- * [update description]
+ * Update a specific account
  *
- * @param  {[type]} req [description]
- * @param  {[type]} res [description]
- *
- * @return {[type]}     [description]
+ * @param  Object req The http request
+ * @param  Object res The http response
  */
 exports.update = function(req, res) {
 
 	logger.debug('Updating a specific account');
 
-	logger.debug('Displaying req.body:');
-	logger.debug(req.body);
-	logger.debug('Displaying req.params:');
-	logger.debug(req.params);
-
 	var accountID = req.params.id;
-	logger.debug('Account id: ' + accountID);
 
-	res.json({
-		status : 'success',
-		message: 'Account updated!'
+	Account.findById(accountID, function(err, account) {
+
+		if (err) {
+			logger.error('Getting the account ' + accountID + ' to update failed!');
+			res.send(err);
+		}
+
+		setAccountFields(req, account);
+
+		// TODO Check if account is null
+		account.save(function(err) {
+
+			if (err) {
+				logger.error('Saving the updated account ' + accountID + ' failed!');
+				res.send(err);
+			}
+
+			logger.info('The account ' + accountID + ' has been successfully updated');
+
+			res.json({ message: 'Account updated!' });
+
+		});
+
 	});
+
 
 };
 
 
 /**
- * [delete description]
+ * Delete a specific account
  *
- * @param  {[type]} req [description]
- * @param  {[type]} res [description]
- *
- * @return {[type]}     [description]
+ * @param  Object req The http request
+ * @param  Object res The http response
  */
 exports.delete = function(req, res) {
 
 	logger.debug('Deleting a specific account');
 
-	logger.debug('Displaying req.body:');
-	logger.debug(req.body);
-	logger.debug('Displaying req.params:');
-	logger.debug(req.params);
-
 	var accountID = req.params.id;
-	logger.debug('Account id: ' + accountID);
 
-	res.json({
-		status : 'success',
-		message: 'Account deleted!'
+	Account.remove({
+		_id: accountID
+	}, function(err) {
+		if (err) {
+			logger.error('Deleting the account ' + accountID + ' failed!');
+			res.send(err);
+		}
+
+		logger.info('The account '+ accountID + ' has been successfully deleted');
+
+		res.json({ message: 'Account deleted!' });
+
 	});
 
 };
