@@ -1,11 +1,16 @@
+/** @module Env All */
 'use strict';
 
-// MODULES =====================================================================
-var logger = require('../logger');
+var logger = require(process.env.LOGGER)('Env All');
 
 
-// EXPORTED OBJECT =============================================================
+// EXPORTED OBJECT ============================================================
 
+/**
+ *  [exports description]
+ *
+ *  @type  {Object}
+ */
 module.exports = {
 
 	app: {
@@ -20,18 +25,25 @@ module.exports = {
 };
 
 
-// PRIVATE FUNCTIONS ===========================================================
+// PRIVATE FUNCTIONS ==========================================================
 
 
 
-// EXPORTED FUNCTIONS ==========================================================
+// EXPORTED FUNCTIONS =========================================================
 
-module.exports.initAllPreDBConnection = function() {
+/**
+ *  [initAll description]
+ */
+module.exports.initAll = function() {
 
-	logger.debug('Pre-DB connection configuration initialization of all environments');
+	logger.debug('Configuration initialization of all environments');
 
 };
 
+
+/**
+ *  [initAllPostDBConnection description]
+ */
 module.exports.initAllPostDBConnection = function() {
 
 	logger.debug('Post-DB connection configuration initialization of all environments');

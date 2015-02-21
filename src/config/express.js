@@ -1,13 +1,23 @@
+/** @module Express */
 'use strict';
 
-// MODULES =====================================================================
+var logger = require(process.env.LOGGER)('Server');
+
+// MODULES ====================================================================
 var express        = require('express');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
-var morgan         = require('morgan'); // TODO remove morgan and set a custom middleware using the logger
+var morgan         = require('morgan');
+// TODO remove morgan and set a custom middleware using the logger
 
-
+/**
+ *  Create and define the express application.
+ *
+ *  @return  {app}  The express application
+ */
 module.exports = function() {
+
+	logger.info('Define the express application');
 
 	var app = express();
 
@@ -41,7 +51,7 @@ module.exports = function() {
 
 	app.disable('x-powered-by');
 
-	// ROUTES ======================================================================
+	// ROUTES =================================================================
 	require('../app/routes/routes')(app, express);
 
 	return app;
