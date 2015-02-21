@@ -48,7 +48,7 @@ function setupDB() {
  */
 module.exports.initEnv = function() {
 
-	logger.debug('Configuration initialization of development environment');
+	logger.debug('Configuration initialization of dev environment');
 
 };
 
@@ -58,7 +58,7 @@ module.exports.initEnv = function() {
  */
 module.exports.initEnvPostDBConnection = function() {
 
-	logger.debug('Post-DB connection configuration initialization of development environment');
+	logger.debug('Post-DB connection configuration initialization of dev environment');
 	setupDB();
 
 };

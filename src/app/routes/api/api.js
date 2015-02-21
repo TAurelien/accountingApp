@@ -19,6 +19,8 @@ module.exports = function(app, express) {
 
 	// TODO Define the authentication
 
+	// TODO add a middleware logging the traffic on api routes
+
 	// Defining the routes
 	require('./api.v1.accounts')(apiV1Router);
 	require('./api.v1.accountChart')(apiV1Router);

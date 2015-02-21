@@ -3,6 +3,8 @@
 
 var logger = require(process.env.LOGGER)('Routes API Account');
 
+var accounts = require('../../controllers/accounts/accounts.controller');
+
 /**
  *  Define the Accounts API routes.
  *  API V1
@@ -17,33 +19,32 @@ module.exports = function(apiV1Router) {
 
 	apiV1Router.route('/accounts')
 
-		.get(function(req, res, next) {
-			// TODO Define the GET /accounts
-			next(new Error('GET /accounts not yet implemented'));
-		})
+		// To get a list of all accounts
+		.get(
+			accounts.list
+		)
 
-		.post(function(req, res, next) {
-			// TODO Define the POST /accounts
-			next(new Error('POST /accounts not yet implemented'));
-		});
+		// To create a new account
+		.post(
+			accounts.create
+		);
 
 
 	apiV1Router.route('/accounts/:id')
 
-		.get(function(req, res, next) {
-			// TODO Define the GET /accounts/:id
-			next(new Error('GET /accounts/:id not yet implemented'));
-		})
+		// To get a specific account
+		.get(
+			accounts.get
+		)
 
-		.put(function(req, res, next) {
-			// TODO Define the POST /accounts/:id
-			next(new Error('POST /accounts/:id not yet implemented'));
-		})
+		// To update a specific account
+		.put(
+			accounts.update
+		)
 
-		.delete(function(req, res, next) {
-			// TODO Define the DELETE /accounts/:id
-			next(new Error('DELETE /accounts/:id not yet implemented'));
-		});
-
+		// To delete a specific account
+		.delete(
+			accounts.delete
+		);
 
 };

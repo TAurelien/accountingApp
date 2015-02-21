@@ -15,6 +15,8 @@ module.exports = function(app){
 
 	logger.info('Defining the core routes');
 
+	// TODO add a middleware logging the traffic on core routes
+
 	app.get('*', function(req, res) {
 		// load our public/index.html file, the front-end will handle
 		// the routing from index.html
