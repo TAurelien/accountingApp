@@ -1,15 +1,17 @@
+/** @module Config */
 'use strict';
 
-// MODULES =====================================================================
-var logger   = require('./logger');
+var logger   = require(process.env.LOGGER)('Config');
+
+// MODULES ====================================================================
 var _        = require('lodash');
-var glob     = require('glob');
+var path     = require('path');
 var mongoose = require('mongoose');
 
 
-// EXPORT ======================================================================
+// EXPORT =====================================================================
 
-// Export objects from environment definitions ---------------------------------
+// Export objects from environment definitions --------------------------------
 module.exports = _.extend(
 
 	require('./env/all'),
@@ -18,47 +20,30 @@ module.exports = _.extend(
 );
 
 
+/**
+ * Run the initialization of the application, running required task for
+ * the launch
+ */
 module.exports.init = function() {
 
-	logger.debug('Global initialization of configuration');
+	logger.info('Global initialization of configuration');
 
-	this.initPreDBConnection();
-	this.connectDB();
-	this.initPostDBConnection();
+	process.env.UTILS  = path.join(__dirname, '/utils');
 
-};
+	process.env.CONFIG = __filename;
 
-
-module.exports.initPreDBConnection = function() {
-
-	logger.debug('Pre DB connection scripts');
-
-	this.initAllPreDBConnection();
-	this.initEnvPreDBConnection();
+	this.initAll();
+	this.initEnv();
 
 };
 
-module.exports.connectDB = function() {
 
-	var dbUrl = this.db.url;
-
-	logger.debug('Connecting to db ' + dbUrl + ' ...');
-	var db = mongoose.connect(dbUrl, function(err) {
-		if (err) {
-			logger.error('Could not connect to database : ' + dbUrl);
-			logger.error( { error: err } );
-		} else {
-			logger.info('Successful connection to db ' + dbUrl);
-		}
-	});
-
-	this.db.mongoose = db;
-
-};
-
+/**
+ * Run the post db connection tasks
+ */
 module.exports.initPostDBConnection = function() {
 
-	logger.debug('Post db connection scripts');
+	logger.info('Post DB connection initialization of configuration');
 
 	this.initAllPostDBConnection();
 	this.initEnvPostDBConnection();
@@ -66,49 +51,33 @@ module.exports.initPostDBConnection = function() {
 };
 
 
-module.exports.searchFiles = function(globPatterns, removeRoot) {
+/**
+ * Connect to the database
+ *
+ *  @return  {Object}  The mongoose database
+ */
+module.exports.connectDB = function() {
 
-	var _this = this;
+	var dbUrl = this.db.url;
 
-	var urlRegex = new RegExp('^(?:[a-z]+:)?\/\/', 'i');
+	logger.info('Connecting to db ' + dbUrl + ' ...');
 
-	var output = [];
+	var db = mongoose.connect(dbUrl, function(err) {
 
-	// If glob pattern is array so we use each pattern in a recursive way, otherwise we use glob 
-	if (_.isArray(globPatterns)) {
+		if (err) {
 
-		globPatterns.forEach(function(globPattern) {
-
-			output = _.union(output, _this.searchFiles(globPattern, removeRoot));
-
-		});
-
-	} else if (_.isString(globPatterns)) {
-
-		if (urlRegex.test(globPatterns)) {
-
-			output.push(globPatterns);
+			logger.error('Could not connect to database : ' + dbUrl);
+			logger.error( { error: err } );
 
 		} else {
 
-			// TODO Change to the sync function of glob
-			glob(globPatterns, {
-				sync: true
-			}, function(err, files) {
-				if (removeRoot) {
-					files = files.map(function(file) {
-						return file.replace(removeRoot, '');
-					});
-				}
-
-				output = _.union(output, files);
-
-			});
+			logger.info('Successful connection to db ' + dbUrl);
 
 		}
 
-	}
+	});
 
-	return output;
+	this.db.mongoose = db;
+	return db;
 
 };

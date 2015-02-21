@@ -1,68 +1,82 @@
+/** @module logger.js */
 'use strict';
 
-// MODULES =====================================================================
+// MODULES ====================================================================
 var winston = require('winston');
 
+/**
+ * Define and return the relevant logger 
+ *
+ * @param   {String}  label  The label to be used in the logger, usually the
+ *                           name of the module.
+ *
+ * @return  {Logger}         The relevant logger according to the environment.
+ */
+module.exports = function(label) {
 
-// LOGGER DEFINITION ===========================================================
+	// Choose the relevant logger according to the environment ----------------
+	switch (process.env.NODE_ENV){
 
-// For Development environment -------------------------------------------------
-var devLogger = new (winston.Logger)({
-	transports: [
-		new (winston.transports.Console)({
-			level: 'silly',
-			colorize: true,
-			timestamp: true,
-			prettyPrint: true,
-			depth: 0
-		})
-	]
-});
+	case 'development': // ----------------------------------------------------
 
-// For Testing environment -----------------------------------------------------
-var testLogger = new (winston.Logger)({
-	transports: [
-		new (winston.transports.Console)({
-			level: 'info',
-			colorize: true,
-			timestamp: false,
-			prettyPrint: true,
-			depth: 0
-		})
-	]
-});
+		return new (winston.Logger)({
+			transports: [
+				new (winston.transports.Console)({
+					level: 'silly',
+					colorize: true,
+					timestamp: true,
+					label : label,
+					prettyPrint: true,
+					depth: 0
+				})
+			]
+		});
 
-// For Production environment --------------------------------------------------
-var prodLogger = new (winston.Logger)({
-	transports: [
-		new (winston.transports.Console)({
-			level: 'info',
-			colorize: true,
-			timestamp: true,
-			prettyPrint: true,
-			depth: 0
-		})
-	]
-});
+	case 'production': // -----------------------------------------------------
 
+		return new (winston.Logger)({
+			transports: [
+				new (winston.transports.Console)({
+					level: 'info',
+					colorize: true,
+					timestamp: true,
+					label : label,
+					prettyPrint: true,
+					depth: 0
+				})
+			]
+		});
 
-// EXPORT LOGGER ===============================================================
-var exportedLogger;
+	case 'test': // -----------------------------------------------------------
 
-// Choose the relevant logger according to the environment ---------------------
-switch (process.env.NODE_ENV){
-case 'development':
-	exportedLogger = devLogger;
-	break;
-case 'production':
-	exportedLogger = prodLogger;
-	break;
-case 'test':
-	exportedLogger = testLogger;
-	break;
-default:
-	exportedLogger = devLogger;
-	break;
-}
+		return new (winston.Logger)({
+			transports: [
+				new (winston.transports.Console)({
+					level: 'info',
+					colorize: true,
+					timestamp: false,
+					label : label,
+					prettyPrint: true,
+					depth: 0
+				})
+			]
+		});
 
-module.exports = exportedLogger;
+	default: // ---------------------------------------------------------------
+
+		return new (winston.Logger)({
+			transports: [
+				new (winston.transports.Console)({
+					level: 'silly',
+					colorize: true,
+					timestamp: true,
+					label : label,
+					prettyPrint: true,
+					depth: 0
+				})
+			]
+		});
+
+	}
+
+};
