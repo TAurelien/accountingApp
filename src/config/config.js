@@ -28,9 +28,11 @@ module.exports.init = function() {
 
 	logger.info('Global initialization of configuration');
 
-	process.env.UTILS  = path.join(__dirname, '/utils');
+	process.env.UTILS     = path.join(__dirname, '/utils');
 
-	process.env.CONFIG = __filename;
+	process.env.CONSTANTS = path.join(__dirname, '/constants');
+
+	process.env.CONFIG    = __filename;
 
 	this.initAll();
 	this.initEnv();
