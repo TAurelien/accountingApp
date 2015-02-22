@@ -47,4 +47,13 @@ module.exports = function(apiV1Router) {
 			accounts.delete
 		);
 
+	// Account chart ----------------------------------------------------------
+
+	apiV1Router.route('/accountChart')
+
+		.get(function(req, res, next) {
+			// TODO Define the GET /accountChart
+			next(new Error('GET /accountChart not yet implemented'));
+		});
+
 };

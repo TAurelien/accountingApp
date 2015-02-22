@@ -23,7 +23,6 @@ module.exports = function(app, express) {
 
 	// Defining the routes
 	require('./api.v1.accounts')(apiV1Router);
-	require('./api.v1.accountChart')(apiV1Router);
 
 	// Register the api v1 router ---------------------------------------------
 	app.use('/api/v1', apiV1Router);
