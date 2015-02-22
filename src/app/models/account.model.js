@@ -4,13 +4,15 @@
 var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
+var constants = require(process.env.CONSTANTS);
 
 var AccountSchema = new Schema({
 
 	name: {
 		type: String,
 		trim: true,
-		default: ''
+		default: '',
+		required : true
 	},
 
 	description: {
@@ -22,7 +24,9 @@ var AccountSchema = new Schema({
 	type: {
 		type: String,
 		trim: true,
-		default: ''
+		default: '',
+		required : true,
+		enum : constants.accountTypeAsArray
 	},
 
 	code: {
@@ -34,7 +38,9 @@ var AccountSchema = new Schema({
 	commodity: {
 		type: String,
 		trim: true,
-		default: ''
+		default: '',
+		required : true,
+		enum : constants.commoditiesAsArray
 	},
 
 	balance: {
