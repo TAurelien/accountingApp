@@ -68,13 +68,16 @@ exports.create = function(req, res) {
 	account.save(function(err) {
 
 		if (err) {
+
 			logger.error('Account creation failed!');
-			res.send(err);
+			res.send(err); // TODO Check error type
+
+		} else {
+
+			logger.info('Account creation successful');
+			res.json({ message: 'Account created!' });
+
 		}
-
-		logger.info('Account creation successful');
-
-		res.json({ message: 'Account created!' });
 
 	});
 
@@ -97,14 +100,21 @@ exports.get = function(req, res) {
 	Account.findById(accountID, function(err, account) {
 
 		if (err){
+
 			logger.error('Getting the account ' + accountID + ' failed!');
-			res.send(err);
+			res.send(err); // TODO Check error type
+
+		} else {
+
+			if (_.isNull(account)){
+				logger.warn('No account has been found for id ' + accountID);
+			}else {
+				logger.info('Success of getting the account ' + accountID);
+			}
+
+			res.json(account);
+
 		}
-
-		// TODO Check if account is null
-		logger.info('Success of getting the account ' + accountID);
-
-		res.json(account);
 
 	});
 
@@ -121,16 +131,27 @@ exports.list = function(req, res) {
 
 	logger.debug('Getting a list of all accounts');
 
+	// TODO Pass argument in the url query to define the list filter
+	// var query = req.query;
+	// var type = query.type;
+
 	Account.find(function(err, accounts){
 		if (err){
+
 			logger.error('Getting all accounts failed!');
-			res.send(err);
+			res.send(err); // TODO Check error type
+
+		} else {
+
+			if (_.isNull(accounts)){
+				logger.warn('No account has been found');
+			}else {
+				logger.info('Success of getting all accounts');
+			}
+
+			res.json(accounts);
+
 		}
-
-		// TODO Check if accounts is null
-		logger.info('Success of getting all accounts');
-
-		res.json(accounts);
 
 	});
 
@@ -152,28 +173,42 @@ exports.update = function(req, res) {
 	Account.findById(accountID, function(err, account) {
 
 		if (err) {
+
 			logger.error('Getting the account ' + accountID + ' to update failed!');
-			res.send(err);
-		}
+			res.send(err); // TODO Check error type
 
-		setAccountFields(req, account);
+		} else {
 
-		// TODO Check if account is null
-		account.save(function(err) {
+			if (_.isNull(account)){
 
-			if (err) {
-				logger.error('Saving the updated account ' + accountID + ' failed!');
-				res.send(err);
+				logger.warn('No account has been found for id ' + accountID);
+				res.json({ message: 'Account to update not found'});
+
+			}else {
+
+				setAccountFields(req, account);
+
+				account.save(function(err) {
+
+					if (err) {
+
+						logger.error('Saving the updated account ' + accountID + ' failed!');
+						res.send(err); // TODO Check error type
+
+					} else {
+
+						logger.info('The account ' + accountID + ' has been successfully updated');
+						res.json({ message: 'Account updated!' });
+
+					}
+
+				});
+
 			}
 
-			logger.info('The account ' + accountID + ' has been successfully updated');
-
-			res.json({ message: 'Account updated!' });
-
-		});
+		}
 
 	});
-
 
 };
 
@@ -190,17 +225,19 @@ exports.delete = function(req, res) {
 
 	var accountID = req.params.id;
 
-	Account.remove({
-		_id: accountID
-	}, function(err) {
+	Account.remove({ _id: accountID }, function(err) {
+
 		if (err) {
+
 			logger.error('Deleting the account ' + accountID + ' failed!');
-			res.send(err);
+			res.send(err); // TODO Check error type
+
+		} else {
+
+			logger.info('The account '+ accountID + ' has been successfully deleted');
+			res.json({ message: 'Account deleted!' });
+
 		}
-
-		logger.info('The account '+ accountID + ' has been successfully deleted');
-
-		res.json({ message: 'Account deleted!' });
 
 	});
 
