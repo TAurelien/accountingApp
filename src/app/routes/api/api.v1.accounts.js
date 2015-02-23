@@ -32,7 +32,9 @@ module.exports = function(apiV1Router) {
 
 	apiV1Router.route('/accounts/:id')
 
-		// To get a specific account
+		/**
+		 * To get a specific account
+		 */
 		.get(
 			accounts.get
 		)

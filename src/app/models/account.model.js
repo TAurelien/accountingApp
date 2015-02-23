@@ -61,6 +61,13 @@ var AccountSchema = new Schema({
 	parent: {
 		type: Schema.ObjectId,
 		ref: 'Account'
+	},
+
+	// add a setter to determine the level from the parent's one (automatic?)
+	level: {
+		type: Number,
+		default: 0,
+		min : 0
 	}
 
 });

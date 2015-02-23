@@ -52,6 +52,28 @@ function setAccountFields(req, account) {
 
 
 /**
+ * Check the accountFilter part of the query extracted from the request and return the conditions object to be passed in the find method of mongoose.
+ *
+ * @param  {String} accountFilter The string extract from request query 'accountFilter'
+ *
+ * @return {Object}               The conditions object expected by mongoose
+ */
+function getAccountFilterQuery(accountFilter){
+	var conditions = {};
+
+	if (accountFilter.indexOf('onlyOpen') > -1) conditions.closed = false;
+	if (accountFilter.indexOf('onlyClosed') > -1) conditions.closed = true;
+	if (accountFilter.indexOf('asset') > -1) conditions.type = 'asset';
+	if (accountFilter.indexOf('liability') > -1) conditions.type = 'liability';
+	if (accountFilter.indexOf('equity') > -1) conditions.type = 'equity';
+	if (accountFilter.indexOf('income') > -1) conditions.type = 'income';
+	if (accountFilter.indexOf('expense') > -1) conditions.type = 'expense';
+
+	return conditions;
+}
+
+
+/**
  * Create a new account
  *
  * @param  Object req The http request
@@ -87,7 +109,8 @@ exports.create = function(req, res) {
 
 /**
  * Get and send a specific account
- *
+ * The request could have a accountInfoType query with value 'simple' or 'full'
+ * 
  * @param  Object req The http request
  * @param  Object res The http response
  */
@@ -95,9 +118,20 @@ exports.get = function(req, res) {
 
 	logger.debug('Getting a specific account');
 
+	var fieldSelection = {};
+
+	var accountInfoType = req.query.accountInfoType;
+	if (accountInfoType === 'simple'){
+		fieldSelection.name = 1;
+		fieldSelection.type = 1;
+		fieldSelection.placeholder = 1;
+		fieldSelection.closed = 1;
+		fieldSelection.parent = 1;
+	}
+
 	var accountID = req.params.id;
 
-	Account.findById(accountID, function(err, account) {
+	Account.findById(accountID, fieldSelection, function(err, account) {
 
 		if (err){
 
@@ -123,7 +157,10 @@ exports.get = function(req, res) {
 
 /**
  * Get and send all accounts
- *
+ * The request could have a accountInfoType query with value 'simple' or 'full'
+ * The request could have a accountFilter query with concatened values:
+ * 'onlyOpen', 'onlyClosed', 'asset', 'liability', 'equity', 'income', 'expense'
+ * 
  * @param  Object req The http request
  * @param  Object res The http response
  */
@@ -131,11 +168,20 @@ exports.list = function(req, res) {
 
 	logger.debug('Getting a list of all accounts');
 
-	// TODO Pass argument in the url query to define the list filter
-	// var query = req.query;
-	// var type = query.type;
+	var fieldSelection = {};
 
-	Account.find(function(err, accounts){
+	var accountInfoType = req.query.accountInfoType;
+	if (accountInfoType === 'simple'){
+		fieldSelection.name = 1;
+		fieldSelection.type = 1;
+		fieldSelection.placeholder = 1;
+		fieldSelection.closed = 1;
+		fieldSelection.parent = 1;
+	}
+
+	var conditions = getAccountFilterQuery(req.query.accountFilter);
+
+	Account.find(conditions, fieldSelection, function(err, accounts){
 		if (err){
 
 			logger.error('Getting all accounts failed!');
