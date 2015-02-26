@@ -37,24 +37,60 @@ function setupDB() {
 
 	logger.debug('Setting up the Dev DB');
 
-	var Account = require('../../app/models/account.model');
+	// General ledger ---------------------------------------------------------
 
-	logger.debug('removing all existing accounts');
-	Account.remove(null).exec();
+	var  GeneralLedger = require('../../app/models/generalLedger.model');
 
-	var testingAccounts = require('./dev/testingAccountsList');
+	logger.debug('removing all existing general ledger');
+	GeneralLedger.remove(null).exec();
 
-	Account.create(testingAccounts, function(err) {
+	var testingGeneralLedger = require('./dev/testingGeneralLedgersList');
+
+	GeneralLedger.create(testingGeneralLedger, function(err) {
 		if (err){
-			logger.error('Error while creating the testing accounts');
+			logger.error('Error while creating the testing general ledgers');
 			logger.error(err);
 		}else {
-			logger.debug('All testing accounts have been created');
+			logger.debug('All testing general ledgers have been created');
+
+
+			// Accounts -------------------------------------------------------
+
+			var Account = require('../../app/models/account.model');
+
+			logger.debug('removing all existing accounts');
+			Account.remove(null).exec();
+
+			var testingAccounts = require('./dev/testingAccountsList');
+
+			Account.create(testingAccounts, function(err) {
+				if (err){
+					logger.error('Error while creating the testing accounts');
+					logger.error(err);
+				}else {
+					logger.debug('All testing accounts have been created');
+
+					GeneralLedger.findOne(function(err, generalLedger) {
+
+						if (!err && generalLedger){
+							logger.debug('The net worth of the general ledger is ' + generalLedger.netWorth);
+						} else {
+							logger.error('There was an error while finding the general ledgers');
+						}
+
+					});
+
+				}
+			});
+
+
+
+			
 		}
 	});
 
-}
 
+}
 
 
 // EXPORTED FUNCTIONS =========================================================
