@@ -6,6 +6,9 @@ var logger = require(process.env.LOGGER)('Account Model');
 var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
+var _ = require('lodash');
+var async = require('async');
+
 var constants = require(process.env.CONSTANTS);
 
 var AccountSchema = new Schema({
@@ -56,11 +59,6 @@ var AccountSchema = new Schema({
 		own: {
 			type: Number,
 			default: 0
-		},
-
-		child: {
-			type: Number,
-			default: 0
 		}
 
 	},
@@ -95,23 +93,128 @@ var AccountSchema = new Schema({
 
 });
 
-// Virtuals ===================================================================
 
-AccountSchema.virtual('balance.total').get(function() {
+// Private methods ============================================================
 
-	return this.balance.own + this.balance.child;
+function computeOwnBalance(ownBalance, cb) {
 
-});
+	logger.debug('computeOwnBalance - Getting the transactions balance');
+
+	return cb(null, ownBalance);
+
+}
+
+function computeChildBalance(accountID, cb) {
+
+	logger.debug('computeChildBalance - Getting the childs balance');
+
+	var conditions = { parent : accountID };
+
+	mongoose.model('Account').find(conditions, function(err, childs) {
+
+		var childArray = [];
+
+		_.forIn(childs, function(child){
+			childArray.push(child);
+		});
+
+		async.map(
+			childArray,
+
+			function(child, callback){
+
+				child.getBalance(function(err, balance) {
+					callback(err, balance);
+				});
+
+			},
+
+			function(err, results) {
+
+				var globalChildBalance = 0;
+
+				_(results).forEach(function(childBalance){
+					globalChildBalance += childBalance;
+				});
+
+				return cb(err, globalChildBalance);
+
+			}
+
+		);
+
+	});
+
+}
+
+// Methods ====================================================================
+
+AccountSchema.methods.getBalance = function(cb) {
+
+	var ownBalance = this.balance.own;
+	var accountID = this._id;
+	var name = this.name;
+
+	logger.debug('getBalance - Computing the account balance of ' + name);
+
+	async.parallel([
+
+		function(callback){
+
+			computeOwnBalance(ownBalance, function(err, transactionsBalance) {
+				logger.debug('Transaction balance for ' + name + ' = ' + transactionsBalance);
+				callback(err, transactionsBalance);
+			});
+
+		},
+
+		function(callback){
+
+			computeChildBalance(accountID, function(err, childBbalance){
+				logger.debug('Child balance for ' + name + ' = ' + childBbalance);
+				callback(err, childBbalance);
+			});
+
+		}
+
+	],
+
+	function(err, results){
+
+		var globalBalance = 0;
+
+		_.forIn(results, function(childAndOwnBalance){
+			globalBalance += childAndOwnBalance;
+		});
+		logger.debug('Global balance for ' + name + ' = ' + globalBalance);
+		return cb(err, globalBalance);
+
+	});
+
+};
+
+AccountSchema.methods.getOwnBalance = function(cb) {
+
+	logger.debug('getOwnBalance - Getting the transactions balance');
+
+	return computeOwnBalance(this.balance.own, cb);
+
+};
+
+AccountSchema.methods.getChildBalance = function(cb) {
+
+	logger.debug('getChildBalance - Getting the childs balance');
+
+	return computeChildBalance(this._id, cb);
+
+};
+
 
 // Pre processing methods =====================================================
 
 AccountSchema.pre('save', function(next) {
 
-	logger.debug('====== New Account saving ================================');
-
-	logger.debug('Name : ' + this.name);
-
-	// meta dates management
+	// meta dates management --------------------------------------------------
 
 	var today = new Date();
 
@@ -121,11 +224,7 @@ AccountSchema.pre('save', function(next) {
 
 	this.meta.updated = today;
 
-	// child balance management
-
-
-
-	// level management
+	// level management -------------------------------------------------------
 
 	var accountId = this._id;
 
@@ -133,17 +232,12 @@ AccountSchema.pre('save', function(next) {
 		mongoose.model('Account').findById(this.parent, function(err, parent) {
 			if(!err && accountId && parent){
 				var newLevel = parent.level + 1;
-				mongoose.model('Account').findByIdAndUpdate(accountId, { level: newLevel }, { new : true })
-				.exec(function(err, account){
-					logger.debug('updated level : ' + account.level);
-				});
+				mongoose.model('Account').findByIdAndUpdate(accountId, { level: newLevel }, { new : true }).exec();
 			}
 		});
 	}
 
 	// ------------------------------------------------------------------------
-
-	logger.debug('');
 
 	next();
 
@@ -154,11 +248,7 @@ AccountSchema.pre('save', function(next) {
 
 AccountSchema.post('save', function(account) {
 
-	logger.debug('====== New Account saved =================================');
-	logger.debug('_id : ' + account._id);
-	logger.debug('Name : ' + account.name);
-	logger.debug('total balance : ' + account.balance.total);
-	logger.debug('');
+	logger.debug('Saved account ' + account.name + ' with _id : ' + account._id);
 
 });
 
