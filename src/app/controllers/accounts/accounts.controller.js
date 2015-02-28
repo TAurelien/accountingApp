@@ -109,7 +109,7 @@ exports.create = function(req, res) {
 
 /**
  * Get and send a specific account
- * The request could have a accountInfoType query with value 'simple' or 'full'
+ * The request could have a accountInfoType query with value 'simple', 'full' or 'balance'
  * 
  * @param  Object req The http request
  * @param  Object res The http response
@@ -146,7 +146,29 @@ exports.get = function(req, res) {
 				logger.info('Success of getting the account ' + accountID);
 			}
 
-			res.json(account);
+			if ((accountInfoType === 'balance') && (!_.isNull(account))) {
+
+				account.getBalance(function(err, balance) {
+
+					if (err) {
+
+						logger.error('Getting the account balance ' + accountID + ' failed!');
+						res.send(err); // TODO Check error type
+
+					} else {
+
+						res.json({ balance : balance });
+
+					}
+
+				});
+
+			} else {
+
+				res.json(account);
+
+			}
+
 
 		}
 
