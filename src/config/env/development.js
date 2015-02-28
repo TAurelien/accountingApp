@@ -4,6 +4,7 @@
 var logger = require(process.env.LOGGER)('Env Dev');
 
 
+
 // EXPORTED OBJECT ============================================================
 
 /**
@@ -47,12 +48,15 @@ function setupDB() {
 	var testingGeneralLedger = require('./dev/testingGeneralLedgersList');
 
 	GeneralLedger.create(testingGeneralLedger, function(err) {
+
 		if (err){
+
 			logger.error('Error while creating the testing general ledgers');
 			logger.error(err);
-		}else {
-			logger.debug('All testing general ledgers have been created');
 
+		}else {
+
+			logger.debug('All testing general ledgers have been created');
 
 			// Accounts -------------------------------------------------------
 
@@ -64,31 +68,23 @@ function setupDB() {
 			var testingAccounts = require('./dev/testingAccountsList');
 
 			Account.create(testingAccounts, function(err) {
+
 				if (err){
+
 					logger.error('Error while creating the testing accounts');
 					logger.error(err);
+
 				}else {
+
 					logger.debug('All testing accounts have been created');
 
-					GeneralLedger.findOne(function(err, generalLedger) {
-
-						if (!err && generalLedger){
-							logger.debug('The net worth of the general ledger is ' + generalLedger.netWorth);
-						} else {
-							logger.error('There was an error while finding the general ledgers');
-						}
-
-					});
-
 				}
+
 			});
 
-
-
-			
 		}
-	});
 
+	});
 
 }
 
