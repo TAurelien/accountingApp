@@ -4,6 +4,7 @@
 var logger = require(process.env.LOGGER)('General Ledger Model');
 
 var _ = require('lodash');
+var async = require('async');
 
 var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
@@ -38,58 +39,94 @@ var GeneralLedgerSchema = new Schema({
 });
 
 
-// Virtuals ===================================================================
+GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 
-GeneralLedgerSchema.virtual('netWorth').get(function() {
+	var name = this.name;
+	var _id = this._id;
 
-	logger.debug('Computing the net worth');
+	logger.debug('Computing the net worth of ' + name);
 
 	var netWorth = 0;
 
 	var conditions = {
-		generalLedger : this._id,
+		generalLedger : _id,
 		$or : [
 			{ type : 'asset' },
 			{ type : 'liability' }
 		]
 	};
 
-	logger.debug('Finding all accounts of the general ledger');
-
 	mongoose.model('Account').find(conditions, function(err, accounts) {
 
-		logger.debug('accounts.length : ' + accounts.length);
-		if (!err && accounts.length){
+		if (err) {
+
+			logger.error('Error while getting the accounts of ' + name);
+			callback(err);
+
+		} else if (accounts.length){
+
+			var accountsArray = [];
 
 			_.forIn(accounts, function(account) {
-				account = account.toObject({ virtuals: true });
-				logger.debug('account.balance.own : ' + account.balance.own);
-				if (account.type === 'asset') {
-					netWorth += account.balance.own;
-				} else if (account.type === 'liability') {
-					netWorth -= account.balance.own;
-				}
+				accountsArray.push(account);
 			});
+
+			async.each(accountsArray, function(account, asyncCallback) {
+
+				var accountObject = account.toObject();
+				var type = accountObject.type;
+
+				account.getOwnBalance(function(err, ownBalance) {
+
+					if (err) {
+
+						logger.error('Error while getting the own balance of ' + accountObject.name);
+						asyncCallback(err);
+
+					} else {
+
+						if (type === 'asset'){
+							netWorth += ownBalance;
+						} else if (type === 'liability') {
+							netWorth -= ownBalance;
+						}
+
+						asyncCallback(null);
+
+					}
+
+				});
+
+			}, function(err){
+
+				if (err) {
+
+					logger.error('Error while getting the own balance of one account of ' + name);
+					callback(err);
+
+				} else {
+
+					callback(null, netWorth);
+
+				}
+
+			});
+
+		} else {
+
+			callback('No accounts found for this general ledger', null);
 
 		}
 
-		logger.debug('Net worth : ' + netWorth);
-		return netWorth;
-
 	});
 
-
-});
+};
 
 // Pre processing methods =====================================================
 
 GeneralLedgerSchema.pre('save', function(next) {
 
-	logger.debug('====== New General Ledger saving =========================');
-
-	logger.debug('Name : ' + this.name);
-
-	// meta dates management
+	// meta dates management --------------------------------------------------
 
 	var today = new Date();
 
@@ -99,20 +136,15 @@ GeneralLedgerSchema.pre('save', function(next) {
 
 	this.meta.updated = today;
 
-	logger.debug('');
-
 	next();
 
 });
 
 // Post processing methods ====================================================
 
-GeneralLedgerSchema.post('save', function(account) {
+GeneralLedgerSchema.post('save', function(generalLedger) {
 
-	logger.debug('====== New General Ledger saved ==========================');
-	logger.debug('_id : ' + account._id);
-	logger.debug('Name : ' + account.name);
-	logger.debug('');
+	logger.debug('Saved general ledger ' + generalLedger.name + ' with _id ' + generalLedger._id);
 
 });
 
