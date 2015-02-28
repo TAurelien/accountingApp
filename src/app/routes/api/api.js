@@ -22,6 +22,7 @@ module.exports = function(app, express) {
 	// TODO add a middleware logging the traffic on api routes
 
 	// Defining the routes
+	require('./api.v1.generalLedgers')(apiV1Router);
 	require('./api.v1.accounts')(apiV1Router);
 
 	// Register the api v1 router ---------------------------------------------
