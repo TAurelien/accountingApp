@@ -20,7 +20,8 @@ module.exports = function(app){
 	app.get('*', function(req, res) {
 		// load our public/index.html file, the front-end will handle
 		// the routing from index.html
-		
+
+		// TODO Use the APP_PATH variable
 		var indexFile = path.join(__dirname + '/../../../public/index.html');
 
 		res.sendFile(indexFile);

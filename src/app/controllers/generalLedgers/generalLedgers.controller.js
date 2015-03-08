@@ -3,9 +3,9 @@
 
 
 // Module dependencies ========================================================
-var logger        = require(process.env.LOGGER)('General Ledger Ctrl');
+var logger        = require(global.LOGGER)('General Ledger Ctrl');
 var _             = require('lodash');
-var GeneralLedger = require('../../models/generalLedger.model');
+var GeneralLedger = require('../../models/generalLedger.model'); // TODO Use the APP_PATH variable
 
 
 // Exported functions =========================================================

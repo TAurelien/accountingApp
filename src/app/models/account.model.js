@@ -3,8 +3,8 @@
 
 
 // Module dependencies ========================================================
-var logger    = require(process.env.LOGGER)('Account Model');
-var constants = require(process.env.CONSTANTS);
+var logger    = require(global.LOGGER)('Account Model');
+var constants = require(global.CONSTANTS);
 var _         = require('lodash');
 var async     = require('async');
 var mongoose  = require('mongoose');

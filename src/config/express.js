@@ -55,7 +55,7 @@ module.exports = function() {
 	app.disable('x-powered-by');
 
 	// Routes -----------------------------------------------------------------
-	require('../app/routes/routes')(app, express);
+	require('../app/routes/all.route')(app, express);
 
 	return app;
 
