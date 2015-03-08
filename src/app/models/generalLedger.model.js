@@ -1,52 +1,76 @@
 /** @module General Ledger Model */
 'use strict';
 
-var logger = require(process.env.LOGGER)('General Ledger Model');
 
-var _ = require('lodash');
-var async = require('async');
-
+// Module dependencies ========================================================
+var logger   = require(process.env.LOGGER)('General Ledger Model');
+var _        = require('lodash');
+var async    = require('async');
 var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
+
+// Schema definition ==========================================================
+
+/**
+ * Definition of the mongoose General Ledger schema.
+ *
+ * @type {Schema}
+ */
 var GeneralLedgerSchema = new Schema({
 
 	name: {
-		type: String,
-		trim: true,
-		default: '',
+		type     : String,
+		trim     : true,
+		default  : '',
 		required : true
 	},
 
 	description: {
-		type: String,
-		trim: true,
-		default: ''
+		type    : String,
+		trim    : true,
+		default : ''
 	},
 
 	closed: {
-		type: Boolean,
-		default: false
+		type    : Boolean,
+		default : false
+	},
+
+	settings: {
+
+		defaultCommodity : {
+			type    : String,
+			trim    : true,
+			default : ''
+		}
+
 	},
 
 	meta: {
-		created: Date,
+		creationDate : Date,
 		creationUser : String,
-		updated: Date,
-		updatedUser : String
+		updateDate   : Date,
+		updatedUser  : String
 	}
 
 });
 
 
+// Schema functions ===========================================================
+
+/**
+ * Get the net worth of the general ledger.
+ *
+ * @param  {Function} callback Callback function.
+ */
 GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 
-	var name = this.name;
-	var _id = this._id;
+	var name     = this.name;
+	var _id      = this._id;
+	var netWorth = 0;
 
 	logger.debug('Computing the net worth of ' + name);
-
-	var netWorth = 0;
 
 	var conditions = {
 		generalLedger : _id,
@@ -71,11 +95,13 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 				accountsArray.push(account);
 			});
 
+			// TODO Add a logger
 			async.each(accountsArray, function(account, asyncCallback) {
 
 				var accountObject = account.toObject();
 				var type = accountObject.type;
 
+				// TODO Add a logger
 				account.getOwnBalance(function(err, ownBalance) {
 
 					if (err) {
@@ -91,13 +117,16 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 							netWorth -= ownBalance;
 						}
 
+						// TODO Add a logger
 						asyncCallback(null);
 
 					}
 
 				});
 
-			}, function(err){
+			},
+
+			function(err){
 
 				if (err) {
 
@@ -106,6 +135,7 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 
 				} else {
 
+					// TODO Add a logger
 					callback(null, netWorth);
 
 				}
@@ -114,6 +144,7 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 
 		} else {
 
+			// TODO Add a logger
 			callback('No accounts found for this general ledger', null);
 
 		}
@@ -122,11 +153,12 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 
 };
 
-// Pre processing methods =====================================================
+
+// Pre processing =============================================================
 
 GeneralLedgerSchema.pre('save', function(next) {
 
-	// meta dates management --------------------------------------------------
+	// meta management --------------------------------------------------------
 
 	var today = new Date();
 
@@ -136,15 +168,18 @@ GeneralLedgerSchema.pre('save', function(next) {
 
 	this.meta.updated = today;
 
+	// Process the save -------------------------------------------------------
+
 	next();
 
 });
 
-// Post processing methods ====================================================
+
+// Post processing ============================================================
 
 GeneralLedgerSchema.post('save', function(generalLedger) {
 
-	logger.debug('Saved general ledger ' + generalLedger.name + ' with _id ' + generalLedger._id);
+	logger.info('Saved general ledger ' + generalLedger.name + ' with _id ' + generalLedger._id);
 
 });
 

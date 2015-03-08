@@ -1,15 +1,21 @@
 /** @module General Ledger controller */
 'use strict';
 
-var logger = require(process.env.LOGGER)('General Ledger Ctrl');
 
-
+// Module dependencies ========================================================
+var logger        = require(process.env.LOGGER)('General Ledger Ctrl');
+var _             = require('lodash');
 var GeneralLedger = require('../../models/generalLedger.model');
 
-var _ = require('lodash');
 
+// Exported functions =========================================================
 
-
+/**
+ * Create a new General Ledger.
+ *
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
+ */
 exports.create = function(req, res) {
 
 	logger.debug('Creating a new general ledger');
@@ -34,12 +40,21 @@ exports.create = function(req, res) {
 
 };
 
+
+/**
+ * Get and send a specific general ledger.
+ * The request could have a infoType query with value 'netWorth' to return only the nbet worth of the account.
+ *
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
+ */
 exports.get = function(req, res) {
 
 	logger.debug('Getting a specific general ledger');
 
 	var fieldSelection = {};
 
+	// TODO Change the query name to 'infoType' instead of 'generalLedgerInfoType'
 	var generalLedgerInfoType = req.query.generalLedgerInfoType;
 
 	var generaleLedgerID = req.params.id;
@@ -62,7 +77,7 @@ exports.get = function(req, res) {
 			if (generalLedgerInfoType === 'netWorth'){
 
 				generalLedger.getNetWorth(function(err, netWorth) {
-					
+
 					if (err){
 
 						logger.error('Getting the net worth of the general ledger ' + generaleLedgerID + ' failed!');
@@ -70,9 +85,8 @@ exports.get = function(req, res) {
 
 					} else {
 
-						res.json({
-							netWorth : netWorth
-						});
+						// TODO Add a logger
+						res.json({ netWorth : netWorth });
 
 					}
 
@@ -80,6 +94,7 @@ exports.get = function(req, res) {
 
 			} else {
 
+				// TODO Add a logger
 				res.json(generalLedger);
 
 			}
@@ -90,6 +105,13 @@ exports.get = function(req, res) {
 
 };
 
+
+/**
+ * Get and send an array of all general ledger.
+ *
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
+ */
 exports.list = function(req, res) {
 
 	logger.debug('Getting a list of all general ledgers');
@@ -98,6 +120,13 @@ exports.list = function(req, res) {
 
 };
 
+
+/**
+ * Update a specific general ledger.
+ *
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
+ */
 exports.update = function(req, res) {
 
 	logger.debug('Updating a specific general ledger');
@@ -106,6 +135,13 @@ exports.update = function(req, res) {
 
 };
 
+
+/**
+ * Delete a specific general ledger.
+ *
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
+ */
 exports.delete = function(req, res) {
 
 	logger.debug('Deleting a specific general ledger');

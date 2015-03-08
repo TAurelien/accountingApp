@@ -1,110 +1,133 @@
 /** @module Account Model */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Account Model');
 
-var mongoose = require('mongoose');
-var Schema   = mongoose.Schema;
-
-var _ = require('lodash');
-var async = require('async');
-
+// Module dependencies ========================================================
+var logger    = require(process.env.LOGGER)('Account Model');
 var constants = require(process.env.CONSTANTS);
+var _         = require('lodash');
+var async     = require('async');
+var mongoose  = require('mongoose');
+var Schema    = mongoose.Schema;
 
+
+// Schema definition ==========================================================
+
+/**
+ * Definition of the mongoose Account schema.
+ * 
+ * @type {Schema}
+ */
 var AccountSchema = new Schema({
 
 	generalLedger :{
-		type: Schema.ObjectId,
-		ref: 'GeneralLedger',
+		type     : Schema.ObjectId,
+		ref      : 'GeneralLedger',
 		required : true
 	},
 
 	name: {
-		type: String,
-		trim: true,
-		default: '',
+		type     : String,
+		trim     : true,
+		default  : '',
 		required : true
 	},
 
 	description: {
-		type: String,
-		trim: true,
-		default: ''
+		type    : String,
+		trim    : true,
+		default : ''
 	},
 
 	type: {
-		type: String,
-		trim: true,
-		default: '',
+		type     : String,
+		trim     : true,
+		default  : '',
 		required : true,
-		enum : constants.accountTypeAsArray
+		enum     : constants.accountTypeAsArray
 	},
 
 	code: {
-		type: String,
-		trim: true,
-		default: ''
+		type    : String,
+		trim    : true,
+		default : ''
 	},
 
 	commodity: {
-		type: String,
-		trim: true,
-		default: '',
+		type     : String,
+		trim     : true,
+		default  : '',
 		required : true,
-		enum : constants.commoditiesAsArray
+		enum     : constants.commoditiesAsArray
 	},
 
 	balance : {
 
 		own: {
-			type: Number,
-			default: 0
+			type    : Number,
+			default : 0
 		}
 
 	},
 
 	placeholder: {
-		type: Boolean,
-		default: false
+		type    : Boolean,
+		default : false
 	},
 
 	closed: {
-		type: Boolean,
-		default: false
+		type    : Boolean,
+		default : false
 	},
 
 	parent: {
-		type: Schema.ObjectId,
-		ref: 'Account'
+		type : Schema.ObjectId,
+		ref  : 'Account'
 	},
 
 	level: {
-		type: Number,
-		default: 0,
-		min : 0
+		type    : Number,
+		default : 0,
+		min     : 0
 	},
 
 	meta: {
-		created: Date,
+		creationDate : Date,
 		creationUser : String,
-		updated: Date,
-		updatedUser : String
+		updateDate   : Date,
+		updateUser   : String
 	}
 
 });
 
 
-// Private methods ============================================================
+// Private functions ==========================================================
 
-function computeOwnBalance(ownBalance, cb) {
+/**
+ * Compute the balance of an account based on his transactions.
+ * The balance is provided in the callback function.
+ *
+ * @param  {Number}   ownBalance TEMPORARY WILL BE REMOVE
+ * @param  {Function} callback   Callback function.
+ */
+function computeOwnBalance(ownBalance, callback) {
 
+	// TODO Remove the ownBalance variable while computation will be possible
 	logger.debug('computeOwnBalance - Getting the transactions balance');
 
-	return cb(null, ownBalance);
+	callback(null, ownBalance);
 
 }
 
-function computeChildBalance(accountID, cb) {
+
+/**
+ * Compute the global balance of all childs of the specified account.
+ * A callback function is then executed with the childs' balance.
+ *
+ * @param  {String}   accountID [description]
+ * @param  {Function} callback  Callback function.
+ */
+function computeChildBalance(accountID, callback) {
 
 	logger.debug('computeChildBalance - Getting the childs balance');
 
@@ -121,10 +144,10 @@ function computeChildBalance(accountID, cb) {
 		async.map(
 			childArray,
 
-			function(child, callback){
+			function(child, asyncCallback){
 
 				child.getBalance(function(err, balance) {
-					callback(err, balance);
+					asyncCallback(err, balance);
 				});
 
 			},
@@ -137,7 +160,7 @@ function computeChildBalance(accountID, cb) {
 					globalChildBalance += childBalance;
 				});
 
-				return cb(err, globalChildBalance);
+				callback(err, globalChildBalance);
 
 			}
 
@@ -147,32 +170,38 @@ function computeChildBalance(accountID, cb) {
 
 }
 
-// Methods ====================================================================
 
-AccountSchema.methods.getBalance = function(cb) {
+// Schema functions ===========================================================
+
+/**
+ * Get the balance of an account by getting its childs' balance and its own transaction balance.
+ *
+ * @param  {Function} callback Callback function.
+ */
+AccountSchema.methods.getBalance = function(callback) {
 
 	var ownBalance = this.balance.own;
-	var accountID = this._id;
-	var name = this.name;
+	var accountID  = this._id;
+	var name       = this.name;
 
 	logger.debug('getBalance - Computing the account balance of ' + name);
 
 	async.parallel([
 
-		function(callback){
+		function(asyncCallback){
 
 			computeOwnBalance(ownBalance, function(err, transactionsBalance) {
 				logger.debug('Transaction balance for ' + name + ' = ' + transactionsBalance);
-				callback(err, transactionsBalance);
+				asyncCallback(err, transactionsBalance);
 			});
 
 		},
 
-		function(callback){
+		function(asyncCallback){
 
 			computeChildBalance(accountID, function(err, childBbalance){
 				logger.debug('Child balance for ' + name + ' = ' + childBbalance);
-				callback(err, childBbalance);
+				asyncCallback(err, childBbalance);
 			});
 
 		}
@@ -187,30 +216,43 @@ AccountSchema.methods.getBalance = function(cb) {
 			globalBalance += childAndOwnBalance;
 		});
 		logger.debug('Global balance for ' + name + ' = ' + globalBalance);
-		return cb(err, globalBalance);
+
+		callback(err, globalBalance);
 
 	});
 
 };
 
-AccountSchema.methods.getOwnBalance = function(cb) {
+
+/**
+ * Get the balance of an account based on its transactions.
+ *
+ * @param  {Function} callback Callback function.
+ */
+AccountSchema.methods.getOwnBalance = function(callback) {
 
 	logger.debug('getOwnBalance - Getting the transactions balance');
 
-	return computeOwnBalance(this.balance.own, cb);
+	computeOwnBalance(this.balance.own, callback);
 
 };
 
-AccountSchema.methods.getChildBalance = function(cb) {
+
+/**
+ * Get the total balance of all childs of the account.
+ *
+ * @param  {Function} callback Callback function.
+ */
+AccountSchema.methods.getChildBalance = function(callback) {
 
 	logger.debug('getChildBalance - Getting the childs balance');
 
-	return computeChildBalance(this._id, cb);
+	computeChildBalance(this._id, callback);
 
 };
 
 
-// Pre processing methods =====================================================
+// Pre processing =============================================================
 
 AccountSchema.pre('save', function(next) {
 
@@ -218,11 +260,11 @@ AccountSchema.pre('save', function(next) {
 
 	var today = new Date();
 
-	if (!this.meta.created) {
-		this.meta.created = today;
+	if (!this.meta.creationDate) {
+		this.meta.creationDate = today;
 	}
 
-	this.meta.updated = today;
+	this.meta.updateDate = today;
 
 	// level management -------------------------------------------------------
 
@@ -244,11 +286,11 @@ AccountSchema.pre('save', function(next) {
 });
 
 
-// Post processing methods ====================================================
+// Post processing ============================================================
 
 AccountSchema.post('save', function(account) {
 
-	logger.debug('Saved account ' + account.name + ' with _id : ' + account._id);
+	logger.info('Saved account ' + account.name + ' with _id : ' + account._id);
 
 });
 

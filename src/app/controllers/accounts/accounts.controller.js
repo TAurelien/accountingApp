@@ -1,19 +1,20 @@
 /** @module Accounts controller */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Accounts Ctrl');
 
-
+// Module dependencies ========================================================
+var logger  = require(process.env.LOGGER)('Accounts Ctrl');
+var _       = require('lodash');
 var Account = require('../../models/account.model');
 
-var _ = require('lodash');
 
+// Private functions ==========================================================
 
 /**
- * Check the http request and set the account fields from request values
+ * Check the http request and set the account fields from request values.
  *
- * @param  Object req The http request
- * @param  Object account The mongoose schema model of account
+ * @param  {Object} req     The http request.
+ * @param  {Object} account The mongoose schema model of account.
  */
 function setAccountFields(req, account) {
 
@@ -52,32 +53,36 @@ function setAccountFields(req, account) {
 
 
 /**
- * Check the accountFilter part of the query extracted from the request and return the conditions object to be passed in the find method of mongoose.
+ * Check the filter part of the query extracted from the request and return the conditions object to be passed in the find method of mongoose.
  *
- * @param  {String} accountFilter The string extract from request query 'accountFilter'
+ * @param  {String} filter The string extract from request query 'filter'.
  *
- * @return {Object}               The conditions object expected by mongoose
+ * @return {Object}               The conditions object expected by mongoose.
  */
-function getAccountFilterQuery(accountFilter){
+function getAccountFilterQuery(filter){
+
 	var conditions = {};
 
-	if (accountFilter.indexOf('onlyOpen') > -1) conditions.closed = false;
-	if (accountFilter.indexOf('onlyClosed') > -1) conditions.closed = true;
-	if (accountFilter.indexOf('asset') > -1) conditions.type = 'asset';
-	if (accountFilter.indexOf('liability') > -1) conditions.type = 'liability';
-	if (accountFilter.indexOf('equity') > -1) conditions.type = 'equity';
-	if (accountFilter.indexOf('income') > -1) conditions.type = 'income';
-	if (accountFilter.indexOf('expense') > -1) conditions.type = 'expense';
+	if (filter.indexOf('onlyOpen') > -1)   conditions.closed = false;
+	if (filter.indexOf('onlyClosed') > -1) conditions.closed = true;
+	if (filter.indexOf('asset') > -1)      conditions.type = 'asset';
+	if (filter.indexOf('liability') > -1)  conditions.type = 'liability';
+	if (filter.indexOf('equity') > -1)     conditions.type = 'equity';
+	if (filter.indexOf('income') > -1)     conditions.type = 'income';
+	if (filter.indexOf('expense') > -1)    conditions.type = 'expense';
 
 	return conditions;
+
 }
 
 
+// Exported functions =========================================================
+
 /**
- * Create a new account
+ * Create a new account.
  *
- * @param  Object req The http request
- * @param  Object res The http response
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
  */
 exports.create = function(req, res) {
 
@@ -103,16 +108,15 @@ exports.create = function(req, res) {
 
 	});
 
-
 };
 
 
 /**
- * Get and send a specific account
- * The request could have a accountInfoType query with value 'simple', 'full' or 'balance'
+ * Get and send a specific account.
+ * The request could have a accountInfoType query with value 'simple', 'full' or 'balance'.
  * 
- * @param  Object req The http request
- * @param  Object res The http response
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
  */
 exports.get = function(req, res) {
 
@@ -120,6 +124,7 @@ exports.get = function(req, res) {
 
 	var fieldSelection = {};
 
+	// TODO Change the query name for 'infoType' instead of 'accountInfoType'
 	var accountInfoType = req.query.accountInfoType;
 	if (accountInfoType === 'simple'){
 		fieldSelection.name = 1;
@@ -157,6 +162,7 @@ exports.get = function(req, res) {
 
 					} else {
 
+						// TODO Add a logger
 						res.json({ balance : balance });
 
 					}
@@ -165,10 +171,10 @@ exports.get = function(req, res) {
 
 			} else {
 
+				// TODO Add a logger
 				res.json(account);
 
 			}
-
 
 		}
 
@@ -178,13 +184,13 @@ exports.get = function(req, res) {
 
 
 /**
- * Get and send all accounts
- * The request could have a accountInfoType query with value 'simple' or 'full'
+ * Get and send all accounts.
+ * The request could have a accountInfoType query with value 'simple' or 'full'.
  * The request could have a accountFilter query with concatened values:
- * 'onlyOpen', 'onlyClosed', 'asset', 'liability', 'equity', 'income', 'expense'
+ * 'onlyOpen', 'onlyClosed', 'asset', 'liability', 'equity', 'income', 'expense'.
  * 
- * @param  Object req The http request
- * @param  Object res The http response
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
  */
 exports.list = function(req, res) {
 
@@ -192,6 +198,7 @@ exports.list = function(req, res) {
 
 	var fieldSelection = {};
 
+	// TODO Change the query name to 'infoType' instead of 'accountInfoType'
 	var accountInfoType = req.query.accountInfoType;
 	if (accountInfoType === 'simple'){
 		fieldSelection.name = 1;
@@ -201,9 +208,11 @@ exports.list = function(req, res) {
 		fieldSelection.parent = 1;
 	}
 
+	// TODO Change the query name to 'filter' instead of 'accountFilter'
 	var conditions = getAccountFilterQuery(req.query.accountFilter);
 
 	Account.find(conditions, fieldSelection, function(err, accounts){
+
 		if (err){
 
 			logger.error('Getting all accounts failed!');
@@ -227,10 +236,10 @@ exports.list = function(req, res) {
 
 
 /**
- * Update a specific account
+ * Update a specific account.
  *
- * @param  Object req The http request
- * @param  Object res The http response
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
  */
 exports.update = function(req, res) {
 
@@ -256,6 +265,7 @@ exports.update = function(req, res) {
 
 				setAccountFields(req, account);
 
+				// TODO Add a logger
 				account.save(function(err) {
 
 					if (err) {
@@ -284,8 +294,8 @@ exports.update = function(req, res) {
 /**
  * Delete a specific account
  *
- * @param  Object req The http request
- * @param  Object res The http response
+ * @param  {Object} req The http request
+ * @param  {Object} res The http response
  */
 exports.delete = function(req, res) {
 
