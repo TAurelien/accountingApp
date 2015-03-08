@@ -67,8 +67,9 @@ module.exports.init = function() {
 
 	// Useful data stored in global variables ---------------------------------
 
-	global.UTILS  = path.join(__dirname, '/utils');
-	global.CONFIG = __filename;
+	global.UTILS     = path.join(__dirname, '/utils');
+	global.CONFIG    = __filename;
+	global.CONSTANTS = path.join(__dirname, '/constants');
 
 	// Paths declaration
 	global.APP_PATHS = {};

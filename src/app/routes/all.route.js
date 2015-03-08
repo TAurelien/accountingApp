@@ -14,9 +14,9 @@ module.exports = function(app, express) {
 	logger.info('Defining the app routes');
 
 	// API ROUTES -------------------------------------------------------------
-	require('./api/api')(app, express);
+	require('./api/api.route')(app, express);
 
 	// CORE ROUTES ------------------------------------------------------------
-	require('./routes.core')(app);
+	require('./core/core.route')(app);
 
 };
