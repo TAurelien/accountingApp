@@ -21,7 +21,7 @@ module.exports = function(app){
 		// load our public/index.html file, the front-end will handle
 		// the routing from index.html
 		
-		var indexFile = path.join(__dirname + '/../../public/index.html');
+		var indexFile = path.join(__dirname + '/../../../public/index.html');
 
 		res.sendFile(indexFile);
 
