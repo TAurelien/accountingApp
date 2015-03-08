@@ -1,11 +1,12 @@
 /** @module Env Dev */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Env Dev');
+
+// Module dependencies ========================================================
+var logger = require(global.LOGGER)('Env Dev');
 
 
-
-// EXPORTED OBJECT ============================================================
+// Exported object ============================================================
 
 /**
  *  [exports description]
@@ -29,7 +30,7 @@ module.exports = {
 };
 
 
-// PRIVATE FUNCTIONS ==========================================================
+// Private functions ==========================================================
 
 /**
  * Setup the database for testing
@@ -89,7 +90,7 @@ function setupDB() {
 }
 
 
-// EXPORTED FUNCTIONS =========================================================
+// Exported functions =========================================================
 
 /**
  * [initEnv description]

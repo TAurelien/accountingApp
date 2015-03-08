@@ -1,9 +1,13 @@
 /** @module Init */
 'use strict';
 
-// MODULES ====================================================================
+
+// Module dependencies ========================================================
 var glob = require('glob');
 var path = require('path');
+
+
+// Exported functions =========================================================
 
 /**
  * Initialization of the environment variable,
@@ -38,7 +42,7 @@ module.exports = function() {
 	}
 
 	// Defining the logger after env is set -----------------------------------
-	var logger = require(process.env.LOGGER)('Init');
+	var logger = require(global.LOGGER)('Init');
 
 	// Log the status
 	switch (status){

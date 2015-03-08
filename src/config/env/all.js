@@ -1,10 +1,12 @@
 /** @module Env All */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Env All');
+
+// Module dependencies ========================================================
+var logger = require(global.LOGGER)('Env All');
 
 
-// EXPORTED OBJECT ============================================================
+// Exported object ============================================================
 
 /**
  *  [exports description]
@@ -25,11 +27,7 @@ module.exports = {
 };
 
 
-// PRIVATE FUNCTIONS ==========================================================
-
-
-
-// EXPORTED FUNCTIONS =========================================================
+// Exported functions =========================================================
 
 /**
  *  [initAll description]
