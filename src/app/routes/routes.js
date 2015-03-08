@@ -1,7 +1,7 @@
 /** @module Routes */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Routes');
+var logger = require(global.LOGGER)('Routes');
 
 /**
  *  Call the definition of the different routes of the express application.

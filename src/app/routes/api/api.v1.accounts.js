@@ -1,7 +1,7 @@
 /** @module API Routes - Accounts*/
 'use strict';
 
-var logger = require(process.env.LOGGER)('Routes API Account');
+var logger = require(global.LOGGER)('Routes API Account');
 
 /**
  *  Define the Accounts API routes.

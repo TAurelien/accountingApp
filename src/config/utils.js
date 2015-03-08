@@ -1,10 +1,14 @@
 /** @module Utils */
 'use strict';
 
-// MODULES ====================================================================
-var logger   = require(process.env.LOGGER)('Utils');
+
+// Module dependencies ========================================================
+var logger   = require(global.LOGGER)('Utils');
 var _        = require('lodash');
 var glob     = require('glob');
+
+
+// Exported functions =========================================================
 
 /**
  * Get filenames according to an input pattern

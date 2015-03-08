@@ -1,7 +1,7 @@
 /** @module Core Routes  */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Routes Core');
+var logger = require(global.LOGGER)('Routes Core');
 
 var path = require('path');
 
