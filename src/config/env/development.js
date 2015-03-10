@@ -3,7 +3,7 @@
 
 
 // Module dependencies ========================================================
-var logger = require(global.LOGGER)('Env Dev');
+var logger = require(global.app.logger)('Env Dev');
 
 
 // Exported object ============================================================

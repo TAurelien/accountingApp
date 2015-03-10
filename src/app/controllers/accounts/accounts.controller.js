@@ -3,9 +3,9 @@
 
 
 // Module dependencies ========================================================
-var logger  = require(global.LOGGER)('Accounts Ctrl');
+var logger  = require(global.app.logger)('Accounts Ctrl');
 var _       = require('lodash');
-var Account = require('../../models/account.model'); // TODO Use the APP_PATH variable
+var Account = require('../../models/account.model'); // TODO Use the app.paths variable
 
 
 // Private functions ==========================================================

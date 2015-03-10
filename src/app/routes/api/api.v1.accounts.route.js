@@ -1,7 +1,7 @@
 /** @module API Routes - Accounts*/
 'use strict';
 
-var logger = require(global.LOGGER)('Routes API Account');
+var logger = require(global.app.logger)('Routes API Account');
 
 // TODO Use the APP_PATH variable
 var accounts = require('../../controllers/accounts/accounts.controller');

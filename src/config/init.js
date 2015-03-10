@@ -42,7 +42,7 @@ module.exports = function() {
 	}
 
 	// Defining the logger after env is set -----------------------------------
-	var logger = require(global.LOGGER)('Init');
+	var logger = require(global.app.logger)('Init');
 
 	// Log the status
 	switch (status){

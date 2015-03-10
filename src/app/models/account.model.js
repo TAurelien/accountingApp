@@ -3,8 +3,8 @@
 
 
 // Module dependencies ========================================================
-var logger    = require(global.LOGGER)('Account Model');
-var constants = require(global.CONSTANTS);
+var logger    = require(global.app.logger)('Account Model');
+var constants = require(global.app.constants);
 var _         = require('lodash');
 var async     = require('async');
 var mongoose  = require('mongoose');
