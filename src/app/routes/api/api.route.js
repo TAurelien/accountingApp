@@ -1,7 +1,7 @@
 /** @module API Routes */
 'use strict';
 
-var logger = require(global.LOGGER)('Routes API');
+var logger = require(global.app.logger)('Routes API');
 
 /**
  *  Define the API routers of the express application.

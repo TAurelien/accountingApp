@@ -3,8 +3,11 @@
 
 var path = require('path');
 
+// Define a global app variable
+global.app = {};
+
 // Define the logger path in gobal variable
-global.LOGGER = path.join(__dirname, '/config/logger');
+global.app.logger = path.join(__dirname, '/config/logger');
 
 
 // Initialization of the environment
@@ -12,7 +15,7 @@ require('./config/init')();
 
 
 // Get the logger
-var logger = require(global.LOGGER)('Server');
+var logger = require(global.app.logger)('Server');
 
 
 // Configure the application

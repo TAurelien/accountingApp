@@ -3,7 +3,7 @@
 
 
 // Module dependencies ========================================================
-var logger   = require(global.LOGGER)('General Ledger Model');
+var logger   = require(global.app.logger)('General Ledger Model');
 var _        = require('lodash');
 var async    = require('async');
 var mongoose = require('mongoose');

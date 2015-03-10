@@ -3,24 +3,23 @@
 
 
 // Module dependencies ========================================================
-var logger   = require(global.LOGGER)('Config');
+var logger   = require(global.app.logger)('Config');
 var _        = require('lodash');
 var path     = require('path');
 var mongoose = require('mongoose');
 
-// Get environnement definition
-var allEnv     = require('./env/all');
-var currentEnv = require('./env/' + process.env.NODE_ENV);
 
 // Module export ==============================================================
 
 // Export objects from environment definitions --------------------------------
-module.exports = _.extend(
+var envDef = _.extend(
 
-	allEnv,
-	currentEnv || {}
+	require('./env/all'),
+	require('./env/' + process.env.NODE_ENV) || {}
 
 );
+
+module.exports = envDef;
 
 
 // Private functions ==========================================================
@@ -40,7 +39,7 @@ function connectDB(dbUrl, callback) {
 		if (err) {
 
 			logger.error('Could not connect to database : ' + dbUrl);
-			logger.error( { error: err } );
+			logger.error(err);
 			callback(err);
 
 		} else {
@@ -67,39 +66,53 @@ module.exports.init = function() {
 
 	// Useful data stored in global variables ---------------------------------
 
-	global.UTILS     = path.join(__dirname, '/utils');
-	global.CONFIG    = __filename;
-	global.CONSTANTS = path.join(__dirname, '/constants');
+	global.app.utils     = path.join(__dirname, '/utils');
+	global.app.config    = __filename;
+	global.app.constants = path.join(__dirname, '/constants');
+	global.app.status    = {};
 
 	// Paths declaration
-	global.APP_PATHS = {};
-	global.APP_PATHS.public      = path.join(__dirname, '../public');
-	global.APP_PATHS.coreRoutes  = path.join(__dirname, '../app/routes/api');
-	global.APP_PATHS.apiRoutes   = path.join(__dirname, '../app/routes/core');
-	global.APP_PATHS.models      = path.join(__dirname, '../app/controllers');
-	global.APP_PATHS.controllers = path.join(__dirname, '../app/models');
+	global.app.paths = {};
+	global.app.paths.configDir    = __dirname;
+	global.app.paths.pluginsDir   = path.join(__dirname, '../plugins');
+	global.app.paths.publicDir    = path.join(__dirname, '../public');
+	global.app.paths.coreRoutesDir= path.join(__dirname, '../app/routes/api');
+	global.app.paths.apiRoutesDir = path.join(__dirname, '../app/routes/core');
+	global.app.paths.modelsDir    = path.join(__dirname, '../app/controllers');
+	global.app.paths.controllersDir = path.join(__dirname, '../app/models');
 
 	// Application environnement configuration --------------------------------
 
-	allEnv.initAll();
+	envDef.initAll();
 
-	currentEnv.initEnv();
+	envDef.initEnv();
 
 	// Database connection ----------------------------------------------------
 
-	connectDB(this.db.url, function(err){
 
-		if (!err) {
+	connectDB(envDef.db.url, function(err){
 
 			// Post DB connection configuration -------------------------------
 
-			logger.info('Post DB connection configuration');
+		if (!err) {
 
-			allEnv.initAllPostDBConnection();
+			logger.info('Post DB connection configuration after success');
 
-			currentEnv.initEnvPostDBConnection();
+			envDef.initAllPostDBConnection();
 
-			global.configDone = true;
+			envDef.initEnvPostDBConnection();
+
+			// Set the status information
+			global.app.status.initialConfig = 'completed';
+			global.app.status.dbConnection  = true;
+
+		} else {
+
+			logger.info('Post DB connection configuration after failure');
+
+			// Set the status information
+			global.app.status.initialConfig = 'preDBConnection';
+			global.app.status.dbConnection  = false;
 
 		}
 

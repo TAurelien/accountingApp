@@ -3,7 +3,7 @@
 
 
 // Module dependencies ========================================================
-var logger         = require(global.LOGGER)('Server');
+var logger         = require(global.app.logger)('Server');
 var express        = require('express');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');

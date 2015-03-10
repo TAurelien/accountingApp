@@ -3,7 +3,7 @@
 
 
 // Module dependencies ========================================================
-var logger   = require(global.LOGGER)('Utils');
+var logger   = require(global.app.logger)('Utils');
 var _        = require('lodash');
 var glob     = require('glob');
 
