@@ -4,6 +4,7 @@
 
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Env Dev');
+var path   = require('path');
 
 
 // Exported object ============================================================
@@ -41,7 +42,7 @@ function setupDB() {
 
 	// General ledger ---------------------------------------------------------
 
-	var  GeneralLedger = require('../../app/models/generalLedger.model');
+	var  GeneralLedger = require(path.join(global.app.paths.modelsDir, './generalLedger.model'));
 
 	logger.debug('removing all existing general ledger');
 	GeneralLedger.remove(null).exec();
@@ -61,7 +62,7 @@ function setupDB() {
 
 			// Accounts -------------------------------------------------------
 
-			var Account = require('../../app/models/account.model');
+			var Account = require(path.join(global.app.paths.modelsDir,'./account.model'));
 
 			logger.debug('removing all existing accounts');
 			Account.remove(null).exec();

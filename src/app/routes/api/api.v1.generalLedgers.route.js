@@ -1,11 +1,14 @@
 /** @module API Routes - General Ledger*/
 'use strict';
 
+
+// Module dependencies ========================================================
 var logger = require(global.app.logger)('Routes API General Ledger');
+var path   = require('path');
+var generalLedger = require(path.join(global.app.paths.controllersDir, './generalLedgers/generalLedgers.controller'));
 
-// TODO Use the APP_PATH varibale
-var generalLedger = require('../../controllers/generalLedgers/generalLedgers.controller');
 
+// Module export ==============================================================
 
 /**
  *  Define the General Ledger API routes.
