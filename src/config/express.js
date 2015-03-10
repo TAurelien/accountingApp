@@ -4,6 +4,7 @@
 
 // Module dependencies ========================================================
 var logger         = require(global.app.logger)('Server');
+var path           = require('path');
 var express        = require('express');
 var bodyParser     = require('body-parser');
 var methodOverride = require('method-override');
@@ -55,7 +56,7 @@ module.exports = function() {
 	app.disable('x-powered-by');
 
 	// Routes -----------------------------------------------------------------
-	require('../app/routes/all.route')(app, express);
+	require(path.join(global.app.paths.routesDir, './all.route'))(app, express);
 
 	return app;
 

@@ -4,8 +4,9 @@
 
 // Module dependencies ========================================================
 var logger  = require(global.app.logger)('Accounts Ctrl');
+var path          = require('path');
 var _       = require('lodash');
-var Account = require('../../models/account.model'); // TODO Use the app.paths variable
+var Account = require(path.join(global.app.paths.modelsDir, './account.model'));
 
 
 // Private functions ==========================================================

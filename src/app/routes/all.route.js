@@ -1,7 +1,13 @@
 /** @module Routes */
 'use strict';
 
+
+// Module dependencies ========================================================
 var logger = require(global.app.logger)('Routes');
+var path   = require('path');
+
+
+// Module export ==============================================================
 
 /**
  *  Call the definition of the different routes of the express application.
@@ -13,10 +19,10 @@ module.exports = function(app, express) {
 
 	logger.info('Defining the app routes');
 
-	// API ROUTES -------------------------------------------------------------
-	require('./api/api.route')(app, express);
+	// API routes -------------------------------------------------------------
+	require(path.join(global.app.paths.apiRoutesDir, './api.route'))(app, express);
 
-	// CORE ROUTES ------------------------------------------------------------
-	require('./core/core.route')(app);
+	// CORE routes ------------------------------------------------------------
+	require(path.join(global.app.paths.coreRoutesDir, './core.route'))(app, express);
 
 };

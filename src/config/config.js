@@ -76,10 +76,11 @@ module.exports.init = function() {
 	global.app.paths.configDir    = __dirname;
 	global.app.paths.pluginsDir   = path.join(__dirname, '../plugins');
 	global.app.paths.publicDir    = path.join(__dirname, '../public');
-	global.app.paths.coreRoutesDir= path.join(__dirname, '../app/routes/api');
-	global.app.paths.apiRoutesDir = path.join(__dirname, '../app/routes/core');
-	global.app.paths.modelsDir    = path.join(__dirname, '../app/controllers');
-	global.app.paths.controllersDir = path.join(__dirname, '../app/models');
+	global.app.paths.routesDir    = path.join(__dirname, '../app/routes');
+	global.app.paths.coreRoutesDir= path.join(__dirname, '../app/routes/core');
+	global.app.paths.apiRoutesDir = path.join(__dirname, '../app/routes/api');
+	global.app.paths.modelsDir    = path.join(__dirname, '../app/models');
+	global.app.paths.controllersDir= path.join(__dirname, '../app/controllers');
 
 	// Application environnement configuration --------------------------------
 

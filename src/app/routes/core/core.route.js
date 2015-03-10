@@ -1,9 +1,13 @@
 /** @module Core Routes  */
 'use strict';
 
-var logger = require(global.app.logger)('Routes Core');
 
+// Module dependencies ========================================================
+var logger = require(global.app.logger)('Routes Core');
 var path = require('path');
+
+
+// Module export ==============================================================
 
 /**
  *  Define the core routes of the app.
@@ -21,8 +25,7 @@ module.exports = function(app){
 		// load our public/index.html file, the front-end will handle
 		// the routing from index.html
 
-		// TODO Use the APP_PATH variable
-		var indexFile = path.join(__dirname + '/../../../public/index.html');
+		var indexFile = path.join(global.app.paths.publicDir, './index.html');
 
 		res.sendFile(indexFile);
 
