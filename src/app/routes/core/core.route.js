@@ -1,9 +1,13 @@
 /** @module Core Routes  */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Routes Core');
 
+// Module dependencies ========================================================
+var logger = require(global.app.logger)('Routes Core');
 var path = require('path');
+
+
+// Module export ==============================================================
 
 /**
  *  Define the core routes of the app.
@@ -15,11 +19,13 @@ module.exports = function(app){
 
 	logger.info('Defining the core routes');
 
+	// TODO add a middleware logging the traffic on core routes
+
 	app.get('*', function(req, res) {
 		// load our public/index.html file, the front-end will handle
 		// the routing from index.html
-		
-		var indexFile = path.join(__dirname + '/../../public/index.html');
+
+		var indexFile = path.join(global.app.paths.publicDir, './index.html');
 
 		res.sendFile(indexFile);
 

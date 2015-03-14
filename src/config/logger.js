@@ -1,8 +1,12 @@
 /** @module logger.js */
 'use strict';
 
-// MODULES ====================================================================
+
+// Module dependencies ========================================================
 var winston = require('winston');
+
+
+// Exported functions =========================================================
 
 /**
  * Define and return the relevant logger 

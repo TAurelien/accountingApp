@@ -1,10 +1,12 @@
 /** @module Env All */
 'use strict';
 
-var logger = require(process.env.LOGGER)('Env All');
+
+// Module dependencies ========================================================
+var logger = require(global.app.logger)('Env All');
 
 
-// EXPORTED OBJECT ============================================================
+// Exported object ============================================================
 
 /**
  *  [exports description]
@@ -19,24 +21,20 @@ module.exports = {
 	},
 
 	server: {
-		port: process.env.PORT || 8080
+		port: process.env.PORT || 8081
 	}
 
 };
 
 
-// PRIVATE FUNCTIONS ==========================================================
-
-
-
-// EXPORTED FUNCTIONS =========================================================
+// Exported functions =========================================================
 
 /**
  *  [initAll description]
  */
 module.exports.initAll = function() {
 
-	logger.debug('Configuration initialization of all environments');
+	logger.info('Configuration initialization of all environments');
 
 };
 
@@ -46,6 +44,6 @@ module.exports.initAll = function() {
  */
 module.exports.initAllPostDBConnection = function() {
 
-	logger.debug('Post-DB connection configuration initialization of all environments');
+	logger.info('Post-DB connection configuration initialization of all environments');
 
 };

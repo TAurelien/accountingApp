@@ -1,10 +1,14 @@
 /** @module Utils */
 'use strict';
 
-// MODULES ====================================================================
-var logger   = require(process.env.LOGGER)('Utils');
+
+// Module dependencies ========================================================
+var logger   = require(global.app.logger)('Utils');
 var _        = require('lodash');
 var glob     = require('glob');
+
+
+// Exported functions =========================================================
 
 /**
  * Get filenames according to an input pattern
@@ -16,7 +20,7 @@ var glob     = require('glob');
  */
 module.exports.getFiles = function(globPatterns, removeRoot) {
 
-	logger.debug('Getting files for pattern: ' + globPatterns);
+	logger.info('Getting files for pattern: ' + globPatterns);
 
 	var _this = this;
 

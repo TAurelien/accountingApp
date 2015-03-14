@@ -24,6 +24,7 @@
     "url": ""
   },
   "dependencies": {
+    "async": "0.x",
     "body-parser": "1.x",
     "bower": "1.x",
     "colors": "^1.0.3",
