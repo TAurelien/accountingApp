@@ -19,7 +19,7 @@ var GeneralLedger = require(path.join(global.app.paths.modelsDir, './generalLedg
  */
 exports.create = function(req, res) {
 
-	logger.debug('Creating a new general ledger');
+	logger.info('Creating a new general ledger');
 
 	var generalLedger = new GeneralLedger();
 
@@ -51,7 +51,7 @@ exports.create = function(req, res) {
  */
 exports.get = function(req, res) {
 
-	logger.debug('Getting a specific general ledger');
+	logger.info('Getting a specific general ledger');
 
 	var fieldSelection = {};
 
@@ -115,7 +115,7 @@ exports.get = function(req, res) {
  */
 exports.list = function(req, res) {
 
-	logger.debug('Getting a list of all general ledgers');
+	logger.info('Getting a list of all general ledgers');
 
 	res.json({ message: 'Not yet implemented' });
 
@@ -130,7 +130,7 @@ exports.list = function(req, res) {
  */
 exports.update = function(req, res) {
 
-	logger.debug('Updating a specific general ledger');
+	logger.info('Updating a specific general ledger');
 
 	res.json({ message: 'Not yet implemented' });
 
@@ -145,7 +145,7 @@ exports.update = function(req, res) {
  */
 exports.delete = function(req, res) {
 
-	logger.debug('Deleting a specific general ledger');
+	logger.info('Deleting a specific general ledger');
 
 	res.json({ message: 'Not yet implemented' });
 

@@ -113,7 +113,7 @@ var AccountSchema = new Schema({
 function computeOwnBalance(ownBalance, callback) {
 
 	// TODO Remove the ownBalance variable while computation will be possible
-	logger.debug('computeOwnBalance - Getting the transactions balance');
+	logger.info('computeOwnBalance - Getting the transactions balance');
 
 	callback(null, ownBalance);
 
@@ -129,7 +129,7 @@ function computeOwnBalance(ownBalance, callback) {
  */
 function computeChildBalance(accountID, callback) {
 
-	logger.debug('computeChildBalance - Getting the childs balance');
+	logger.info('computeChildBalance - Getting the childs balance');
 
 	var conditions = { parent : accountID };
 
@@ -184,14 +184,14 @@ AccountSchema.methods.getBalance = function(callback) {
 	var accountID  = this._id;
 	var name       = this.name;
 
-	logger.debug('getBalance - Computing the account balance of ' + name);
+	logger.info('getBalance - Computing the account balance of ' + name);
 
 	async.parallel([
 
 		function(asyncCallback){
 
 			computeOwnBalance(ownBalance, function(err, transactionsBalance) {
-				logger.debug('Transaction balance for ' + name + ' = ' + transactionsBalance);
+				logger.info('Transaction balance for ' + name + ' = ' + transactionsBalance);
 				asyncCallback(err, transactionsBalance);
 			});
 
@@ -200,7 +200,7 @@ AccountSchema.methods.getBalance = function(callback) {
 		function(asyncCallback){
 
 			computeChildBalance(accountID, function(err, childBbalance){
-				logger.debug('Child balance for ' + name + ' = ' + childBbalance);
+				logger.info('Child balance for ' + name + ' = ' + childBbalance);
 				asyncCallback(err, childBbalance);
 			});
 
@@ -215,7 +215,7 @@ AccountSchema.methods.getBalance = function(callback) {
 		_.forIn(results, function(childAndOwnBalance){
 			globalBalance += childAndOwnBalance;
 		});
-		logger.debug('Global balance for ' + name + ' = ' + globalBalance);
+		logger.info('Global balance for ' + name + ' = ' + globalBalance);
 
 		callback(err, globalBalance);
 
@@ -231,7 +231,7 @@ AccountSchema.methods.getBalance = function(callback) {
  */
 AccountSchema.methods.getOwnBalance = function(callback) {
 
-	logger.debug('getOwnBalance - Getting the transactions balance');
+	logger.info('getOwnBalance - Getting the transactions balance');
 
 	computeOwnBalance(this.balance.own, callback);
 
@@ -245,7 +245,7 @@ AccountSchema.methods.getOwnBalance = function(callback) {
  */
 AccountSchema.methods.getChildBalance = function(callback) {
 
-	logger.debug('getChildBalance - Getting the childs balance');
+	logger.info('getChildBalance - Getting the childs balance');
 
 	computeChildBalance(this._id, callback);
 

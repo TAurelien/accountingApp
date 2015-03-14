@@ -34,7 +34,7 @@ module.exports = {
  */
 module.exports.initAll = function() {
 
-	logger.debug('Configuration initialization of all environments');
+	logger.info('Configuration initialization of all environments');
 
 };
 
@@ -44,6 +44,6 @@ module.exports.initAll = function() {
  */
 module.exports.initAllPostDBConnection = function() {
 
-	logger.debug('Post-DB connection configuration initialization of all environments');
+	logger.info('Post-DB connection configuration initialization of all environments');
 
 };
