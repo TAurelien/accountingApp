@@ -18,7 +18,7 @@ var SplitSchema = new Schema({
 		ref  : 'Account'
 	},
 
-	amount: AmountSchema,
+	amount: [AmountSchema],
 
 	currency: {
 		type     : String,

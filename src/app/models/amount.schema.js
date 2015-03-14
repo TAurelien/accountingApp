@@ -10,12 +10,12 @@ var AmountSchema = new Schema ({
 
 	quantity:{
 		type     : Number,
+		default  : 1,
 		required : true
 	},
 
 	unitary:{
-		type     : Number,
-		required : true
+		type     : Number
 	},
 
 	value:{
@@ -36,16 +36,17 @@ var AmountSchema = new Schema ({
 
 AmountSchema.pre('save', function(next) {
 
-	if (!this.quantity) {
-		this.quantity = 1;
-	}
+	if (this.quantity === 0) {
 
-	if (!this.unitary) {
-		this.unitary = this.value;
-	}
+		this.unitary = 0;
+		this.value = 0;
 
-	if (!this.value && this.unitary) {
-		this.value = this.quantity * this.unitary;
+	} else {
+
+		if (!this.unitary) {
+			this.unitary = this.value / this.quantity;
+		}
+
 	}
 
 	next();
