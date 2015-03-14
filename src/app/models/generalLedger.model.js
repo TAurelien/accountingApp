@@ -70,7 +70,7 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 	var _id      = this._id;
 	var netWorth = 0;
 
-	logger.debug('Computing the net worth of ' + name);
+	logger.info('Computing the net worth of ' + name);
 
 	var conditions = {
 		generalLedger : _id,

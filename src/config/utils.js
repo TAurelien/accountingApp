@@ -20,7 +20,7 @@ var glob     = require('glob');
  */
 module.exports.getFiles = function(globPatterns, removeRoot) {
 
-	logger.debug('Getting files for pattern: ' + globPatterns);
+	logger.info('Getting files for pattern: ' + globPatterns);
 
 	var _this = this;
 

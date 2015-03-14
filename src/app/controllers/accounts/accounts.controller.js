@@ -4,7 +4,7 @@
 
 // Module dependencies ========================================================
 var logger  = require(global.app.logger)('Accounts Ctrl');
-var path          = require('path');
+var path    = require('path');
 var _       = require('lodash');
 var Account = require(path.join(global.app.paths.modelsDir, './account.model'));
 
@@ -87,7 +87,7 @@ function getAccountFilterQuery(filter){
  */
 exports.create = function(req, res) {
 
-	logger.debug('Creating a new account');
+	logger.info('Creating a new account');
 
 	var account = new Account();
 
@@ -121,7 +121,7 @@ exports.create = function(req, res) {
  */
 exports.get = function(req, res) {
 
-	logger.debug('Getting a specific account');
+	logger.info('Getting a specific account');
 
 	var fieldSelection = {};
 
@@ -195,7 +195,7 @@ exports.get = function(req, res) {
  */
 exports.list = function(req, res) {
 
-	logger.debug('Getting a list of all accounts');
+	logger.info('Getting a list of all accounts');
 
 	var fieldSelection = {};
 
@@ -244,7 +244,7 @@ exports.list = function(req, res) {
  */
 exports.update = function(req, res) {
 
-	logger.debug('Updating a specific account');
+	logger.info('Updating a specific account');
 
 	var accountID = req.params.id;
 
@@ -300,7 +300,7 @@ exports.update = function(req, res) {
  */
 exports.delete = function(req, res) {
 
-	logger.debug('Deleting a specific account');
+	logger.info('Deleting a specific account');
 
 	var accountID = req.params.id;
 
