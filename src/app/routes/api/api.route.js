@@ -29,6 +29,7 @@ module.exports = function(app, express) {
 	// Defining the routes
 	require('./api.v1.generalLedgers.route')(apiV1Router);
 	require('./api.v1.accounts.route')(apiV1Router);
+	require('./api.v1.transactions.route')(apiV1Router);
 
 	// Register the api v1 router ---------------------------------------------
 	app.use('/api/v1', apiV1Router);
