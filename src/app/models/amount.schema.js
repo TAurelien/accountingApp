@@ -2,30 +2,30 @@
 'use strict';
 
 // Module dependencies ========================================================
-var mongoose  = require('mongoose');
-var Schema    = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 // Amount schema definition ===================================================
-var AmountSchema = new Schema ({
+var AmountSchema = new Schema({
 
-	quantity:{
-		type     : Number,
-		default  : 1,
-		required : true
+	quantity: {
+		type: Number,
+		default: 1,
+		required: true
 	},
 
-	unitary:{
-		type     : Number
+	unitary: {
+		type: Number
 	},
 
-	value:{
-		type     : Number,
-		required : true
+	value: {
+		type: Number,
+		required: true
 	},
 
 	scaleFactor: {
-		type     : Number,
-		required : true
+		type: Number,
+		required: true
 	}
 
 });
@@ -33,7 +33,7 @@ var AmountSchema = new Schema ({
 
 // Pre processing =============================================================
 
-AmountSchema.pre('save', function(next) {
+AmountSchema.pre('save', function (next) {
 
 	if (this.quantity === 0) {
 

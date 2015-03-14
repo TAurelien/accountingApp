@@ -15,7 +15,7 @@ var logger = require(global.app.logger)('Routes API');
  *  @param   {app}     app      The express application
  *  @param   {express} express  The express module
  */
-module.exports = function(app, express) {
+module.exports = function (app, express) {
 
 	logger.info('Defining the API routes');
 

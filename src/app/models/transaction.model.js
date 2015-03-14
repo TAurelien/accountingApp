@@ -3,10 +3,10 @@
 
 
 // Module dependencies ========================================================
-var logger    = require(global.app.logger)('Transaction Model');
+var logger = require(global.app.logger)('Transaction Model');
 var constants = require(global.app.constants);
-var mongoose  = require('mongoose');
-var Schema    = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 var AmountSchema = require('./amount.schema');
 
 
@@ -14,39 +14,39 @@ var AmountSchema = require('./amount.schema');
 var SplitSchema = new Schema({
 
 	account: {
-		type : Schema.ObjectId,
-		ref  : 'Account'
+		type: Schema.ObjectId,
+		ref: 'Account'
 	},
 
 	amount: [AmountSchema],
 
 	currency: {
-		type     : String,
-		trim     : true,
-		default  : '',
-		required : true,
-		enum     : constants.commoditiesAsArray
+		type: String,
+		trim: true,
+		default: '',
+		required: true,
+		enum: constants.commoditiesAsArray
 	},
 
 	thirdParty: {
-		type    : String,
-		trim    : true
+		type: String,
+		trim: true
 	},
 
 	description: {
-		type    : String,
-		trim    : true
+		type: String,
+		trim: true
 	},
 
 	reconciliationState: {
-		type    : String,
-		trim    : true,
-		default : ''
+		type: String,
+		trim: true,
+		default: ''
 	},
 
 	reconciliationDate: Date,
 
-	accountDate: Date,
+	accountDate: Date
 
 });
 
@@ -55,8 +55,8 @@ var SplitSchema = new Schema({
 var TransactionSchema = new Schema({
 
 	description: {
-		type    : String,
-		trim    : true
+		type: String,
+		trim: true
 	},
 
 	valueDate: Date,
@@ -64,10 +64,10 @@ var TransactionSchema = new Schema({
 	splits: [SplitSchema],
 
 	meta: {
-		creationDate : Date,
-		creationUser : String,
-		updateDate   : Date,
-		updateUser   : String
+		creationDate: Date,
+		creationUser: String,
+		updateDate: Date,
+		updateUser: String
 	}
 
 });
@@ -75,7 +75,7 @@ var TransactionSchema = new Schema({
 
 // Pre processing =============================================================
 
-TransactionSchema.pre('save', function(next) {
+TransactionSchema.pre('save', function (next) {
 
 	// meta dates management --------------------------------------------------
 
@@ -94,7 +94,7 @@ TransactionSchema.pre('save', function(next) {
 
 // Post processing ============================================================
 
-TransactionSchema.post('save', function(transaction) {
+TransactionSchema.post('save', function (transaction) {
 
 	logger.info('Saved transaction with _id : ' + transaction._id);
 
