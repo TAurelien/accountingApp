@@ -3,10 +3,12 @@
 
 
 // Module dependencies ========================================================
-var logger      = require(global.app.logger)('Transactions Ctrl');
-var path        = require('path');
-var _           = require('lodash');
-var Transaction = require(path.join(global.app.paths.modelsDir, './transaction.model'));
+var logger = require(global.app.logger)('Transactions Ctrl');
+var path = require('path');
+var _ = require('lodash');
+var Transaction = require(path.join(global.app.paths.modelsDir,
+	'./transaction.model'));
+
 
 // Private functions ==========================================================
 
@@ -19,13 +21,14 @@ function setTransactionFields(req, transaction) {
 		transaction.description = req.body.description;
 	}
 	if (req.body.valueDate) {
-		transaction.valueDate   = req.body.valueDate;
+		transaction.valueDate = req.body.valueDate;
 	}
 	if (req.body.splits) {
-		transaction.splits      = req.body.splits;
+		transaction.splits = req.body.splits;
 	}
 
 }
+
 
 // Exported functions =========================================================
 
@@ -35,7 +38,7 @@ function setTransactionFields(req, transaction) {
  * @param  {Object} req The http request
  * @param  {Object} res The http response
  */
-exports.create = function(req, res) {
+exports.create = function (req, res) {
 
 	logger.info('Creating a new transaction');
 
@@ -43,7 +46,7 @@ exports.create = function(req, res) {
 
 	setTransactionFields(req, transaction);
 
-	transaction.save(function(err) {
+	transaction.save(function (err) {
 
 		if (err) {
 
@@ -53,7 +56,9 @@ exports.create = function(req, res) {
 		} else {
 
 			logger.info('Transaction creation successful');
-			res.json({ message: 'Transaction created!' });
+			res.json({
+				message: 'Transaction created!'
+			});
 
 		}
 
@@ -68,12 +73,41 @@ exports.create = function(req, res) {
  * @param  {Object} req The http request
  * @param  {Object} res The http response
  */
-exports.get = function(req, res) {
+exports.get = function (req, res) {
 
 	logger.info('Getting a specific transaction');
 
-	res.json({ message: 'Not yet implemented' });
+	var transactionID = req.params.id;
 
+	Transaction
+		.findById(transactionID)
+		.exec(function (err, transaction) {
+
+			if (err) {
+
+				logger.error('Getting the transaction ' + transactionID +
+					' to update failed!');
+				res.send(err); // TODO Check error type
+
+			} else {
+
+				if (_.isNull(transaction)) {
+
+					logger.warn('No transaction has been found for id ' + transactionID);
+					res.json({
+						message: 'Transaction to update not found'
+					});
+
+				} else {
+
+					logger.info('Success of getting the transaction ' + transactionID);
+					res.json(transaction);
+
+				}
+
+			}
+
+		});
 
 };
 
@@ -84,11 +118,59 @@ exports.get = function(req, res) {
  * @param  {Object} req The http request
  * @param  {Object} res The http response
  */
-exports.list = function(req, res) {
+exports.list = function (req, res) {
 
 	logger.info('Getting a list of all transactions');
 
-	res.json({ message: 'Not yet implemented' });
+
+	// TODO Add a filter
+	// TODO Add a filter for a given time period
+	// TODO Add an option to get transaction from account childs as well
+
+	var conditions = {};
+	var fieldSelection = {};
+
+	var accountID = req.query.account;
+
+	conditions.splits = {
+		$elemMatch: {
+			account: accountID
+		}
+	};
+
+	var sortDate = req.query.sort;
+	if (sortDate !== 'asc' && sortDate !== 'desc') {
+		sortDate = 'asc';
+	}
+
+	Transaction
+		.find(conditions)
+		.sort({
+			valueDate: sortDate
+		})
+		.select(fieldSelection)
+		.exec(function (err, transactions) {
+
+				if (err) {
+
+					logger.error('Getting all transactions failed!');
+					res.send(err); // TODO Check error type
+
+				} else {
+
+					if (_.isNull(transactions)) {
+						logger.warn('No transaction has been found');
+					} else {
+						logger.info('Success of getting all transactions');
+					}
+
+					res.json(transactions);
+
+				}
+
+			}
+
+		);
 
 };
 
@@ -99,11 +181,61 @@ exports.list = function(req, res) {
  * @param  {Object} req The http request
  * @param  {Object} res The http response
  */
-exports.update = function(req, res) {
+exports.update = function (req, res) {
 
 	logger.info('Updating a specific transaction');
 
-	res.json({ message: 'Not yet implemented' });
+	var transactionID = req.params.id;
+
+	Transaction
+		.findById(transactionID)
+		.exec(function (err, transaction) {
+
+			if (err) {
+
+				logger.error('Getting the transaction ' + transactionID +
+					' to update failed!');
+				res.send(err); // TODO Check error type
+
+			} else {
+
+				if (_.isNull(transaction)) {
+
+					logger.warn('No transaction has been found for id ' + transactionID);
+					res.json({
+						message: 'Transaction to update not found'
+					});
+
+				} else {
+
+					setTransactionFields(req, transaction);
+
+					// TODO Add a logger
+					transaction.save(function (err) {
+
+						if (err) {
+
+							logger.error('Saving the updated transaction ' + transactionID +
+								' failed!');
+							res.send(err); // TODO Check error type
+
+						} else {
+
+							logger.info('The transaction ' + transactionID +
+								' has been successfully updated');
+							res.json({
+								message: 'Transaction updated!'
+							});
+
+						}
+
+					});
+
+				}
+
+			}
+
+		});
 
 };
 
@@ -114,10 +246,33 @@ exports.update = function(req, res) {
  * @param  {Object} req The http request
  * @param  {Object} res The http response
  */
-exports.delete = function(req, res) {
+exports.delete = function (req, res) {
 
 	logger.info('Deleting a specific transaction');
 
-	res.json({ message: 'Not yet implemented' });
+	var transactionID = req.params.id;
+
+	Transaction
+		.remove({
+			_id: transactionID
+		})
+		.exec(function (err) {
+
+			if (err) {
+
+				logger.error('Deleting the transaction ' + transactionID + ' failed!');
+				res.send(err); // TODO Check error type
+
+			} else {
+
+				logger.info('The transaction ' + transactionID +
+					' has been successfully deleted');
+				res.json({
+					message: 'Transaction deleted!'
+				});
+
+			}
+
+		});
 
 };
