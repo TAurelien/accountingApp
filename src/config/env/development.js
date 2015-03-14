@@ -38,13 +38,15 @@ module.exports = {
  */
 function setupDB() {
 
-	logger.debug('Setting up the Dev DB');
+	logger.info('Setting up the Dev DB');
 
 	// General ledger ---------------------------------------------------------
 
+	// TODO Use async to organize the set up
+
 	var  GeneralLedger = require(path.join(global.app.paths.modelsDir, './generalLedger.model'));
 
-	logger.debug('removing all existing general ledger');
+	logger.info('removing all existing general ledger');
 	GeneralLedger.remove(null).exec();
 
 	var testingGeneralLedger = require('./dev/testingGeneralLedgersList');
@@ -58,13 +60,13 @@ function setupDB() {
 
 		}else {
 
-			logger.debug('All testing general ledgers have been created');
+			logger.info('All testing general ledgers have been created');
 
 			// Accounts -------------------------------------------------------
 
 			var Account = require(path.join(global.app.paths.modelsDir,'./account.model'));
 
-			logger.debug('removing all existing accounts');
+			logger.info('removing all existing accounts');
 			Account.remove(null).exec();
 
 			var testingAccounts = require('./dev/testingAccountsList');
@@ -76,9 +78,33 @@ function setupDB() {
 					logger.error('Error while creating the testing accounts');
 					logger.error(err);
 
-				}else {
+				} else {
 
-					logger.debug('All testing accounts have been created');
+					logger.info('All testing accounts have been created');
+
+					// Transactions -------------------------------------------
+
+					var Transaction = require(path.join(global.app.paths.modelsDir, '/transaction.model'));
+
+					logger.info('Removing all existing transactions');
+					Transaction.remove(null).exec();
+
+					var testingTransactions = require('./dev/testingTransactionsList');
+
+					Transaction.create(testingTransactions, function(err) {
+
+						if (err) {
+
+							logger.error('Error while creating the testing transactions');
+							logger.error(err);
+
+						} else {
+
+							logger.info('All testing transactions have been created');
+
+						}
+
+					});
 
 				}
 
@@ -98,7 +124,7 @@ function setupDB() {
  */
 module.exports.initEnv = function() {
 
-	logger.debug('Configuration initialization of dev environment');
+	logger.info('Configuration initialization of dev environment');
 
 };
 
@@ -108,7 +134,7 @@ module.exports.initEnv = function() {
  */
 module.exports.initEnvPostDBConnection = function() {
 
-	logger.debug('Post-DB connection configuration initialization of dev environment');
+	logger.info('Post-DB connection configuration initialization of dev environment');
 	setupDB();
 
 };
