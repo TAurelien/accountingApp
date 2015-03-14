@@ -25,7 +25,6 @@ var AmountSchema = new Schema ({
 
 	scaleFactor: {
 		type     : Number,
-		default  : 100,
 		required : true
 	}
 
