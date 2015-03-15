@@ -1,34 +1,36 @@
 /** @module Core Routes  */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Routes Core');
 var path = require('path');
-
+var core = require(path.join(global.app.paths.controllersDir, './core/core.controller'));
 
 // Module export ==============================================================
 
 /**
  *  Define the core routes of the app.
  *
- *  @param   {app}     app      The express application
+ *  @param   {Express.App} app      The express application.
  */
-module.exports = function(app){
+module.exports = function (app) {
 	//  routes to handle all front-end requests
 
 	logger.info('Defining the core routes');
 
-	// TODO add a middleware logging the traffic on core routes
+	// TODO Add a middleware logging the traffic on core routes
 
-	app.get('*', function(req, res) {
-		// load our public/index.html file, the front-end will handle
-		// the routing from index.html
+	app.use('*', function (req, res, next) {
 
-		var indexFile = path.join(global.app.paths.publicDir, './index.html');
+		logger.info('Core route requested');
 
-		res.sendFile(indexFile);
+		next();
 
 	});
+
+	app.route('*')
+		.get(
+			core.getIndexPage // load our public/index.html file, the front-end will handle the routing from index.html
+		);
 
 };
