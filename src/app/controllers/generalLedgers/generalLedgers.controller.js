@@ -26,12 +26,12 @@ exports.create = function (req, res) {
 		if (err) {
 
 			logger.error('General ledger creation failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			logger.info('General ledger creation successful');
-			res.json({
+			res.status(201).json({
 				message: 'General ledger created!'
 			});
 
@@ -64,30 +64,36 @@ exports.get = function (req, res) {
 		if (err) {
 
 			logger.error('Getting the general ledger ' + generaleLedgerID + ' failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			if (_.isNull(generalLedger)) {
+
 				logger.warn('No general ledger has been found for id ' + generaleLedgerID);
+				res.status(400);
+
 			} else {
+
 				logger.info('Success of getting the general ledger ' + generaleLedgerID);
+				res.status(200);
+
 			}
 
-			if (generalLedgerInfoType === 'netWorth') {
+			if ((generalLedgerInfoType === 'netWorth') && (_.isNull(generalLedger))) {
 
 				generalLedger.getNetWorth(function (err, netWorth) {
 
 					if (err) {
 
 						logger.error('Getting the net worth of the general ledger ' + generaleLedgerID + ' failed!');
-						res.send(err); // TODO Check error type
+						res.status(400).send(err); // TODO Check error type
 
 					} else {
 
 						logger.info('Got the general ledger net worth of ' + generaleLedgerID + ' : ' + netWorth);
 
-						res.json({
+						res.status(200).json({
 							netWorth: netWorth
 						});
 
@@ -119,7 +125,7 @@ exports.list = function (req, res) {
 
 	// TODO (1) Implement the list function of the general ledger controller
 
-	res.json({
+	res.status(501).json({
 		message: 'Not yet implemented'
 	});
 
@@ -137,7 +143,7 @@ exports.update = function (req, res) {
 
 	// TODO (1) Implement the update function of the general ledger controller
 
-	res.json({
+	res.status(501).json({
 		message: 'Not yet implemented'
 	});
 
@@ -155,7 +161,7 @@ exports.delete = function (req, res) {
 
 	// TODO (1) Implement the delete function of the general ledger controller
 
-	res.json({
+	res.status(501).json({
 		message: 'Not yet implemented'
 	});
 

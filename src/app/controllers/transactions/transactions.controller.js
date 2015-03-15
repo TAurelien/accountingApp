@@ -54,12 +54,12 @@ exports.create = function (req, res) {
 		if (err) {
 
 			logger.error('Transaction creation failed');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			logger.info('Transaction creation successful');
-			res.json({
+			res.status(201).json({
 				message: 'Transaction created!'
 			});
 
@@ -89,21 +89,21 @@ exports.get = function (req, res) {
 
 				logger.error('Getting the transaction ' + transactionID +
 					' to update failed!');
-				res.send(err); // TODO Check error type
+				res.status(400).send(err); // TODO Check error type
 
 			} else {
 
 				if (_.isNull(transaction)) {
 
 					logger.warn('No transaction has been found for id ' + transactionID);
-					res.json({
-						message: 'Transaction to update not found'
+					res.status(400).json({
+						message: 'Transaction not found'
 					});
 
 				} else {
 
 					logger.info('Success of getting the transaction ' + transactionID);
-					res.json(transaction);
+					res.status(200).json(transaction);
 
 				}
 
@@ -154,14 +154,20 @@ exports.list = function (req, res) {
 				if (err) {
 
 					logger.error('Getting all transactions failed!');
-					res.send(err); // TODO Check error type
+					res.status(400).send(err); // TODO Check error type
 
 				} else {
 
 					if (_.isNull(transactions)) {
+
 						logger.warn('No transaction has been found');
+						res.status(400);
+
 					} else {
+
 						logger.info('Success of getting all transactions');
+						res.status(200);
+
 					}
 
 					res.json(transactions);
@@ -194,14 +200,14 @@ exports.update = function (req, res) {
 
 				logger.error('Getting the transaction ' + transactionID +
 					' to update failed!');
-				res.send(err); // TODO Check error type
+				res.status(400).send(err); // TODO Check error type
 
 			} else {
 
 				if (_.isNull(transaction)) {
 
 					logger.warn('No transaction has been found for id ' + transactionID);
-					res.json({
+					res.status(400).json({
 						message: 'Transaction to update not found'
 					});
 
@@ -217,13 +223,13 @@ exports.update = function (req, res) {
 
 							logger.error('Saving the updated transaction ' + transactionID +
 								' failed!');
-							res.send(err); // TODO Check error type
+							res.status(400).send(err); // TODO Check error type
 
 						} else {
 
 							logger.info('The transaction ' + transactionID +
 								' has been successfully updated');
-							res.json({
+							res.status(200).json({
 								message: 'Transaction updated!'
 							});
 
@@ -260,13 +266,13 @@ exports.delete = function (req, res) {
 			if (err) {
 
 				logger.error('Deleting the transaction ' + transactionID + ' failed!');
-				res.send(err); // TODO Check error type
+				res.status(400).send(err); // TODO Check error type
 
 			} else {
 
 				logger.info('The transaction ' + transactionID +
 					' has been successfully deleted');
-				res.json({
+				res.status(200).json({
 					message: 'Transaction deleted!'
 				});
 

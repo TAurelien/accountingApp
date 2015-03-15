@@ -94,12 +94,12 @@ exports.create = function (req, res) {
 		if (err) {
 
 			logger.error('Account creation failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			logger.info('Account creation successful');
-			res.json({
+			res.status(201).json({
 				message: 'Account created!'
 			});
 
@@ -139,14 +139,22 @@ exports.get = function (req, res) {
 		if (err) {
 
 			logger.error('Getting the account ' + accountID + ' failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			if (_.isNull(account)) {
+
 				logger.warn('No account has been found for id ' + accountID);
+
+				res.status(400);
+
 			} else {
+
 				logger.info('Success of getting the account ' + accountID);
+
+				res.status(200);
+
 			}
 
 			if ((accountInfoType === 'balance') && (!_.isNull(account))) {
@@ -156,12 +164,12 @@ exports.get = function (req, res) {
 					if (err) {
 
 						logger.error('Getting the account balance of ' + accountID + ' failed!');
-						res.send(err); // TODO Check error type
+						res.status(400).send(err); // TODO Check error type
 
 					} else {
 
 						logger.info('Got the account balance of ' + accountID + ' : ' + balance);
-						res.json({
+						res.status(200).json({
 							balance: balance
 						});
 
@@ -214,7 +222,7 @@ exports.list = function (req, res) {
 		if (err) {
 
 			logger.error('Getting all accounts failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
@@ -224,7 +232,7 @@ exports.list = function (req, res) {
 				logger.info('Success of getting all accounts');
 			}
 
-			res.json(accounts);
+			res.status(200).json(accounts);
 
 		}
 
@@ -249,14 +257,14 @@ exports.update = function (req, res) {
 		if (err) {
 
 			logger.error('Getting the account ' + accountID + ' to update failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			if (_.isNull(account)) {
 
 				logger.warn('No account has been found for id ' + accountID);
-				res.json({
+				res.status(400).json({
 					message: 'Account to update not found'
 				});
 
@@ -271,12 +279,12 @@ exports.update = function (req, res) {
 					if (err) {
 
 						logger.error('Saving the updated account ' + accountID + ' failed!');
-						res.send(err); // TODO Check error type
+						res.status(400).send(err); // TODO Check error type
 
 					} else {
 
 						logger.info('The account ' + accountID + ' has been successfully updated');
-						res.json({
+						res.status(200).json({
 							message: 'Account updated!'
 						});
 
@@ -311,12 +319,12 @@ exports.delete = function (req, res) {
 		if (err) {
 
 			logger.error('Deleting the account ' + accountID + ' failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			logger.info('The account ' + accountID + ' has been successfully deleted');
-			res.json({
+			res.status(200).json({
 				message: 'Account deleted!'
 			});
 

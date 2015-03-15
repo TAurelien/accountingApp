@@ -17,6 +17,8 @@ var onFinished = require('on-finished');
  */
 function analyzeTraffic(req, res, callback) {
 
+	req._startAt = process.hrtime();
+
 	function analyze() {
 
 		var method = req.method;
@@ -28,7 +30,7 @@ function analyzeTraffic(req, res, callback) {
 		} else {
 			var diff = process.hrtime(req._startAt);
 			var ms = diff[0] * 1e3 + diff[1] * 1e-6;
-			responseTime = ms.toFixed(3);
+			responseTime = ms.toFixed(3) + ' ms';
 		}
 
 		var output = '\x1b[0m';
