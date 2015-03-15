@@ -3,21 +3,21 @@
 
 module.exports = {
 
-	accountTypeAsArray : [
+	accountTypeAsArray: [
 		'equity', 'asset', 'liability', 'income', 'expense'
 	],
 
-	accountTypes : {
+	accountTypes: {
 
-		equity    : 'equity',
+		equity: 'equity',
 
-		asset     : 'asset',
+		asset: 'asset',
 
-		liabitity : 'liability',
+		liabitity: 'liability',
 
-		income    : 'income',
+		income: 'income',
 
-		expense   : 'expense'
+		expense: 'expense'
 
 	}
 

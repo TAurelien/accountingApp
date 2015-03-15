@@ -1,7 +1,6 @@
 /** @module Transactions controller */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Transactions Ctrl');
 var path = require('path');
@@ -9,9 +8,14 @@ var _ = require('lodash');
 var Transaction = require(path.join(global.app.paths.modelsDir,
 	'./transaction.model'));
 
-
 // Private functions ==========================================================
 
+/**
+ * Check the http request and set the transaction fields from request values.
+ *
+ * @param  {Object} req     The http request.
+ * @param  {Object} account An instance of the mongoose schema model of transaction.
+ */
 function setTransactionFields(req, transaction) {
 
 	if (_.isUndefined(req) | _.isNull(req)) return;
@@ -29,14 +33,13 @@ function setTransactionFields(req, transaction) {
 
 }
 
-
 // Exported functions =========================================================
 
 /**
  * Create a new transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.create = function (req, res) {
 
@@ -66,12 +69,11 @@ exports.create = function (req, res) {
 
 };
 
-
 /**
  * Get and send a specific transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.get = function (req, res) {
 
@@ -111,17 +113,15 @@ exports.get = function (req, res) {
 
 };
 
-
 /**
  * Get and send an array of all transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.list = function (req, res) {
 
 	logger.info('Getting a list of all transactions');
-
 
 	// TODO Add a filter
 	// TODO Add a filter for a given time period
@@ -174,12 +174,11 @@ exports.list = function (req, res) {
 
 };
 
-
 /**
  * Update a specific transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.update = function (req, res) {
 
@@ -210,7 +209,8 @@ exports.update = function (req, res) {
 
 					setTransactionFields(req, transaction);
 
-					// TODO Add a logger
+					logger.info('Success of getting the transaction ' + transactionID);
+
 					transaction.save(function (err) {
 
 						if (err) {
@@ -239,12 +239,11 @@ exports.update = function (req, res) {
 
 };
 
-
 /**
  * Delete a specific transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.delete = function (req, res) {
 

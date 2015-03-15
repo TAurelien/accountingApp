@@ -1,16 +1,14 @@
 /** @module Env Dev */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Env Dev');
-var path   = require('path');
-
+var path = require('path');
 
 // Exported object ============================================================
 
 /**
- *  [exports description]
+ *  Export the application main information as development environment.
  *
  *  @type  {Object}
  */
@@ -24,12 +22,11 @@ module.exports = {
 		port: process.env.PORT || 8081
 	},
 
-	db : {
-		url: 'mongodb://localhost/accounting_app-dev' // TODO extract url to a private file
+	db: {
+		url: 'mongodb://localhost/accounting_app-dev' // TODO Extract url to a private file
 	}
 
 };
-
 
 // Private functions ==========================================================
 
@@ -44,36 +41,36 @@ function setupDB() {
 
 	// TODO Use async to organize the set up
 
-	var  GeneralLedger = require(path.join(global.app.paths.modelsDir, './generalLedger.model'));
+	var GeneralLedger = require(path.join(global.app.paths.modelsDir, './generalLedger.model'));
 
 	logger.info('removing all existing general ledger');
 	GeneralLedger.remove(null).exec();
 
 	var testingGeneralLedger = require('./dev/testingGeneralLedgersList');
 
-	GeneralLedger.create(testingGeneralLedger, function(err) {
+	GeneralLedger.create(testingGeneralLedger, function (err) {
 
-		if (err){
+		if (err) {
 
 			logger.error('Error while creating the testing general ledgers');
 			logger.error(err);
 
-		}else {
+		} else {
 
 			logger.info('All testing general ledgers have been created');
 
 			// Accounts -------------------------------------------------------
 
-			var Account = require(path.join(global.app.paths.modelsDir,'./account.model'));
+			var Account = require(path.join(global.app.paths.modelsDir, './account.model'));
 
 			logger.info('removing all existing accounts');
 			Account.remove(null).exec();
 
 			var testingAccounts = require('./dev/testingAccountsList');
 
-			Account.create(testingAccounts, function(err) {
+			Account.create(testingAccounts, function (err) {
 
-				if (err){
+				if (err) {
 
 					logger.error('Error while creating the testing accounts');
 					logger.error(err);
@@ -91,7 +88,7 @@ function setupDB() {
 
 					var testingTransactions = require('./dev/testingTransactionsList');
 
-					Transaction.create(testingTransactions, function(err) {
+					Transaction.create(testingTransactions, function (err) {
 
 						if (err) {
 
@@ -116,23 +113,21 @@ function setupDB() {
 
 }
 
-
 // Exported functions =========================================================
 
 /**
- * [initEnv description]
+ * Pre DB connection initialization of the environment.
  */
-module.exports.initEnv = function() {
+module.exports.initEnv = function () {
 
 	logger.info('Configuration initialization of dev environment');
 
 };
 
-
 /**
- * [initEnvPostDBConnection description]
+ * Post DB connection initialization of the environment.
  */
-module.exports.initEnvPostDBConnection = function() {
+module.exports.initEnvPostDBConnection = function () {
 
 	logger.info('Post-DB connection configuration initialization of dev environment');
 	setupDB();

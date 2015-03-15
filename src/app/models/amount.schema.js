@@ -30,7 +30,6 @@ var AmountSchema = new Schema({
 
 });
 
-
 // Pre processing =============================================================
 
 AmountSchema.pre('save', function (next) {
@@ -51,7 +50,6 @@ AmountSchema.pre('save', function (next) {
 	next();
 
 });
-
 
 // Model export ===============================================================
 
