@@ -1,10 +1,8 @@
 /** @module API Routes */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Routes API');
-
 
 // Module export ==============================================================
 
@@ -12,8 +10,8 @@ var logger = require(global.app.logger)('Routes API');
  *  Define the API routers of the express application.
  *  Manage the different versions of the API, if any.
  *
- *  @param   {app}     app      The express application
- *  @param   {express} express  The express module
+ *  @param   {Express.App} app      The express application.
+ *  @param   {Express}     express  The express module.
  */
 module.exports = function (app, express) {
 
@@ -22,11 +20,18 @@ module.exports = function (app, express) {
 	// API V1 =================================================================
 	var apiV1Router = express.Router();
 
+	// TODO Add a middleware logging the traffic on api routes
+	apiV1Router.use('*', function (req, res, next) {
+
+		logger.info('API V1 route requested');
+		next();
+
+	});
+
 	// TODO Define the authentication
 
-	// TODO add a middleware logging the traffic on api routes
-
 	// Defining the routes
+	// TODO Getting and requiring all the api.v1 files dynamically
 	require('./api.v1.generalLedgers.route')(apiV1Router);
 	require('./api.v1.accounts.route')(apiV1Router);
 	require('./api.v1.transactions.route')(apiV1Router);
