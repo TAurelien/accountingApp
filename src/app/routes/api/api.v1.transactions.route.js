@@ -1,12 +1,10 @@
 /** @module API Routes - Transactions*/
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Routes API transaction');
 var path = require('path');
 var transactions = require(path.join(global.app.paths.controllersDir, './transactions/transactions.controller'));
-
 
 // Module export ==============================================================
 
@@ -14,7 +12,7 @@ var transactions = require(path.join(global.app.paths.controllersDir, './transac
  *  Define the Transactions API routes.
  *  API V1
  *
- *  @param   {Router}  apiV1Router  The API v1 router of the express app
+ *  @param   {Router}  apiV1Router  The API v1 router of the express app.
  */
 module.exports = function (apiV1Router) {
 
@@ -27,7 +25,6 @@ module.exports = function (apiV1Router) {
 		.post(
 			transactions.create // To create a new transaction
 		);
-
 
 	apiV1Router.route('/transactions/:id')
 		.get(

@@ -1,14 +1,12 @@
 /** @module Transaction Model */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Transaction Model');
 var constants = require(global.app.constants);
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var AmountSchema = require('./amount.schema');
-
 
 // Split schema definition ====================================================
 var SplitSchema = new Schema({
@@ -50,7 +48,6 @@ var SplitSchema = new Schema({
 
 });
 
-
 // Transaction schema definition ==============================================
 var TransactionSchema = new Schema({
 
@@ -72,7 +69,6 @@ var TransactionSchema = new Schema({
 
 });
 
-
 // Pre processing =============================================================
 
 TransactionSchema.pre('save', function (next) {
@@ -91,7 +87,6 @@ TransactionSchema.pre('save', function (next) {
 
 });
 
-
 // Post processing ============================================================
 
 TransactionSchema.post('save', function (transaction) {
@@ -99,7 +94,6 @@ TransactionSchema.post('save', function (transaction) {
 	logger.info('Saved transaction with _id : ' + transaction._id);
 
 });
-
 
 // Model export ===============================================================
 

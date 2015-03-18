@@ -1,13 +1,11 @@
 /** @module Accounts controller */
 'use strict';
 
-
 // Module dependencies ========================================================
-var logger  = require(global.app.logger)('Accounts Ctrl');
-var path    = require('path');
-var _       = require('lodash');
+var logger = require(global.app.logger)('Accounts Ctrl');
+var path = require('path');
+var _ = require('lodash');
 var Account = require(path.join(global.app.paths.modelsDir, './account.model'));
-
 
 // Private functions ==========================================================
 
@@ -15,7 +13,7 @@ var Account = require(path.join(global.app.paths.modelsDir, './account.model'));
  * Check the http request and set the account fields from request values.
  *
  * @param  {Object} req     The http request.
- * @param  {Object} account The mongoose schema model of account.
+ * @param  {Object} account An instance of the mongoose schema model of account.
  */
 function setAccountFields(req, account) {
 
@@ -23,35 +21,34 @@ function setAccountFields(req, account) {
 	if (_.isUndefined(account) | _.isNull(account)) return;
 
 	if (req.body.name) {
-		account.name         = req.body.name;
+		account.name = req.body.name;
 	}
 	if (req.body.description) {
-		account.description  = req.body.description;
+		account.description = req.body.description;
 	}
 	if (req.body.type) {
-		account.type         = req.body.type;
+		account.type = req.body.type;
 	}
 	if (req.body.code) {
-		account.code         = req.body.code;
+		account.code = req.body.code;
 	}
 	if (req.body.commodity) {
-		account.commodity    = req.body.commodity;
+		account.commodity = req.body.commodity;
 	}
 	if (req.body.balance) {
-		account.balance      = req.body.balance;
+		account.balance = req.body.balance;
 	}
 	if (req.body.placeholder) {
-		account.placeholder  = req.body.placeholder;
+		account.placeholder = req.body.placeholder;
 	}
 	if (req.body.closed) {
-		account.closed       = req.body.closed;
+		account.closed = req.body.closed;
 	}
 	if (req.body.parent) {
-		account.parent       = req.body.parent;
+		account.parent = req.body.parent;
 	}
 
 }
-
 
 /**
  * Check the filter part of the query extracted from the request and return the conditions object to be passed in the find method of mongoose.
@@ -60,32 +57,31 @@ function setAccountFields(req, account) {
  *
  * @return {Object}               The conditions object expected by mongoose.
  */
-function getAccountFilterQuery(filter){
+function getAccountFilterQuery(filter) {
 
 	var conditions = {};
 
-	if (filter.indexOf('onlyOpen') > -1)   conditions.closed = false;
+	if (filter.indexOf('onlyOpen') > -1) conditions.closed = false;
 	if (filter.indexOf('onlyClosed') > -1) conditions.closed = true;
-	if (filter.indexOf('asset') > -1)      conditions.type = 'asset';
-	if (filter.indexOf('liability') > -1)  conditions.type = 'liability';
-	if (filter.indexOf('equity') > -1)     conditions.type = 'equity';
-	if (filter.indexOf('income') > -1)     conditions.type = 'income';
-	if (filter.indexOf('expense') > -1)    conditions.type = 'expense';
+	if (filter.indexOf('asset') > -1) conditions.type = 'asset';
+	if (filter.indexOf('liability') > -1) conditions.type = 'liability';
+	if (filter.indexOf('equity') > -1) conditions.type = 'equity';
+	if (filter.indexOf('income') > -1) conditions.type = 'income';
+	if (filter.indexOf('expense') > -1) conditions.type = 'expense';
 
 	return conditions;
 
 }
-
 
 // Exported functions =========================================================
 
 /**
  * Create a new account.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
-exports.create = function(req, res) {
+exports.create = function (req, res) {
 
 	logger.info('Creating a new account');
 
@@ -93,17 +89,19 @@ exports.create = function(req, res) {
 
 	setAccountFields(req, account);
 
-	account.save(function(err) {
+	account.save(function (err) {
 
 		if (err) {
 
 			logger.error('Account creation failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			logger.info('Account creation successful');
-			res.json({ message: 'Account created!' });
+			res.status(201).json({
+				message: 'Account created!'
+			});
 
 		}
 
@@ -111,23 +109,22 @@ exports.create = function(req, res) {
 
 };
 
-
 /**
  * Get and send a specific account.
  * The request could have a accountInfoType query with value 'simple', 'full' or 'balance'.
- * 
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ *
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
-exports.get = function(req, res) {
+exports.get = function (req, res) {
 
 	logger.info('Getting a specific account');
 
 	var fieldSelection = {};
 
-	// TODO Change the query name for 'infoType' instead of 'accountInfoType'
+	// TODO (1) Change the query name for 'infoType' instead of 'accountInfoType'
 	var accountInfoType = req.query.accountInfoType;
-	if (accountInfoType === 'simple'){
+	if (accountInfoType === 'simple') {
 		fieldSelection.name = 1;
 		fieldSelection.type = 1;
 		fieldSelection.placeholder = 1;
@@ -137,34 +134,44 @@ exports.get = function(req, res) {
 
 	var accountID = req.params.id;
 
-	Account.findById(accountID, fieldSelection, function(err, account) {
+	Account.findById(accountID, fieldSelection, function (err, account) {
 
-		if (err){
+		if (err) {
 
 			logger.error('Getting the account ' + accountID + ' failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
-			if (_.isNull(account)){
+			if (_.isNull(account)) {
+
 				logger.warn('No account has been found for id ' + accountID);
-			}else {
+
+				res.status(400);
+
+			} else {
+
 				logger.info('Success of getting the account ' + accountID);
+
+				res.status(200);
+
 			}
 
 			if ((accountInfoType === 'balance') && (!_.isNull(account))) {
 
-				account.getBalance(function(err, balance) {
+				account.getBalance(function (err, balance) {
 
 					if (err) {
 
-						logger.error('Getting the account balance ' + accountID + ' failed!');
-						res.send(err); // TODO Check error type
+						logger.error('Getting the account balance of ' + accountID + ' failed!');
+						res.status(400).send(err); // TODO Check error type
 
 					} else {
 
-						// TODO Add a logger
-						res.json({ balance : balance });
+						logger.info('Got the account balance of ' + accountID + ' : ' + balance);
+						res.status(200).json({
+							balance: balance
+						});
 
 					}
 
@@ -172,7 +179,6 @@ exports.get = function(req, res) {
 
 			} else {
 
-				// TODO Add a logger
 				res.json(account);
 
 			}
@@ -183,25 +189,24 @@ exports.get = function(req, res) {
 
 };
 
-
 /**
  * Get and send all accounts.
  * The request could have a accountInfoType query with value 'simple' or 'full'.
  * The request could have a accountFilter query with concatened values:
  * 'onlyOpen', 'onlyClosed', 'asset', 'liability', 'equity', 'income', 'expense'.
- * 
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ *
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
-exports.list = function(req, res) {
+exports.list = function (req, res) {
 
 	logger.info('Getting a list of all accounts');
 
 	var fieldSelection = {};
 
-	// TODO Change the query name to 'infoType' instead of 'accountInfoType'
+	// TODO (1) Change the query name to 'infoType' instead of 'accountInfoType'
 	var accountInfoType = req.query.accountInfoType;
-	if (accountInfoType === 'simple'){
+	if (accountInfoType === 'simple') {
 		fieldSelection.name = 1;
 		fieldSelection.type = 1;
 		fieldSelection.placeholder = 1;
@@ -209,25 +214,25 @@ exports.list = function(req, res) {
 		fieldSelection.parent = 1;
 	}
 
-	// TODO Change the query name to 'filter' instead of 'accountFilter'
+	// TODO (1) Change the query name to 'filter' instead of 'accountFilter'
 	var conditions = getAccountFilterQuery(req.query.accountFilter);
 
-	Account.find(conditions, fieldSelection, function(err, accounts){
+	Account.find(conditions, fieldSelection, function (err, accounts) {
 
-		if (err){
+		if (err) {
 
 			logger.error('Getting all accounts failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
-			if (_.isNull(accounts)){
+			if (_.isNull(accounts)) {
 				logger.warn('No account has been found');
-			}else {
+			} else {
 				logger.info('Success of getting all accounts');
 			}
 
-			res.json(accounts);
+			res.status(200).json(accounts);
 
 		}
 
@@ -235,49 +240,53 @@ exports.list = function(req, res) {
 
 };
 
-
 /**
  * Update a specific account.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
-exports.update = function(req, res) {
+exports.update = function (req, res) {
 
 	logger.info('Updating a specific account');
 
 	var accountID = req.params.id;
 
-	Account.findById(accountID, function(err, account) {
+	Account.findById(accountID, function (err, account) {
 
 		if (err) {
 
 			logger.error('Getting the account ' + accountID + ' to update failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
-			if (_.isNull(account)){
+			if (_.isNull(account)) {
 
 				logger.warn('No account has been found for id ' + accountID);
-				res.json({ message: 'Account to update not found'});
+				res.status(400).json({
+					message: 'Account to update not found'
+				});
 
-			}else {
+			} else {
 
 				setAccountFields(req, account);
 
-				// TODO Add a logger
-				account.save(function(err) {
+				logger.info('Success of getting the account ' + accountID);
+
+				account.save(function (err) {
 
 					if (err) {
 
 						logger.error('Saving the updated account ' + accountID + ' failed!');
-						res.send(err); // TODO Check error type
+						res.status(400).send(err); // TODO Check error type
 
 					} else {
 
 						logger.info('The account ' + accountID + ' has been successfully updated');
-						res.json({ message: 'Account updated!' });
+						res.status(200).json({
+							message: 'Account updated!'
+						});
 
 					}
 
@@ -291,30 +300,33 @@ exports.update = function(req, res) {
 
 };
 
-
 /**
- * Delete a specific account
+ * Delete a specific account.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
-exports.delete = function(req, res) {
+exports.delete = function (req, res) {
 
 	logger.info('Deleting a specific account');
 
 	var accountID = req.params.id;
 
-	Account.remove({ _id: accountID }, function(err) {
+	Account.remove({
+		_id: accountID
+	}, function (err) {
 
 		if (err) {
 
 			logger.error('Deleting the account ' + accountID + ' failed!');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
-			logger.info('The account '+ accountID + ' has been successfully deleted');
-			res.json({ message: 'Account deleted!' });
+			logger.info('The account ' + accountID + ' has been successfully deleted');
+			res.status(200).json({
+				message: 'Account deleted!'
+			});
 
 		}
 

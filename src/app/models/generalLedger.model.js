@@ -1,14 +1,12 @@
 /** @module General Ledger Model */
 'use strict';
 
-
 // Module dependencies ========================================================
-var logger   = require(global.app.logger)('General Ledger Model');
-var _        = require('lodash');
-var async    = require('async');
+var logger = require(global.app.logger)('General Ledger Model');
+var _ = require('lodash');
+var async = require('async');
 var mongoose = require('mongoose');
-var Schema   = mongoose.Schema;
-
+var Schema = mongoose.Schema;
 
 // Schema definition ==========================================================
 
@@ -20,42 +18,41 @@ var Schema   = mongoose.Schema;
 var GeneralLedgerSchema = new Schema({
 
 	name: {
-		type     : String,
-		trim     : true,
-		default  : '',
-		required : true
+		type: String,
+		trim: true,
+		default: '',
+		required: true
 	},
 
 	description: {
-		type    : String,
-		trim    : true,
-		default : ''
+		type: String,
+		trim: true,
+		default: ''
 	},
 
 	closed: {
-		type    : Boolean,
-		default : false
+		type: Boolean,
+		default: false
 	},
 
 	settings: {
 
-		defaultCommodity : {
-			type    : String,
-			trim    : true,
-			default : ''
+		defaultCommodity: {
+			type: String,
+			trim: true,
+			default: ''
 		}
 
 	},
 
 	meta: {
-		creationDate : Date,
-		creationUser : String,
-		updateDate   : Date,
-		updatedUser  : String
+		creationDate: Date,
+		creationUser: String,
+		updateDate: Date,
+		updatedUser: String
 	}
 
 });
-
 
 // Schema functions ===========================================================
 
@@ -64,87 +61,95 @@ var GeneralLedgerSchema = new Schema({
  *
  * @param  {Function} callback Callback function.
  */
-GeneralLedgerSchema.methods.getNetWorth = function(callback) {
+GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 
-	var name     = this.name;
-	var _id      = this._id;
+	var name = this.name;
+	var _id = this._id;
 	var netWorth = 0;
 
-	logger.info('Computing the net worth of ' + name);
+	logger.info('Computing the net worth of ' + name + ' (' + _id + ')');
 
 	var conditions = {
-		generalLedger : _id,
-		$or : [
-			{ type : 'asset' },
-			{ type : 'liability' }
-		]
+		generalLedger: _id,
+		$or: [{
+			type: 'asset'
+		}, {
+			type: 'liability'
+		}]
 	};
 
-	mongoose.model('Account').find(conditions, function(err, accounts) {
+	mongoose.model('Account').find(conditions, function (err, accounts) {
 
 		if (err) {
 
-			logger.error('Error while getting the accounts of ' + name);
+			logger.error('Error while getting the accounts of ' + name + ' (' + _id + ')');
+
 			callback(err);
 
-		} else if (accounts.length){
+		} else if (accounts.length) {
 
 			var accountsArray = [];
 
-			_.forIn(accounts, function(account) {
+			_.forIn(accounts, function (account) {
 				accountsArray.push(account);
 			});
 
-			// TODO Add a logger
-			async.each(accountsArray, function(account, asyncCallback) {
+			logger.info('Success of getting searched accounts for ' + name + ' (' + _id + ')');
 
-				var accountObject = account.toObject();
-				var type = accountObject.type;
+			async.each(accountsArray, function (account, asyncCallback) {
 
-				// TODO Add a logger
-				account.getOwnBalance(function(err, ownBalance) {
+					var accountObject = account.toObject();
+					var type = accountObject.type;
+
+					logger.info('Getting own balance of account ' + account.name + ' (' + _id + ')');
+
+					account.getOwnBalance(function (err, ownBalance) {
+
+						if (err) {
+
+							logger.error('Error while getting the own balance of ' + accountObject.name);
+
+							asyncCallback(err);
+
+						} else {
+
+							if (type === 'asset') {
+								netWorth += ownBalance;
+							} else if (type === 'liability') {
+								netWorth -= ownBalance;
+							}
+
+							logger.info('Got the own balance of ' + accountObject.name);
+
+							asyncCallback(null);
+
+						}
+
+					});
+
+				},
+
+				function (err) {
 
 					if (err) {
 
-						logger.error('Error while getting the own balance of ' + accountObject.name);
-						asyncCallback(err);
+						logger.error('Error while getting the own balance of one account of ' + name);
+						callback(err);
 
 					} else {
 
-						if (type === 'asset'){
-							netWorth += ownBalance;
-						} else if (type === 'liability') {
-							netWorth -= ownBalance;
-						}
+						logger.info('Got the net worth of ' + name);
 
-						// TODO Add a logger
-						asyncCallback(null);
+						callback(null, netWorth);
 
 					}
 
 				});
 
-			},
-
-			function(err){
-
-				if (err) {
-
-					logger.error('Error while getting the own balance of one account of ' + name);
-					callback(err);
-
-				} else {
-
-					// TODO Add a logger
-					callback(null, netWorth);
-
-				}
-
-			});
-
 		} else {
 
-			// TODO Add a logger
+			logger.warn('No accounts found for this general ledger ' + name + ' (' + _id + ')');
+
 			callback('No accounts found for this general ledger', null);
 
 		}
@@ -153,10 +158,9 @@ GeneralLedgerSchema.methods.getNetWorth = function(callback) {
 
 };
 
-
 // Pre processing =============================================================
 
-GeneralLedgerSchema.pre('save', function(next) {
+GeneralLedgerSchema.pre('save', function (next) {
 
 	// meta management --------------------------------------------------------
 
@@ -174,15 +178,13 @@ GeneralLedgerSchema.pre('save', function(next) {
 
 });
 
-
 // Post processing ============================================================
 
-GeneralLedgerSchema.post('save', function(generalLedger) {
+GeneralLedgerSchema.post('save', function (generalLedger) {
 
 	logger.info('Saved general ledger ' + generalLedger.name + ' with _id ' + generalLedger._id);
 
 });
-
 
 // Model export ===============================================================
 

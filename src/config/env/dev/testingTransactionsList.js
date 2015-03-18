@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = [
 
 	{
@@ -23,7 +25,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b5d',
 		description: 'Initial balance of Savings',
@@ -46,7 +47,6 @@ module.exports = [
 			}]
 		}]
 	},
-
 
 	{
 		_id: '55045a189b6c6da81f1a1b62',
@@ -71,7 +71,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b67',
 		description: 'Rent revenue of January',
@@ -94,7 +93,6 @@ module.exports = [
 			}]
 		}]
 	},
-
 
 	{
 		_id: '55045a189b6c6da81f1a1b6c',
@@ -119,7 +117,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b71',
 		description: 'Saving of January',
@@ -142,7 +139,6 @@ module.exports = [
 			}]
 		}]
 	},
-
 
 	{
 		_id: '55045a189b6c6da81f1a1b76',
@@ -167,7 +163,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b7b',
 		description: 'Fees of January',
@@ -190,7 +185,6 @@ module.exports = [
 			}]
 		}]
 	},
-
 
 	{
 		_id: '55045a189b6c6da81f1a1b80',
@@ -215,7 +209,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b85',
 		description: 'Loan interest of January',
@@ -238,7 +231,6 @@ module.exports = [
 			}]
 		}]
 	},
-
 
 	{
 		_id: '55045a189b6c6da81f1a1b8a',
@@ -263,7 +255,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b8f',
 		description: 'Electricity invoice',
@@ -287,7 +278,6 @@ module.exports = [
 		}]
 	},
 
-
 	{
 		_id: '55045a189b6c6da81f1a1b94',
 		description: 'Miscellanous expense',
@@ -310,7 +300,6 @@ module.exports = [
 			}]
 		}]
 	},
-
 
 	{
 		_id: '55045a189b6c6da81f1a1b99',

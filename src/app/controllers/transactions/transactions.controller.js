@@ -1,7 +1,6 @@
 /** @module Transactions controller */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Transactions Ctrl');
 var path = require('path');
@@ -9,9 +8,14 @@ var _ = require('lodash');
 var Transaction = require(path.join(global.app.paths.modelsDir,
 	'./transaction.model'));
 
-
 // Private functions ==========================================================
 
+/**
+ * Check the http request and set the transaction fields from request values.
+ *
+ * @param  {Object} req     The http request.
+ * @param  {Object} account An instance of the mongoose schema model of transaction.
+ */
 function setTransactionFields(req, transaction) {
 
 	if (_.isUndefined(req) | _.isNull(req)) return;
@@ -29,14 +33,13 @@ function setTransactionFields(req, transaction) {
 
 }
 
-
 // Exported functions =========================================================
 
 /**
  * Create a new transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.create = function (req, res) {
 
@@ -51,12 +54,12 @@ exports.create = function (req, res) {
 		if (err) {
 
 			logger.error('Transaction creation failed');
-			res.send(err); // TODO Check error type
+			res.status(400).send(err); // TODO Check error type
 
 		} else {
 
 			logger.info('Transaction creation successful');
-			res.json({
+			res.status(201).json({
 				message: 'Transaction created!'
 			});
 
@@ -66,12 +69,11 @@ exports.create = function (req, res) {
 
 };
 
-
 /**
  * Get and send a specific transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.get = function (req, res) {
 
@@ -87,21 +89,21 @@ exports.get = function (req, res) {
 
 				logger.error('Getting the transaction ' + transactionID +
 					' to update failed!');
-				res.send(err); // TODO Check error type
+				res.status(400).send(err); // TODO Check error type
 
 			} else {
 
 				if (_.isNull(transaction)) {
 
 					logger.warn('No transaction has been found for id ' + transactionID);
-					res.json({
-						message: 'Transaction to update not found'
+					res.status(400).json({
+						message: 'Transaction not found'
 					});
 
 				} else {
 
 					logger.info('Success of getting the transaction ' + transactionID);
-					res.json(transaction);
+					res.status(200).json(transaction);
 
 				}
 
@@ -111,17 +113,15 @@ exports.get = function (req, res) {
 
 };
 
-
 /**
  * Get and send an array of all transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.list = function (req, res) {
 
 	logger.info('Getting a list of all transactions');
-
 
 	// TODO Add a filter
 	// TODO Add a filter for a given time period
@@ -154,14 +154,20 @@ exports.list = function (req, res) {
 				if (err) {
 
 					logger.error('Getting all transactions failed!');
-					res.send(err); // TODO Check error type
+					res.status(400).send(err); // TODO Check error type
 
 				} else {
 
 					if (_.isNull(transactions)) {
+
 						logger.warn('No transaction has been found');
+						res.status(400);
+
 					} else {
+
 						logger.info('Success of getting all transactions');
+						res.status(200);
+
 					}
 
 					res.json(transactions);
@@ -174,12 +180,11 @@ exports.list = function (req, res) {
 
 };
 
-
 /**
  * Update a specific transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.update = function (req, res) {
 
@@ -195,14 +200,14 @@ exports.update = function (req, res) {
 
 				logger.error('Getting the transaction ' + transactionID +
 					' to update failed!');
-				res.send(err); // TODO Check error type
+				res.status(400).send(err); // TODO Check error type
 
 			} else {
 
 				if (_.isNull(transaction)) {
 
 					logger.warn('No transaction has been found for id ' + transactionID);
-					res.json({
+					res.status(400).json({
 						message: 'Transaction to update not found'
 					});
 
@@ -210,20 +215,21 @@ exports.update = function (req, res) {
 
 					setTransactionFields(req, transaction);
 
-					// TODO Add a logger
+					logger.info('Success of getting the transaction ' + transactionID);
+
 					transaction.save(function (err) {
 
 						if (err) {
 
 							logger.error('Saving the updated transaction ' + transactionID +
 								' failed!');
-							res.send(err); // TODO Check error type
+							res.status(400).send(err); // TODO Check error type
 
 						} else {
 
 							logger.info('The transaction ' + transactionID +
 								' has been successfully updated');
-							res.json({
+							res.status(200).json({
 								message: 'Transaction updated!'
 							});
 
@@ -239,12 +245,11 @@ exports.update = function (req, res) {
 
 };
 
-
 /**
  * Delete a specific transaction.
  *
- * @param  {Object} req The http request
- * @param  {Object} res The http response
+ * @param  {Object} req The http request.
+ * @param  {Object} res The http response.
  */
 exports.delete = function (req, res) {
 
@@ -261,13 +266,13 @@ exports.delete = function (req, res) {
 			if (err) {
 
 				logger.error('Deleting the transaction ' + transactionID + ' failed!');
-				res.send(err); // TODO Check error type
+				res.status(400).send(err); // TODO Check error type
 
 			} else {
 
 				logger.info('The transaction ' + transactionID +
 					' has been successfully deleted');
-				res.json({
+				res.status(200).json({
 					message: 'Transaction deleted!'
 				});
 

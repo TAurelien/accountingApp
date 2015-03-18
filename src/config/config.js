@@ -1,13 +1,11 @@
 /** @module Config */
 'use strict';
 
-
 // Module dependencies ========================================================
-var logger   = require(global.app.logger)('Config');
-var _        = require('lodash');
-var path     = require('path');
+var logger = require(global.app.logger)('Config');
+var _ = require('lodash');
+var path = require('path');
 var mongoose = require('mongoose');
-
 
 // Module export ==============================================================
 
@@ -21,7 +19,6 @@ var envDef = _.extend(
 
 module.exports = envDef;
 
-
 // Private functions ==========================================================
 
 /**
@@ -34,7 +31,7 @@ function connectDB(dbUrl, callback) {
 
 	logger.info('Connecting to db ' + dbUrl);
 
-	mongoose.connect(dbUrl, function(err) {
+	mongoose.connect(dbUrl, function (err) {
 
 		if (err) {
 
@@ -53,34 +50,33 @@ function connectDB(dbUrl, callback) {
 
 }
 
-
 // Exported functions =========================================================
 
 /**
  * Run the initialization of the application, running required task for
  * the launch.
  */
-module.exports.init = function() {
+module.exports.init = function () {
 
 	logger.info('Global initialization of configuration');
 
 	// Useful data stored in global variables ---------------------------------
 
-	global.app.utils     = path.join(__dirname, '/utils');
-	global.app.config    = __filename;
+	global.app.utils = path.join(__dirname, '/utils');
+	global.app.config = __filename;
 	global.app.constants = path.join(__dirname, '/constants');
-	global.app.status    = {};
+	global.app.status = {};
 
 	// Paths declaration
 	global.app.paths = {};
-	global.app.paths.configDir    = __dirname;
-	global.app.paths.pluginsDir   = path.join(__dirname, '../plugins');
-	global.app.paths.publicDir    = path.join(__dirname, '../public');
-	global.app.paths.routesDir    = path.join(__dirname, '../app/routes');
-	global.app.paths.coreRoutesDir= path.join(__dirname, '../app/routes/core');
+	global.app.paths.configDir = __dirname;
+	global.app.paths.pluginsDir = path.join(__dirname, '../plugins');
+	global.app.paths.publicDir = path.join(__dirname, '../public');
+	global.app.paths.routesDir = path.join(__dirname, '../app/routes');
+	global.app.paths.coreRoutesDir = path.join(__dirname, '../app/routes/core');
 	global.app.paths.apiRoutesDir = path.join(__dirname, '../app/routes/api');
-	global.app.paths.modelsDir    = path.join(__dirname, '../app/models');
-	global.app.paths.controllersDir= path.join(__dirname, '../app/controllers');
+	global.app.paths.modelsDir = path.join(__dirname, '../app/models');
+	global.app.paths.controllersDir = path.join(__dirname, '../app/controllers');
 
 	// Application environnement configuration --------------------------------
 
@@ -90,10 +86,9 @@ module.exports.init = function() {
 
 	// Database connection ----------------------------------------------------
 
+	connectDB(envDef.db.url, function (err) {
 
-	connectDB(envDef.db.url, function(err){
-
-			// Post DB connection configuration -------------------------------
+		// Post DB connection configuration -------------------------------
 
 		if (!err) {
 
@@ -105,7 +100,7 @@ module.exports.init = function() {
 
 			// Set the status information
 			global.app.status.initialConfig = 'completed';
-			global.app.status.dbConnection  = true;
+			global.app.status.dbConnection = true;
 
 		} else {
 
@@ -113,7 +108,7 @@ module.exports.init = function() {
 
 			// Set the status information
 			global.app.status.initialConfig = 'preDBConnection';
-			global.app.status.dbConnection  = false;
+			global.app.status.dbConnection = false;
 
 		}
 
