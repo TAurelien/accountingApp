@@ -1,15 +1,13 @@
 /** @module Env All */
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Env All');
-
 
 // Exported object ============================================================
 
 /**
- *  [exports description]
+ *  Export the application main information whatever the environment.
  *
  *  @type  {Object}
  */
@@ -26,24 +24,22 @@ module.exports = {
 
 };
 
-
 // Exported functions =========================================================
 
 /**
- *  [initAll description]
+ * Pre DB connection initialization of the environment.
  */
-module.exports.initAll = function() {
+module.exports.initAll = function () {
 
-	logger.debug('Configuration initialization of all environments');
+	logger.info('Configuration initialization of all environments');
 
 };
 
-
 /**
- *  [initAllPostDBConnection description]
+ * Post DB connection initialization of the environment.
  */
-module.exports.initAllPostDBConnection = function() {
+module.exports.initAllPostDBConnection = function () {
 
-	logger.debug('Post-DB connection configuration initialization of all environments');
+	logger.info('Post-DB connection configuration initialization of all environments');
 
 };

@@ -1,12 +1,10 @@
 /** @module API Routes - General Ledger*/
 'use strict';
 
-
 // Module dependencies ========================================================
 var logger = require(global.app.logger)('Routes API General Ledger');
-var path   = require('path');
+var path = require('path');
 var generalLedger = require(path.join(global.app.paths.controllersDir, './generalLedgers/generalLedgers.controller'));
-
 
 // Module export ==============================================================
 
@@ -14,42 +12,29 @@ var generalLedger = require(path.join(global.app.paths.controllersDir, './genera
  *  Define the General Ledger API routes.
  *  API V1
  *
- *  @param   {Router}  apiV1Router  The API v1 router of the express app
+ *  @param   {Router}  apiV1Router  The API v1 router of the express app.
  */
-module.exports = function(apiV1Router) {
+module.exports = function (apiV1Router) {
 
 	logger.info('Defining the API routes for general ledger');
 
-	// General ledger ---------------------------------------------------------
-
 	apiV1Router.route('/generalLedgers')
-
-		// To get a list of all general ledger
 		.get(
-			generalLedger.list
+			generalLedger.list // To get a list of all general ledger
 		)
-
-		// To create a new general ledger
 		.post(
-			generalLedger.create
+			generalLedger.create // To create a new general ledger
 		);
 
-
 	apiV1Router.route('/generalLedgers/:id')
-
-		// To get a specific general ledger
 		.get(
-			generalLedger.get
+			generalLedger.get // To get a specific general ledger
 		)
-
-		// To update a specific general ledger
 		.put(
-			generalLedger.update
+			generalLedger.update // To update a specific general ledger
 		)
-
-		// To delete a specific general ledger
 		.delete(
-			generalLedger.delete
+			generalLedger.delete // To delete a specific general ledger
 		);
 
 };

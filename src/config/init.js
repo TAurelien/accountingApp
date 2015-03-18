@@ -1,11 +1,9 @@
 /** @module Init */
 'use strict';
 
-
 // Module dependencies ========================================================
 var glob = require('glob');
 var path = require('path');
-
 
 // Exported functions =========================================================
 
@@ -13,7 +11,7 @@ var path = require('path');
  * Initialization of the environment variable,
  * by default it is set to development.
  */
-module.exports = function() {
+module.exports = function () {
 
 	// Look for environment definition ----------------------------------------
 
@@ -27,25 +25,26 @@ module.exports = function() {
 		// If no file found, either the file doesn't exist or env is undefined
 
 		if (env) {
-			status ='ENV_NotFound';
+			status = 'ENV_NotFound';
 		} else {
-			status ='ENV_Undefined';
+			status = 'ENV_Undefined';
 		}
 
 		// Whatever the case, set nv to development
 		env = process.env.NODE_ENV = 'development';
 
 	} else {
-		// If a file has been found, env is ok
 
-		status ='ENV_Found';
+		// If a file has been found, env is ok
+		status = 'ENV_Found';
+
 	}
 
 	// Defining the logger after env is set -----------------------------------
 	var logger = require(global.app.logger)('Init');
 
 	// Log the status
-	switch (status){
+	switch (status) {
 	case 'ENV_NotFound':
 
 		logger.warn('No configuration file found for "' + env + '" environment using development instead');

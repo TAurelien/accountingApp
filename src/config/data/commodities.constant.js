@@ -3,22 +3,22 @@
 
 module.exports = {
 
-	commoditiesAsArray : [
+	commoditiesAsArray: [
 		'EUR', 'USD'
 	],
 
-	commodities : {
+	commodities: {
 
-		EUR : {
-			code : 'EUR',
-			name : 'Euro',
-			symbol : '€'
+		EUR: {
+			code: 'EUR',
+			name: 'Euro',
+			symbol: '€'
 		},
 
-		USD : {
-			code : 'USD',
-			name : 'American Dollar',
-			symbol : '$'
+		USD: {
+			code: 'USD',
+			name: 'American Dollar',
+			symbol: '$'
 		}
 
 	}

@@ -1,105 +1,102 @@
 /** @module Account Model */
 'use strict';
 
-
 // Module dependencies ========================================================
-var logger    = require(global.app.logger)('Account Model');
+var logger = require(global.app.logger)('Account Model');
 var constants = require(global.app.constants);
-var _         = require('lodash');
-var async     = require('async');
-var mongoose  = require('mongoose');
-var Schema    = mongoose.Schema;
-
+var _ = require('lodash');
+var async = require('async');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 // Schema definition ==========================================================
 
 /**
  * Definition of the mongoose Account schema.
- * 
+ *
  * @type {Schema}
  */
 var AccountSchema = new Schema({
 
-	generalLedger :{
-		type     : Schema.ObjectId,
-		ref      : 'GeneralLedger',
-		required : true
+	generalLedger: {
+		type: Schema.ObjectId,
+		ref: 'GeneralLedger',
+		required: true
 	},
 
 	name: {
-		type     : String,
-		trim     : true,
-		default  : '',
-		required : true
+		type: String,
+		trim: true,
+		default: '',
+		required: true
 	},
 
 	description: {
-		type    : String,
-		trim    : true,
-		default : ''
+		type: String,
+		trim: true,
+		default: ''
 	},
 
 	type: {
-		type     : String,
-		trim     : true,
-		default  : '',
-		required : true,
-		enum     : constants.accountTypeAsArray
+		type: String,
+		trim: true,
+		default: '',
+		required: true,
+		enum: constants.accountTypeAsArray
 	},
 
 	code: {
-		type    : String,
-		trim    : true,
-		default : ''
+		type: String,
+		trim: true,
+		default: ''
 	},
 
 	commodity: {
-		type     : String,
-		trim     : true,
-		default  : '',
-		required : true,
-		enum     : constants.commoditiesAsArray
+		type: String,
+		trim: true,
+		default: '',
+		required: true,
+		enum: constants.commoditiesAsArray
 	},
 
-	balance : {
+	balance: {
 
 		own: {
-			type    : Number,
-			default : 0
+			type: Number,
+			default: 0
 		}
 
 	},
 
 	placeholder: {
-		type    : Boolean,
-		default : false
+		type: Boolean,
+		default: false
 	},
 
 	closed: {
-		type    : Boolean,
-		default : false
+		type: Boolean,
+		default: false
 	},
 
 	parent: {
-		type : Schema.ObjectId,
-		ref  : 'Account'
+		type: Schema.ObjectId,
+		ref: 'Account'
 	},
 
 	level: {
-		type    : Number,
-		default : 0,
-		min     : 0
+		type: Number,
+		default: 0,
+		min: 0
 	},
 
 	meta: {
-		creationDate : Date,
-		creationUser : String,
-		updateDate   : Date,
-		updateUser   : String
+		creationDate: Date,
+		creationUser: String,
+		updateDate: Date,
+		updateUser: String
 	}
 
 });
-
 
 // Private functions ==========================================================
 
@@ -107,56 +104,57 @@ var AccountSchema = new Schema({
  * Compute the balance of an account based on his transactions.
  * The balance is provided in the callback function.
  *
- * @param  {Number}   ownBalance TEMPORARY WILL BE REMOVE
+ * @param  {Number}   ownBalance TEMPORARY WILL BE REMOVE.
  * @param  {Function} callback   Callback function.
  */
 function computeOwnBalance(ownBalance, callback) {
 
 	// TODO Remove the ownBalance variable while computation will be possible
-	logger.debug('computeOwnBalance - Getting the transactions balance');
+	logger.info('computeOwnBalance - Getting the transactions balance');
 
 	callback(null, ownBalance);
 
 }
 
-
 /**
  * Compute the global balance of all childs of the specified account.
  * A callback function is then executed with the childs' balance.
  *
- * @param  {String}   accountID [description]
+ * @param  {String}   accountID The id of the account to compute balance.
  * @param  {Function} callback  Callback function.
  */
 function computeChildBalance(accountID, callback) {
 
-	logger.debug('computeChildBalance - Getting the childs balance');
+	logger.info('computeChildBalance - Getting the childs balance');
 
-	var conditions = { parent : accountID };
+	var conditions = {
+		parent: accountID
+	};
 
-	mongoose.model('Account').find(conditions, function(err, childs) {
+	mongoose.model('Account').find(conditions, function (err, childs) {
 
 		var childArray = [];
 
-		_.forIn(childs, function(child){
+		_.forIn(childs, function (child) {
 			childArray.push(child);
 		});
 
 		async.map(
 			childArray,
 
-			function(child, asyncCallback){
+			function (child, asyncCallback) {
 
-				child.getBalance(function(err, balance) {
+				child.getBalance(function (err, balance) {
 					asyncCallback(err, balance);
 				});
 
 			},
 
-			function(err, results) {
+			function (err, results) {
 
 				var globalChildBalance = 0;
 
-				_(results).forEach(function(childBalance){
+				_(results).forEach(function (childBalance) {
 					globalChildBalance += childBalance;
 				});
 
@@ -170,7 +168,6 @@ function computeChildBalance(accountID, callback) {
 
 }
 
-
 // Schema functions ===========================================================
 
 /**
@@ -178,83 +175,80 @@ function computeChildBalance(accountID, callback) {
  *
  * @param  {Function} callback Callback function.
  */
-AccountSchema.methods.getBalance = function(callback) {
+AccountSchema.methods.getBalance = function (callback) {
 
 	var ownBalance = this.balance.own;
-	var accountID  = this._id;
-	var name       = this.name;
+	var accountID = this._id;
+	var name = this.name;
 
-	logger.debug('getBalance - Computing the account balance of ' + name);
+	logger.info('getBalance - Computing the account balance of ' + name);
 
 	async.parallel([
 
-		function(asyncCallback){
+			function (asyncCallback) {
 
-			computeOwnBalance(ownBalance, function(err, transactionsBalance) {
-				logger.debug('Transaction balance for ' + name + ' = ' + transactionsBalance);
-				asyncCallback(err, transactionsBalance);
+				computeOwnBalance(ownBalance, function (err, transactionsBalance) {
+					logger.info('Transaction balance for ' + name + ' = ' + transactionsBalance);
+					asyncCallback(err, transactionsBalance);
+				});
+
+			},
+
+			function (asyncCallback) {
+
+				computeChildBalance(accountID, function (err, childBbalance) {
+					logger.info('Child balance for ' + name + ' = ' + childBbalance);
+					asyncCallback(err, childBbalance);
+				});
+
+			}
+
+		],
+
+		function (err, results) {
+
+			var globalBalance = 0;
+
+			_.forIn(results, function (childAndOwnBalance) {
+				globalBalance += childAndOwnBalance;
 			});
+			logger.info('Global balance for ' + name + ' = ' + globalBalance);
 
-		},
+			callback(err, globalBalance);
 
-		function(asyncCallback){
-
-			computeChildBalance(accountID, function(err, childBbalance){
-				logger.debug('Child balance for ' + name + ' = ' + childBbalance);
-				asyncCallback(err, childBbalance);
-			});
-
-		}
-
-	],
-
-	function(err, results){
-
-		var globalBalance = 0;
-
-		_.forIn(results, function(childAndOwnBalance){
-			globalBalance += childAndOwnBalance;
 		});
-		logger.debug('Global balance for ' + name + ' = ' + globalBalance);
-
-		callback(err, globalBalance);
-
-	});
 
 };
-
 
 /**
  * Get the balance of an account based on its transactions.
  *
  * @param  {Function} callback Callback function.
  */
-AccountSchema.methods.getOwnBalance = function(callback) {
+AccountSchema.methods.getOwnBalance = function (callback) {
 
-	logger.debug('getOwnBalance - Getting the transactions balance');
+	logger.info('getOwnBalance - Getting the transactions balance');
 
 	computeOwnBalance(this.balance.own, callback);
 
 };
-
 
 /**
  * Get the total balance of all childs of the account.
  *
  * @param  {Function} callback Callback function.
  */
-AccountSchema.methods.getChildBalance = function(callback) {
+AccountSchema.methods.getChildBalance = function (callback) {
 
-	logger.debug('getChildBalance - Getting the childs balance');
+	logger.info('getChildBalance - Getting the childs balance');
 
 	computeChildBalance(this._id, callback);
 
 };
 
-
 // Pre processing =============================================================
 
-AccountSchema.pre('save', function(next) {
+AccountSchema.pre('save', function (next) {
 
 	// meta dates management --------------------------------------------------
 
@@ -271,10 +265,14 @@ AccountSchema.pre('save', function(next) {
 	var accountId = this._id;
 
 	if (this.parent) {
-		mongoose.model('Account').findById(this.parent, function(err, parent) {
-			if(!err && accountId && parent){
+		mongoose.model('Account').findById(this.parent, function (err, parent) {
+			if (!err && accountId && parent) {
 				var newLevel = parent.level + 1;
-				mongoose.model('Account').findByIdAndUpdate(accountId, { level: newLevel }, { new : true }).exec();
+				mongoose.model('Account').findByIdAndUpdate(accountId, {
+					level: newLevel
+				}, {
+					new: true
+				}).exec();
 			}
 		});
 	}
@@ -285,15 +283,13 @@ AccountSchema.pre('save', function(next) {
 
 });
 
-
 // Post processing ============================================================
 
-AccountSchema.post('save', function(account) {
+AccountSchema.post('save', function (account) {
 
 	logger.info('Saved account ' + account.name + ' with _id : ' + account._id);
 
 });
-
 
 // Model export ===============================================================
 

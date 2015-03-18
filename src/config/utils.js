@@ -1,26 +1,24 @@
 /** @module Utils */
 'use strict';
 
-
 // Module dependencies ========================================================
-var logger   = require(global.app.logger)('Utils');
-var _        = require('lodash');
-var glob     = require('glob');
-
+var logger = require(global.app.logger)('Utils');
+var _ = require('lodash');
+var glob = require('glob');
 
 // Exported functions =========================================================
 
 /**
- * Get filenames according to an input pattern
+ * Get filenames according to an input pattern.
  *
- * @param   {String}  globPatterns  Pattern to be matched
- * @param   {String}  removeRoot    String to remove from the filenames
+ * @param   {String}  globPatterns  Pattern to be matched.
+ * @param   {String}  removeRoot    String to remove from the filenames.
  *
- * @return  {Array}                 Array of all found filenames
+ * @return  {Array}                 Array of all found filenames.
  */
-module.exports.getFiles = function(globPatterns, removeRoot) {
+module.exports.getFiles = function (globPatterns, removeRoot) {
 
-	logger.debug('Getting files for pattern: ' + globPatterns);
+	logger.info('Getting files for pattern: ' + globPatterns);
 
 	var _this = this;
 
@@ -32,7 +30,7 @@ module.exports.getFiles = function(globPatterns, removeRoot) {
 	// otherwise we use glob 
 	if (_.isArray(globPatterns)) {
 
-		globPatterns.forEach(function(globPattern) {
+		globPatterns.forEach(function (globPattern) {
 
 			output = _.union(output, _this.searchFiles(globPattern, removeRoot));
 
@@ -49,7 +47,7 @@ module.exports.getFiles = function(globPatterns, removeRoot) {
 			var files = glob.sync(globPatterns);
 
 			if (removeRoot) {
-				files = files.map(function(file) {
+				files = files.map(function (file) {
 					return file.replace(removeRoot, '');
 				});
 			}
