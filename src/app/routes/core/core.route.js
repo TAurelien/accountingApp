@@ -18,8 +18,6 @@ module.exports = function (app) {
 
 	logger.info('Defining the core routes');
 
-	// TODO Add a middleware logging the traffic on core routes
-
 	app.use('*', function (req, res, next) {
 
 		logger.info('Core route requested');

@@ -80,7 +80,7 @@ exports.get = function (req, res) {
 
 			}
 
-			if ((generalLedgerInfoType === 'netWorth') && (_.isNull(generalLedger))) {
+			if ((generalLedgerInfoType === 'netWorth') && (!_.isNull(generalLedger))) {
 
 				generalLedger.getNetWorth(function (err, netWorth) {
 

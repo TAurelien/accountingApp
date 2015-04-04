@@ -104,15 +104,97 @@ var AccountSchema = new Schema({
  * Compute the balance of an account based on his transactions.
  * The balance is provided in the callback function.
  *
- * @param  {Number}   ownBalance TEMPORARY WILL BE REMOVE.
+ * @param  {String}   accountID The id of the account to compute balance.
  * @param  {Function} callback   Callback function.
  */
-function computeOwnBalance(ownBalance, callback) {
+function computeOwnBalance(accountID, callback) {
 
-	// TODO Remove the ownBalance variable while computation will be possible
 	logger.info('computeOwnBalance - Getting the transactions balance');
 
-	callback(null, ownBalance);
+	var conditions = {};
+	conditions.splits = {
+		$elemMatch: {
+			account: accountID
+		}
+	};
+
+	mongoose.model('Transaction')
+		.find(conditions)
+		.exec(function (err, transactions) {
+
+			if (err) {
+
+				logger.error('Getting transactions failed');
+				callback(err);
+
+			} else {
+
+				if (_.isNull(transactions)) {
+
+					logger.warn('No transaction has been found');
+					callback(null, 0);
+
+				} else {
+
+					logger.info('Success of getting account\'s transactions');
+
+					var transactionsArray = [];
+
+					_.forIn(transactions, function (child) {
+						transactionsArray.push(child);
+					});
+
+					async.map(
+						transactionsArray,
+
+						function (transaction, asyncCallback) {
+
+							// TODO Deal with precise amount
+							var amount = 0;
+
+							_.forEach(transaction.splits, function (split) {
+
+								if (split.account + '' === accountID + '') {
+									// TODO Deal with precise amount
+									var value = split.amount[0].value;
+									var scaleFactor = split.amount[0].scaleFactor;
+									amount += (value / scaleFactor);
+								}
+
+							});
+
+							asyncCallback(null, amount);
+
+						},
+
+						function (err, transactionAmounts) {
+
+							if (err) {
+
+								logger.error('');
+								callback(err);
+
+							} else {
+
+								var ownBalance = 0;
+
+								_.forEach(transactionAmounts, function (amount) {
+									// TODO Deal with precise amount
+									ownBalance += amount;
+								});
+
+								callback(null, ownBalance);
+
+							}
+
+						}
+
+					);
+
+				}
+
+			}
+		});
 
 }
 
@@ -152,9 +234,11 @@ function computeChildBalance(accountID, callback) {
 
 			function (err, results) {
 
+				// TODO Deal with precise amount
 				var globalChildBalance = 0;
 
 				_(results).forEach(function (childBalance) {
+					// TODO Deal with precise amount
 					globalChildBalance += childBalance;
 				});
 
@@ -177,7 +261,6 @@ function computeChildBalance(accountID, callback) {
  */
 AccountSchema.methods.getBalance = function (callback) {
 
-	var ownBalance = this.balance.own;
 	var accountID = this._id;
 	var name = this.name;
 
@@ -187,7 +270,7 @@ AccountSchema.methods.getBalance = function (callback) {
 
 			function (asyncCallback) {
 
-				computeOwnBalance(ownBalance, function (err, transactionsBalance) {
+				computeOwnBalance(accountID, function (err, transactionsBalance) {
 					logger.info('Transaction balance for ' + name + ' = ' + transactionsBalance);
 					asyncCallback(err, transactionsBalance);
 				});
@@ -210,10 +293,12 @@ AccountSchema.methods.getBalance = function (callback) {
 			var globalBalance = 0;
 
 			_.forIn(results, function (childAndOwnBalance) {
+				// TODO Deal with precise amount
 				globalBalance += childAndOwnBalance;
 			});
 			logger.info('Global balance for ' + name + ' = ' + globalBalance);
 
+			// TODO Deal with precise amount
 			callback(err, globalBalance);
 
 		});
@@ -229,7 +314,7 @@ AccountSchema.methods.getOwnBalance = function (callback) {
 
 	logger.info('getOwnBalance - Getting the transactions balance');
 
-	computeOwnBalance(this.balance.own, callback);
+	computeOwnBalance(this._id, callback);
 
 };
 

@@ -20,7 +20,6 @@ module.exports = function (app, express) {
 	// API V1 =================================================================
 	var apiV1Router = express.Router();
 
-	// TODO Add a middleware logging the traffic on api routes
 	apiV1Router.use('*', function (req, res, next) {
 
 		logger.info('API V1 route requested');

@@ -119,7 +119,7 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 								netWorth -= ownBalance;
 							}
 
-							logger.info('Got the own balance of ' + accountObject.name);
+							logger.info('Got the own balance of ' + accountObject.name + ' : ' + ownBalance);
 
 							asyncCallback(null);
 
