@@ -233,47 +233,72 @@ function computeChildBalance(accountID, callback) {
 		parent: accountID
 	};
 
-	mongoose.model('Account').find(conditions, function (err, childs) {
+	mongoose.model('Account')
+		.find(conditions)
+		.exec(function (err, childs) {
 
-		// TODO (1) Manage the error
+			if (err) {
 
-		var childArray = [];
+				logger.error('Getting accounts failed!');
+				callback(err);
 
-		_.forIn(childs, function (child) {
-			childArray.push(child);
-		});
+			} else {
 
-		async.map(
-			childArray,
+				if (_.isEmpty(childs)) {
 
-			function (child, asyncCallback) {
+					logger.warn('No account has been found');
+					callback(null, 0);
 
-				child.getBalance(function (err, balance) {
-					asyncCallback(err, balance);
-				});
+				} else {
 
-			},
+					var childArray = [];
 
-			function (err, results) {
+					_.forIn(childs, function (child) {
+						childArray.push(child);
+					});
 
-				// TODO (1) Manage the error
+					async.map(
+						childArray,
 
-				var globalChildBalance = Object.create(Amount);
-				// TODO Deal with initialization of Amount object
-				globalChildBalance.init(0, 100, 'EUR');
+						function (child, asyncCallback) {
 
-				// TODO Is that a correct forEach implementation?
-				_(results).forEach(function (childBalance) {
-					globalChildBalance.add(childBalance);
-				});
+							child.getBalance(function (err, balance) {
+								asyncCallback(err, balance);
+							});
 
-				callback(err, globalChildBalance);
+						},
+
+						function (err, results) {
+
+							if (err) {
+
+								logger.error('Getting balance of child accounts failed!');
+								callback(err);
+
+							} else {
+
+								var globalChildBalance = Object.create(Amount);
+								// TODO Deal with initialization of Amount object
+								globalChildBalance.init(0, 100, 'EUR');
+
+								// TODO Is that a correct forEach implementation?
+								_(results).forEach(function (childBalance) {
+									globalChildBalance.add(childBalance);
+								});
+
+								callback(null, globalChildBalance);
+
+							}
+
+						}
+
+					);
+
+				}
 
 			}
 
-		);
-
-	});
+		});
 
 }
 
@@ -296,8 +321,19 @@ AccountSchema.methods.getBalance = function (callback) {
 			function (asyncCallback) {
 
 				computeOwnBalance(accountID, function (err, transactionsBalance) {
-					logger.info('Transaction balance for ' + name + ' = ' + transactionsBalance);
-					asyncCallback(err, transactionsBalance);
+
+					if (err) {
+
+						logger.error('Computing the own balance of the account failed!');
+						asyncCallback(err);
+
+					} else {
+
+						logger.info('Transaction balance for ' + name + ' = ' + transactionsBalance);
+						asyncCallback(null, transactionsBalance);
+
+					}
+
 				});
 
 			},
@@ -305,8 +341,19 @@ AccountSchema.methods.getBalance = function (callback) {
 			function (asyncCallback) {
 
 				computeChildBalance(accountID, function (err, childBbalance) {
-					logger.info('Child balance for ' + name + ' = ' + childBbalance);
-					asyncCallback(err, childBbalance);
+
+					if (err) {
+
+						logger.error('Computing the child balance of the account failed!');
+						asyncCallback(err);
+
+					} else {
+
+						logger.info('Child balance for ' + name + ' = ' + childBbalance);
+						asyncCallback(null, childBbalance);
+
+					}
+
 				});
 
 			}
@@ -315,18 +362,25 @@ AccountSchema.methods.getBalance = function (callback) {
 
 		function (err, results) {
 
-			// TODO (1) Manage the error
+			if (err) {
 
-			var globalBalance = Object.create(Amount);
-			// TODO Deal with initialization of Amount object
-			globalBalance.init(0, 100, 'EUR');
+				logger.error('Getting the balance of the account failed!');
+				callback(err);
 
-			// TODO Is that a correct forEach implementation?
-			_.forIn(results, function (childAndOwnBalance) {
-				globalBalance.add(childAndOwnBalance);
-			});
-			logger.info('Global balance for ' + name + ' = ' + globalBalance);
-			callback(err, globalBalance);
+			} else {
+
+				var globalBalance = Object.create(Amount);
+				// TODO Deal with initialization of Amount object
+				globalBalance.init(0, 100, 'EUR');
+
+				// TODO Is that a correct forEach implementation?
+				_.forIn(results, function (childAndOwnBalance) {
+					globalBalance.add(childAndOwnBalance);
+				});
+				logger.info('Global balance for ' + name + ' = ' + globalBalance);
+				callback(null, globalBalance);
+
+			}
 
 		});
 
@@ -372,24 +426,48 @@ AccountSchema.pre('save', function (next) {
 
 	// level management -------------------------------------------------------
 
+	// TODO (2) Rework the level management while pre-saving an account
+
 	var accountId = this._id;
 
 	if (this.parent) {
-		mongoose.model('Account').findById(this.parent, function (err, parent) {
 
-			// TODO (1) Manage the error
+		mongoose.model('Account')
+			.findById(this.parent)
+			.exec(function (err, parent) {
 
-			if (!err && accountId && parent) {
-				var newLevel = parent.level + 1;
-				mongoose.model('Account')
-					.findByIdAndUpdate(accountId, {
-						level: newLevel
-					}, {
-						new: true
-					})
-					.exec();
-			}
-		});
+				if (err) {
+
+					logger.error('Getting the parent of account while pre-saving failed!');
+					logger.error(err);
+
+				} else {
+
+					if (accountId && parent) {
+
+						var update = {
+							level: parent.level + 1
+						}
+						var options = {
+							new: true
+						}
+
+						mongoose.model('Account')
+							.findByIdAndUpdate(accountId, update, options)
+							.exec(function (err) {
+
+								if (err) {
+									logger.error('Error while updating myself!');
+									logger.error(err);
+								}
+
+							});
+
+					}
+
+				}
+
+			});
 	}
 
 	// ------------------------------------------------------------------------

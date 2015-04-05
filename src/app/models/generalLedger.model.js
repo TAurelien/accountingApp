@@ -82,87 +82,89 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 		}]
 	};
 
-	mongoose.model('Account').find(conditions, function (err, accounts) {
+	mongoose.model('Account')
+		.find(conditions)
+		.exec(function (err, accounts) {
 
-		if (err) {
+			if (err) {
 
-			logger.error('Error while getting the accounts of ' + name + ' (' + _id + ')');
-			callback(err);
+				logger.error('Error while getting the accounts of ' + name + ' (' + _id + ')');
+				callback(err);
 
-		} else if (accounts.length) {
+			} else if (accounts.length) {
 
-			var accountsArray = [];
+				var accountsArray = [];
 
-			_.forIn(accounts, function (account) {
-				accountsArray.push(account);
-			});
+				_.forIn(accounts, function (account) {
+					accountsArray.push(account);
+				});
 
-			logger.info('Success of getting searched accounts for ' + name + ' (' + _id + ')');
+				logger.info('Success of getting searched accounts for ' + name + ' (' + _id + ')');
 
-			async.each(accountsArray, function (account, asyncCallback) {
+				async.each(accountsArray, function (account, asyncCallback) {
 
-					var accountObject = account.toObject();
-					var type = accountObject.type;
+						var accountObject = account.toObject();
+						var type = accountObject.type;
 
-					logger.info('Getting own balance of account ' + account.name + ' (' + _id + ')');
+						logger.info('Getting own balance of account ' + account.name + ' (' + _id + ')');
 
-					account.getOwnBalance(function (err, ownBalance) {
+						account.getOwnBalance(function (err, ownBalance) {
+
+							if (err) {
+
+								logger.error('Error while getting the own balance of ' + accountObject.name);
+								asyncCallback(err);
+
+							} else {
+
+								try {
+									if (type === 'asset') {
+										netWorth.add(ownBalance);
+									} else if (type === 'liability') {
+										netWorth.subtract(ownBalance);
+									}
+								} catch (err) {
+									logger.error('There was an error while computing the net worth of ' + accountObject.name);
+									logger.error(err);
+									asyncCallback(err);
+									return;
+								}
+
+								logger.info('Got the own balance of ' + accountObject.name + ' (' + accountObject._id + ') : ' + ownBalance);
+								asyncCallback(null);
+
+							}
+
+						});
+
+					},
+
+					function (err) {
 
 						if (err) {
 
-							logger.error('Error while getting the own balance of ' + accountObject.name);
-							asyncCallback(err);
+							logger.error('Error while getting the own balance of one account of ' + name);
+							callback(err);
 
 						} else {
 
-							try {
-								if (type === 'asset') {
-									netWorth.add(ownBalance);
-								} else if (type === 'liability') {
-									netWorth.subtract(ownBalance);
-								}
-							} catch (err) {
-								logger.error('There was an error while computing the net worth of ' + accountObject.name);
-								logger.error(err);
-								asyncCallback(err);
-								return;
-							}
-
-							logger.info('Got the own balance of ' + accountObject.name + ' (' + accountObject._id + ') : ' + ownBalance);
-							asyncCallback(null);
+							logger.info('Got the net worth of ' + name);
+							callback(null, netWorth);
 
 						}
 
 					});
 
-				},
+			} else {
 
-				function (err) {
+				logger.warn('No accounts found for this general ledger ' + name + ' (' + _id + ')');
+				callback({
+					message: 'No accounts found for this general ledger'
+				}, null);
 
-					if (err) {
+			}
 
-						logger.error('Error while getting the own balance of one account of ' + name);
-						callback(err);
-
-					} else {
-
-						logger.info('Got the net worth of ' + name);
-						callback(null, netWorth);
-
-					}
-
-				});
-
-		} else {
-
-			logger.warn('No accounts found for this general ledger ' + name + ' (' + _id + ')');
-			callback({
-				message: 'No accounts found for this general ledger'
-			}, null);
-
-		}
-
-	});
+		});
 
 };
 
