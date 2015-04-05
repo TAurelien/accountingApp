@@ -222,7 +222,7 @@ exports.list = function (req, res) {
 
 			} else {
 
-				if (_.isNull(transactions)) {
+				if (_.isEmpty(transactions)) {
 					logger.warn('No transaction has been found');
 				} else {
 					logger.info('Success of getting all transactions');

@@ -235,7 +235,7 @@ exports.list = function (req, res) {
 
 			} else {
 
-				if (_.isNull(generalLedgers)) {
+				if (_.isEmpty(generalLedgers)) {
 					logger.warn('No general ledger has been found');
 				} else {
 					logger.info('Success of getting general ledgers');

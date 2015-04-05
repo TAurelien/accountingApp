@@ -21,7 +21,7 @@ exports.getIndexPage = function (req, res) {
 		if (err) {
 
 			logger.error('Something went wrong while sending the index page!');
-
+			logger.error(err);
 			res.status(err.status).end();
 
 		}

@@ -282,7 +282,7 @@ exports.list = function (req, res) {
 
 			} else {
 
-				if (_.isNull(accounts)) {
+				if (_.isEmpty(accounts)) {
 					logger.warn('No account has been found');
 				} else {
 					logger.info('Success of getting accounts');

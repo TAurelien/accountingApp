@@ -65,13 +65,15 @@ var GeneralLedgerSchema = new Schema({
  */
 GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 
-	var name = this.name;
 	var _id = this._id;
-	var netWorth = Object.create(Amount);
-	// TODO Deal with initialization of Amount object
-	netWorth.init(0, 100, 'EUR');
+	var name = this.name;
+	var nameRef = name + ' (' + _id + ')';
 
-	logger.info('Computing the net worth of ' + name + ' (' + _id + ')');
+	var netWorth = Object.create(Amount);
+	netWorth.init(0, 100, 'EUR');
+	// TODO Deal with initialization of Amount object
+
+	logger.info('getNetWorth - Computing the net worth of the general ledger ' + nameRef);
 
 	var conditions = {
 		generalLedger: _id,
@@ -88,49 +90,55 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 
 			if (err) {
 
-				logger.error('Error while getting the accounts of ' + name + ' (' + _id + ')');
+				logger.error('Getting the accounts of the general ledger ' + nameRef + ' failed!');
 				callback(err);
 
-			} else if (accounts.length) {
+			} else if (_.isEmpty(accounts)) {
 
-				var accountsArray = [];
-
-				_.forIn(accounts, function (account) {
-					accountsArray.push(account);
+				logger.warn('No account found for the general ledger ' + nameRef);
+				callback({
+					message: 'No accounts found for this general ledger'
 				});
 
-				logger.info('Success of getting searched accounts for ' + name + ' (' + _id + ')');
+			} else {
 
-				async.each(accountsArray, function (account, asyncCallback) {
+				logger.info('Success of getting the accounts of the general ledger ' + nameRef);
 
-						var accountObject = account.toObject();
-						var type = accountObject.type;
+				async.each(
+					_.toArray(accounts),
 
-						logger.info('Getting own balance of account ' + account.name + ' (' + _id + ')');
+					function (account, asyncCallback) {
+
+						var accountID = account._id;
+						var accountName = account.name;
+						var accountNameRef = accountName + ' (' + accountID + ')';
+						var type = account.type;
 
 						account.getOwnBalance(function (err, ownBalance) {
 
 							if (err) {
 
-								logger.error('Error while getting the own balance of ' + accountObject.name);
+								logger.error('computing the own balance of ' + accountNameRef + ' failed!');
 								asyncCallback(err);
 
 							} else {
 
 								try {
+
 									if (type === 'asset') {
 										netWorth.add(ownBalance);
 									} else if (type === 'liability') {
 										netWorth.subtract(ownBalance);
 									}
+
 								} catch (err) {
-									logger.error('There was an error while computing the net worth of ' + accountObject.name);
-									logger.error(err);
+
+									logger.error('There was an error while adding the balance of the account ' + accountNameRef + ' to the net worth of the general ledger ' + nameRef);
 									asyncCallback(err);
 									return;
+
 								}
 
-								logger.info('Got the own balance of ' + accountObject.name + ' (' + accountObject._id + ') : ' + ownBalance);
 								asyncCallback(null);
 
 							}
@@ -143,24 +151,17 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 
 						if (err) {
 
-							logger.error('Error while getting the own balance of one account of ' + name);
+							logger.error('computing the net worth of the general ledger ' + nameRef + ' failed!');
 							callback(err);
 
 						} else {
 
-							logger.info('Got the net worth of ' + name);
+							logger.info('The net worth of the general ledger ' + nameRef + ' = ' + netWorth);
 							callback(null, netWorth);
 
 						}
 
 					});
-
-			} else {
-
-				logger.warn('No accounts found for this general ledger ' + name + ' (' + _id + ')');
-				callback({
-					message: 'No accounts found for this general ledger'
-				}, null);
 
 			}
 
