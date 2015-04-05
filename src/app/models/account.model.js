@@ -8,6 +8,8 @@ var _ = require('lodash');
 var async = require('async');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var path = require('path');
+var Amount = require(path.join(global.app.paths.controllersDir, './amount/amount.controller'));
 
 // Schema definition ==========================================================
 
@@ -149,21 +151,27 @@ function computeOwnBalance(accountID, callback) {
 
 						function (transaction, asyncCallback) {
 
-							// TODO Deal with precise amount
-							var amount = 0;
+							var transactionAmount = Object.create(Amount);
+							// TODO Deal with initialization of Amount object
+							transactionAmount.init(0, 100, 'EUR');
 
-							_.forEach(transaction.splits, function (split) {
+							try {
+								_.forEach(transaction.splits, function (split) {
+									if (split.account + '' === accountID + '') {
+										var splitAmount = Object.create(Amount);
+										splitAmount.preciseValue = split.amount[0].value;
+										splitAmount.scale = split.amount[0].scaleFactor;
+										splitAmount.currency = split.currency;
+										transactionAmount.add(splitAmount);
+									}
+								});
+							} catch (err) {
+								logger.error('There was an error getting the amount of the transaction ' + transaction._id);
+								asyncCallback(err);
+								return;
+							}
 
-								if (split.account + '' === accountID + '') {
-									// TODO Deal with precise amount
-									var value = split.amount[0].value;
-									var scaleFactor = split.amount[0].scaleFactor;
-									amount += (value / scaleFactor);
-								}
-
-							});
-
-							asyncCallback(null, amount);
+							asyncCallback(null, transactionAmount);
 
 						},
 
@@ -176,11 +184,20 @@ function computeOwnBalance(accountID, callback) {
 
 							} else {
 
-								var ownBalance = 0;
+								var ownBalance = Object.create(Amount);
+								// TODO Deal with initialization of Amount object
+								ownBalance.init(0, 100, 'EUR');
 
 								_.forEach(transactionAmounts, function (amount) {
-									// TODO Deal with precise amount
-									ownBalance += amount;
+
+									try {
+										ownBalance.add(amount);
+									} catch (err) {
+										logger.error('There was an error computing the own balance of the account ' + accountID);
+										callback(err);
+										return;
+									}
+
 								});
 
 								callback(null, ownBalance);
@@ -234,12 +251,12 @@ function computeChildBalance(accountID, callback) {
 
 			function (err, results) {
 
-				// TODO Deal with precise amount
-				var globalChildBalance = 0;
+				var globalChildBalance = Object.create(Amount);
+				// TODO Deal with initialization of Amount object
+				globalChildBalance.init(0, 100, 'EUR');
 
 				_(results).forEach(function (childBalance) {
-					// TODO Deal with precise amount
-					globalChildBalance += childBalance;
+					globalChildBalance.add(childBalance);
 				});
 
 				callback(err, globalChildBalance);
@@ -290,15 +307,15 @@ AccountSchema.methods.getBalance = function (callback) {
 
 		function (err, results) {
 
-			var globalBalance = 0;
+			var globalBalance = Object.create(Amount);
+			// TODO Deal with initialization of Amount object
+			globalBalance.init(0, 100, 'EUR');
 
 			_.forIn(results, function (childAndOwnBalance) {
-				// TODO Deal with precise amount
-				globalBalance += childAndOwnBalance;
+				globalBalance.add(childAndOwnBalance);
 			});
 			logger.info('Global balance for ' + name + ' = ' + globalBalance);
 
-			// TODO Deal with precise amount
 			callback(err, globalBalance);
 
 		});

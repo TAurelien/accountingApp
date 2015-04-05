@@ -7,6 +7,8 @@ var _ = require('lodash');
 var async = require('async');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var path = require('path');
+var Amount = require(path.join(global.app.paths.controllersDir, './amount/amount.controller'));
 
 // Schema definition ==========================================================
 
@@ -65,7 +67,9 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 
 	var name = this.name;
 	var _id = this._id;
-	var netWorth = 0;
+	var netWorth = Object.create(Amount);
+	// TODO Deal with initialization of Amount object
+	netWorth.init(0, 100, 'EUR');
 
 	logger.info('Computing the net worth of ' + name + ' (' + _id + ')');
 
@@ -113,13 +117,20 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 
 						} else {
 
-							if (type === 'asset') {
-								netWorth += ownBalance;
-							} else if (type === 'liability') {
-								netWorth -= ownBalance;
+							try {
+								if (type === 'asset') {
+									netWorth.add(ownBalance);
+								} else if (type === 'liability') {
+									netWorth.subtract(ownBalance);
+								}
+							} catch (err) {
+								logger.error('There was an error while computing the net worth of ' + accountObject.name);
+								logger.error(err);
+								asyncCallback(err);
+								return;
 							}
 
-							logger.info('Got the own balance of ' + accountObject.name + ' : ' + ownBalance);
+							logger.info('Got the own balance of ' + accountObject.name + ' (' + accountObject._id + ') : ' + ownBalance);
 
 							asyncCallback(null);
 
