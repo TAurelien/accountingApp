@@ -87,7 +87,6 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 		if (err) {
 
 			logger.error('Error while getting the accounts of ' + name + ' (' + _id + ')');
-
 			callback(err);
 
 		} else if (accounts.length) {
@@ -112,7 +111,6 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 						if (err) {
 
 							logger.error('Error while getting the own balance of ' + accountObject.name);
-
 							asyncCallback(err);
 
 						} else {
@@ -131,7 +129,6 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 							}
 
 							logger.info('Got the own balance of ' + accountObject.name + ' (' + accountObject._id + ') : ' + ownBalance);
-
 							asyncCallback(null);
 
 						}
@@ -150,7 +147,6 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 					} else {
 
 						logger.info('Got the net worth of ' + name);
-
 						callback(null, netWorth);
 
 					}
@@ -160,8 +156,9 @@ GeneralLedgerSchema.methods.getNetWorth = function (callback) {
 		} else {
 
 			logger.warn('No accounts found for this general ledger ' + name + ' (' + _id + ')');
-
-			callback('No accounts found for this general ledger', null);
+			callback({
+				message: 'No accounts found for this general ledger'
+			}, null);
 
 		}
 

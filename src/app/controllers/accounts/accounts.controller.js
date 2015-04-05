@@ -10,54 +10,54 @@ var Account = require(path.join(global.app.paths.modelsDir, './account.model'));
 // Private functions ==========================================================
 
 /**
- * Check the http request and set the account fields from request values.
+ * Check the http request body and set the account fields from request values.
  *
- * @param  {Object} req     The http request.
- * @param  {Object} account An instance of the mongoose schema model of account.
+ * @param  {Object} requestBody The body of the http request.
+ * @param  {Object} account     An instance of the mongoose schema model of account.
  */
-function setAccountFields(req, account) {
+function setAccountFields(requestBody, account) {
 
-	if (_.isUndefined(req) | _.isNull(req)) return;
+	if (_.isUndefined(requestBody) | _.isNull(requestBody)) return;
 	if (_.isUndefined(account) | _.isNull(account)) return;
 
-	if (req.body.name) {
-		account.name = req.body.name;
+	if (requestBody.generalLedger) {
+		account.generalLedger = requestBody.generalLedger;
 	}
-	if (req.body.description) {
-		account.description = req.body.description;
+	if (requestBody.name) {
+		account.name = requestBody.name;
 	}
-	if (req.body.type) {
-		account.type = req.body.type;
+	if (requestBody.description) {
+		account.description = requestBody.description;
 	}
-	if (req.body.code) {
-		account.code = req.body.code;
+	if (requestBody.type) {
+		account.type = requestBody.type;
 	}
-	if (req.body.commodity) {
-		account.commodity = req.body.commodity;
+	if (requestBody.code) {
+		account.code = requestBody.code;
 	}
-	if (req.body.balance) {
-		account.balance = req.body.balance;
+	if (requestBody.commodity) {
+		account.commodity = requestBody.commodity;
 	}
-	if (req.body.placeholder) {
-		account.placeholder = req.body.placeholder;
+	if (requestBody.placeholder) {
+		account.placeholder = requestBody.placeholder;
 	}
-	if (req.body.closed) {
-		account.closed = req.body.closed;
+	if (requestBody.closed) {
+		account.closed = requestBody.closed;
 	}
-	if (req.body.parent) {
-		account.parent = req.body.parent;
+	if (requestBody.parent) {
+		account.parent = requestBody.parent;
 	}
 
 }
 
 /**
- * Check the filter part of the query extracted from the request and return the conditions object to be passed in the find method of mongoose.
+ * Check the filter part of the query extracted from the request and return the conditions object to be passed in the mongoose method.
  *
  * @param  {String} filter The string extract from request query 'filter'.
  *
- * @return {Object}               The conditions object expected by mongoose.
+ * @return {Object}        The conditions object expected by mongoose.
  */
-function getAccountFilterQuery(filter) {
+function getConditions(filter) {
 
 	var conditions = {};
 
@@ -70,6 +70,60 @@ function getAccountFilterQuery(filter) {
 	if (filter.indexOf('expense') > -1) conditions.type = 'expense';
 
 	return conditions;
+
+}
+
+/**
+ * Check the sort part of the query extracted from the request and return the order object to be passed in the mongoose method.
+ *
+ * @param  {Object} sort The string extract from request query 'sort'.
+ *
+ * @return {Object}      The order object expected by mongoose.
+ */
+function getOrder(sort) {
+
+	var order = {};
+
+	if (sort === 'type') {
+		order.type = 'asc';
+	}
+
+	if (sort === 'name') {
+		order.name = 'asc';
+	}
+
+	if (sort === 'code') {
+		order.code = 'asc';
+	}
+
+	if (sort === 'level') {
+		order.level = 'asc';
+	}
+
+	return order;
+
+}
+
+/**
+ * Check the infoType part of the query extracted from the request and return the fieldSelection object to be passed in the mongoose method.
+ *
+ * @param  {String} infoType The string extract from request query 'infoType'.
+ *
+ * @return {Object}          The field selection object expected by mongoose.
+ */
+function getFieldSelection(infoType) {
+
+	var fieldSelection = {};
+
+	if (infoType === 'simple') {
+		fieldSelection.name = 1;
+		fieldSelection.type = 1;
+		fieldSelection.placeholder = 1;
+		fieldSelection.closed = 1;
+		fieldSelection.parent = 1;
+	}
+
+	return fieldSelection;
 
 }
 
@@ -86,15 +140,16 @@ exports.create = function (req, res) {
 	logger.info('Creating a new account');
 
 	var account = new Account();
-
-	setAccountFields(req, account);
+	setAccountFields(req.body, account);
 
 	account.save(function (err) {
 
 		if (err) {
 
+			// TODO Check error type
 			logger.error('Account creation failed!');
-			res.status(400).send(err); // TODO Check error type
+			logger.error(err);
+			res.status(400).send(err);
 
 		} else {
 
@@ -111,7 +166,7 @@ exports.create = function (req, res) {
 
 /**
  * Get and send a specific account.
- * The request could have a accountInfoType query with value 'simple', 'full' or 'balance'.
+ * The request could have a 'infoType' query with value 'simple' or 'balance'.
  *
  * @param  {Object} req The http request.
  * @param  {Object} res The http response.
@@ -120,80 +175,71 @@ exports.get = function (req, res) {
 
 	logger.info('Getting a specific account');
 
-	var fieldSelection = {};
-
-	// TODO (1) Change the query name for 'infoType' instead of 'accountInfoType'
-	var accountInfoType = req.query.accountInfoType;
-	if (accountInfoType === 'simple') {
-		fieldSelection.name = 1;
-		fieldSelection.type = 1;
-		fieldSelection.placeholder = 1;
-		fieldSelection.closed = 1;
-		fieldSelection.parent = 1;
-	}
+	var infoType = req.query.infoType;
+	var fieldSelection = getFieldSelection(infoType);
 
 	var accountID = req.params.id;
 
-	Account.findById(accountID, fieldSelection, function (err, account) {
+	Account
+		.findById(accountID)
+		.select(fieldSelection)
+		.exec(function (err, account) {
 
-		if (err) {
+			if (err) {
 
-			logger.error('Getting the account ' + accountID + ' failed!');
-			res.status(400).send(err); // TODO Check error type
-
-		} else {
-
-			if (_.isNull(account)) {
-
-				logger.warn('No account has been found for id ' + accountID);
-
-				res.status(400);
+				// TODO Check error type
+				logger.error('Getting the account ' + accountID + ' failed!');
+				logger.error(err);
+				res.status(400).send(err);
 
 			} else {
 
-				logger.info('Success of getting the account ' + accountID);
+				if (_.isNull(account)) {
+					logger.warn('No account has been found for id ' + accountID);
+				} else {
+					logger.info('Success of getting the account ' + accountID);
+				}
 
-				res.status(200);
+				if ((infoType === 'balance') && (!_.isNull(account))) {
+
+					account.getBalance(function (err, balance) {
+
+						if (err) {
+
+							// TODO Check error type
+							logger.error('Getting the account balance of ' + accountID + ' failed!');
+							logger.error(err);
+							res.status(400).send(err);
+
+						} else {
+
+							logger.info('Got the account balance of ' + accountID + ' : ' + balance);
+							res.status(200).json({
+								balance: balance
+							});
+
+						}
+
+					});
+
+				} else {
+
+					res.status(200).json(account);
+
+				}
 
 			}
 
-			if ((accountInfoType === 'balance') && (!_.isNull(account))) {
-
-				account.getBalance(function (err, balance) {
-
-					if (err) {
-
-						logger.error('Getting the account balance of ' + accountID + ' failed!');
-						res.status(400).send(err); // TODO Check error type
-
-					} else {
-
-						logger.info('Got the account balance of ' + accountID + ' : ' + balance);
-						res.status(200).json({
-							balance: balance
-						});
-
-					}
-
-				});
-
-			} else {
-
-				res.json(account);
-
-			}
-
-		}
-
-	});
+		});
 
 };
 
 /**
- * Get and send all accounts.
- * The request could have a accountInfoType query with value 'simple' or 'full'.
- * The request could have a accountFilter query with concatened values:
+ * Get and send an arry of accounts.
+ * The request could have a 'infoType' query with value 'simple' or 'full'.
+ * The request could have a 'filter' query with concatened values:
  * 'onlyOpen', 'onlyClosed', 'asset', 'liability', 'equity', 'income', 'expense'.
+ * The request could have a 'sort' query with value 'type', 'name', 'code' or 'level'.
  *
  * @param  {Object} req The http request.
  * @param  {Object} res The http response.
@@ -202,41 +248,51 @@ exports.list = function (req, res) {
 
 	logger.info('Getting a list of all accounts');
 
-	var fieldSelection = {};
+	var conditions = getConditions(req.query.filter);
+	var order = getOrder(req.query.sort);
+	var fieldSelection = getFieldSelection(req.query.infoType);
 
-	// TODO (1) Change the query name to 'infoType' instead of 'accountInfoType'
-	var accountInfoType = req.query.accountInfoType;
-	if (accountInfoType === 'simple') {
-		fieldSelection.name = 1;
-		fieldSelection.type = 1;
-		fieldSelection.placeholder = 1;
-		fieldSelection.closed = 1;
-		fieldSelection.parent = 1;
+	var generalLedgerID = req.query.generalLedger;
+
+	if (_.isEmpty(generalLedgerID) || !_.isString(generalLedgerID)) {
+
+		var err = new Error('Invalid generalledger ID query');
+		logger.error('The general ledger ID query of the request is not valid: ' + generalLedgerID);
+		logger.error(err);
+		// FIXME Error content not sent
+		res.status(400).send(err);
+		return;
+
 	}
 
-	// TODO (1) Change the query name to 'filter' instead of 'accountFilter'
-	var conditions = getAccountFilterQuery(req.query.accountFilter);
+	conditions.generalLedger = generalLedgerID;
 
-	Account.find(conditions, fieldSelection, function (err, accounts) {
+	Account
+		.find(conditions)
+		.sort(order)
+		.select(fieldSelection)
+		.exec(function (err, accounts) {
 
-		if (err) {
+			if (err) {
 
-			logger.error('Getting all accounts failed!');
-			res.status(400).send(err); // TODO Check error type
+				// TODO Check error type
+				logger.error('Getting accounts failed!');
+				logger.error(err);
+				res.status(400).send(err);
 
-		} else {
-
-			if (_.isNull(accounts)) {
-				logger.warn('No account has been found');
 			} else {
-				logger.info('Success of getting all accounts');
+
+				if (_.isNull(accounts)) {
+					logger.warn('No account has been found');
+				} else {
+					logger.info('Success of getting accounts');
+				}
+
+				res.status(200).json(accounts);
+
 			}
 
-			res.status(200).json(accounts);
-
-		}
-
-	});
+		});
 
 };
 
@@ -252,51 +308,57 @@ exports.update = function (req, res) {
 
 	var accountID = req.params.id;
 
-	Account.findById(accountID, function (err, account) {
+	Account
+		.findById(accountID)
+		.exec(function (err, account) {
 
-		if (err) {
+			if (err) {
 
-			logger.error('Getting the account ' + accountID + ' to update failed!');
-			res.status(400).send(err); // TODO Check error type
-
-		} else {
-
-			if (_.isNull(account)) {
-
-				logger.warn('No account has been found for id ' + accountID);
-				res.status(400).json({
-					message: 'Account to update not found'
-				});
+				// TODO Check error type
+				logger.error('Getting the account ' + accountID + ' to update failed!');
+				logger.error(err);
+				res.status(400).send(err);
 
 			} else {
 
-				setAccountFields(req, account);
+				if (_.isNull(account)) {
 
-				logger.info('Success of getting the account ' + accountID);
+					logger.warn('No account has been found for id ' + accountID);
+					res.status(400).json({
+						message: 'Account to update not found'
+					});
 
-				account.save(function (err) {
+				} else {
 
-					if (err) {
+					logger.info('Success of getting the account ' + accountID);
 
-						logger.error('Saving the updated account ' + accountID + ' failed!');
-						res.status(400).send(err); // TODO Check error type
+					setAccountFields(req.body, account);
 
-					} else {
+					account.save(function (err) {
 
-						logger.info('The account ' + accountID + ' has been successfully updated');
-						res.status(200).json({
-							message: 'Account updated!'
-						});
+						if (err) {
 
-					}
+							// TODO Check error type
+							logger.error('Saving the updated account ' + accountID + ' failed!');
+							logger.error(err);
+							res.status(400).send(err);
 
-				});
+						} else {
+
+							logger.info('The account ' + accountID + ' has been successfully updated');
+							res.status(200).json({
+								message: 'Account updated!'
+							});
+
+						}
+
+					});
+
+				}
 
 			}
 
-		}
-
-	});
+		});
 
 };
 
@@ -311,25 +373,30 @@ exports.delete = function (req, res) {
 	logger.info('Deleting a specific account');
 
 	var accountID = req.params.id;
-
-	Account.remove({
+	var conditions = {
 		_id: accountID
-	}, function (err) {
+	};
 
-		if (err) {
+	Account
+		.remove(conditions)
+		.exec(function (err) {
 
-			logger.error('Deleting the account ' + accountID + ' failed!');
-			res.status(400).send(err); // TODO Check error type
+			if (err) {
 
-		} else {
+				// TODO Check error type
+				logger.error('Deleting the account ' + accountID + ' failed!');
+				logger.error(err);
+				res.status(400).send(err);
 
-			logger.info('The account ' + accountID + ' has been successfully deleted');
-			res.status(200).json({
-				message: 'Account deleted!'
-			});
+			} else {
 
-		}
+				logger.info('The account ' + accountID + ' has been successfully deleted');
+				res.status(200).json({
+					message: 'Account deleted!'
+				});
 
-	});
+			}
+
+		});
 
 };

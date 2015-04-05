@@ -167,6 +167,7 @@ function computeOwnBalance(accountID, callback) {
 								});
 							} catch (err) {
 								logger.error('There was an error getting the amount of the transaction ' + transaction._id);
+								logger.error(err);
 								asyncCallback(err);
 								return;
 							}
@@ -179,6 +180,7 @@ function computeOwnBalance(accountID, callback) {
 
 							if (err) {
 
+								// TODO Log the error
 								logger.error('');
 								callback(err);
 
@@ -194,6 +196,7 @@ function computeOwnBalance(accountID, callback) {
 										ownBalance.add(amount);
 									} catch (err) {
 										logger.error('There was an error computing the own balance of the account ' + accountID);
+										logger.error(err);
 										callback(err);
 										return;
 									}
@@ -232,6 +235,8 @@ function computeChildBalance(accountID, callback) {
 
 	mongoose.model('Account').find(conditions, function (err, childs) {
 
+		// TODO (1) Manage the error
+
 		var childArray = [];
 
 		_.forIn(childs, function (child) {
@@ -251,10 +256,13 @@ function computeChildBalance(accountID, callback) {
 
 			function (err, results) {
 
+				// TODO (1) Manage the error
+
 				var globalChildBalance = Object.create(Amount);
 				// TODO Deal with initialization of Amount object
 				globalChildBalance.init(0, 100, 'EUR');
 
+				// TODO Is that a correct forEach implementation?
 				_(results).forEach(function (childBalance) {
 					globalChildBalance.add(childBalance);
 				});
@@ -307,15 +315,17 @@ AccountSchema.methods.getBalance = function (callback) {
 
 		function (err, results) {
 
+			// TODO (1) Manage the error
+
 			var globalBalance = Object.create(Amount);
 			// TODO Deal with initialization of Amount object
 			globalBalance.init(0, 100, 'EUR');
 
+			// TODO Is that a correct forEach implementation?
 			_.forIn(results, function (childAndOwnBalance) {
 				globalBalance.add(childAndOwnBalance);
 			});
 			logger.info('Global balance for ' + name + ' = ' + globalBalance);
-
 			callback(err, globalBalance);
 
 		});
@@ -330,7 +340,6 @@ AccountSchema.methods.getBalance = function (callback) {
 AccountSchema.methods.getOwnBalance = function (callback) {
 
 	logger.info('getOwnBalance - Getting the transactions balance');
-
 	computeOwnBalance(this._id, callback);
 
 };
@@ -343,7 +352,6 @@ AccountSchema.methods.getOwnBalance = function (callback) {
 AccountSchema.methods.getChildBalance = function (callback) {
 
 	logger.info('getChildBalance - Getting the childs balance');
-
 	computeChildBalance(this._id, callback);
 
 };
@@ -368,13 +376,18 @@ AccountSchema.pre('save', function (next) {
 
 	if (this.parent) {
 		mongoose.model('Account').findById(this.parent, function (err, parent) {
+
+			// TODO (1) Manage the error
+
 			if (!err && accountId && parent) {
 				var newLevel = parent.level + 1;
-				mongoose.model('Account').findByIdAndUpdate(accountId, {
-					level: newLevel
-				}, {
-					new: true
-				}).exec();
+				mongoose.model('Account')
+					.findByIdAndUpdate(accountId, {
+						level: newLevel
+					}, {
+						new: true
+					})
+					.exec();
 			}
 		});
 	}
