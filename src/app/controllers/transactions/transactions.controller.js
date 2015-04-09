@@ -11,25 +11,85 @@ var Transaction = require(path.join(global.app.paths.modelsDir,
 // Private functions ==========================================================
 
 /**
- * Check the http request and set the transaction fields from request values.
+ * Check the http request body and set the transaction fields from request values.
  *
- * @param  {Object} req     The http request.
- * @param  {Object} account An instance of the mongoose schema model of transaction.
+ * @param  {Object} requestBody The body of the http request.
+ * @param  {Object} account     An instance of the mongoose schema model of transaction.
  */
-function setTransactionFields(req, transaction) {
+function setTransactionFields(requestBody, transaction) {
 
-	if (_.isUndefined(req) | _.isNull(req)) return;
+	if (_.isUndefined(requestBody) | _.isNull(requestBody)) return;
 	if (_.isUndefined(transaction) | _.isNull(transaction)) return;
 
-	if (req.body.description) {
-		transaction.description = req.body.description;
+	if (requestBody.description) {
+		transaction.description = requestBody.description;
 	}
-	if (req.body.valueDate) {
-		transaction.valueDate = req.body.valueDate;
+	if (requestBody.valueDate) {
+		transaction.valueDate = requestBody.valueDate;
 	}
-	if (req.body.splits) {
-		transaction.splits = req.body.splits;
+	if (requestBody.splits) {
+		transaction.splits = requestBody.splits;
 	}
+
+}
+
+/**
+ * Check the filter part of the query extracted from the request and return the conditions object to be passed in the find method of mongoose.
+ *
+ * @param  {String} filter The string extract from request query 'filter'.
+ *
+ * @return {Object}        The conditions object expected by mongoose.
+ */
+function getConditions(filter) {
+
+	var conditions = {};
+
+	// TODO Explore http request to find a way to pass key/value on a single query
+	// TODO Explore the Query object of Mongoose
+	// TODO Add a filter for a given time period
+	// TODO Add an option to get transaction from account childs as well
+
+	return conditions;
+
+}
+
+/**
+ * Check the sort part of the query extracted from the request and return the order object to be passed in the mongoose method.
+ *
+ * @param  {Object} sort The string extract from request query 'sort'.
+ *
+ * @return {Object}      The order object expected by mongoose.
+ */
+function getOrder(sort) {
+
+	var order = {};
+
+	if (sort !== 'asc' && sort !== 'desc') {
+		sort = 'asc';
+	}
+	order.valueDate = sort;
+
+	return order;
+
+}
+
+/**
+ * Check the infoType part of the query extracted from the request and return the fieldSelection object to be passed in the find method of mongoose.
+ *
+ * @param  {String} infoType The string extract from request query 'infoType'.
+ *
+ * @return {Object}          The field selection object expected by mongoose.
+ */
+function getFieldSelection(infoType) {
+
+	var fieldSelection = {};
+
+	if (infoType === 'simple') {
+		fieldSelection.valueDate = 1;
+		fieldSelection.splits = 1;
+	}
+
+	return fieldSelection;
 
 }
 
@@ -46,15 +106,16 @@ exports.create = function (req, res) {
 	logger.info('Creating a new transaction');
 
 	var transaction = new Transaction();
-
-	setTransactionFields(req, transaction);
+	setTransactionFields(req.body, transaction);
 
 	transaction.save(function (err) {
 
 		if (err) {
 
+			// TODO Check error type
 			logger.error('Transaction creation failed');
-			res.status(400).send(err); // TODO Check error type
+			logger.error(err);
+			res.status(400).send(err);
 
 		} else {
 
@@ -79,33 +140,33 @@ exports.get = function (req, res) {
 
 	logger.info('Getting a specific transaction');
 
+	var infoType = req.query.infoType;
+	var fieldSelection = getFieldSelection(infoType);
+
 	var transactionID = req.params.id;
 
 	Transaction
 		.findById(transactionID)
+		.select(fieldSelection)
 		.exec(function (err, transaction) {
 
 			if (err) {
 
+				// TODO Check error type
 				logger.error('Getting the transaction ' + transactionID +
 					' to update failed!');
-				res.status(400).send(err); // TODO Check error type
+				logger.error(err);
+				res.status(400).send(err);
 
 			} else {
 
 				if (_.isNull(transaction)) {
-
 					logger.warn('No transaction has been found for id ' + transactionID);
-					res.status(400).json({
-						message: 'Transaction not found'
-					});
-
 				} else {
-
 					logger.info('Success of getting the transaction ' + transactionID);
-					res.status(200).json(transaction);
-
 				}
+
+				res.status(200).json(transaction);
 
 			}
 
@@ -123,14 +184,22 @@ exports.list = function (req, res) {
 
 	logger.info('Getting a list of all transactions');
 
-	// TODO Add a filter
-	// TODO Add a filter for a given time period
-	// TODO Add an option to get transaction from account childs as well
-
-	var conditions = {};
-	var fieldSelection = {};
+	var conditions = getConditions(req.query.filter);
+	var order = getOrder(req.query.sort);
+	var fieldSelection = getFieldSelection(req.query.infoType);
 
 	var accountID = req.query.account;
+
+	if (_.isEmpty(accountID) || !_.isString(accountID)) {
+
+		var err = new Error('Invalid account ID query');
+		logger.error('The account ID query of the request is not valid: ' + accountID);
+		logger.error(err);
+		// FIXME Error content not sent
+		res.status(400).send(err);
+		return;
+
+	}
 
 	conditions.splits = {
 		$elemMatch: {
@@ -138,45 +207,32 @@ exports.list = function (req, res) {
 		}
 	};
 
-	var sortDate = req.query.sort;
-	if (sortDate !== 'asc' && sortDate !== 'desc') {
-		sortDate = 'asc';
-	}
-
 	Transaction
 		.find(conditions)
-		.sort({
-			valueDate: sortDate
-		})
+		.sort(order)
 		.select(fieldSelection)
 		.exec(function (err, transactions) {
 
-				if (err) {
+			if (err) {
 
-					logger.error('Getting all transactions failed!');
-					res.status(400).send(err); // TODO Check error type
+				// TODO Check error type
+				logger.error('Getting all transactions failed!');
+				logger.error(err);
+				res.status(400).send(err);
 
+			} else {
+
+				if (_.isEmpty(transactions)) {
+					logger.warn('No transaction has been found');
 				} else {
-
-					if (_.isNull(transactions)) {
-
-						logger.warn('No transaction has been found');
-						res.status(400);
-
-					} else {
-
-						logger.info('Success of getting all transactions');
-						res.status(200);
-
-					}
-
-					res.json(transactions);
-
+					logger.info('Success of getting all transactions');
 				}
+
+				res.status(200).json(transactions);
 
 			}
 
-		);
+		});
 
 };
 
@@ -198,9 +254,11 @@ exports.update = function (req, res) {
 
 			if (err) {
 
+				// TODO Check error type
 				logger.error('Getting the transaction ' + transactionID +
 					' to update failed!');
-				res.status(400).send(err); // TODO Check error type
+				logger.error(err);
+				res.status(400).send(err);
 
 			} else {
 
@@ -213,17 +271,19 @@ exports.update = function (req, res) {
 
 				} else {
 
-					setTransactionFields(req, transaction);
-
 					logger.info('Success of getting the transaction ' + transactionID);
+
+					setTransactionFields(req.body, transaction);
 
 					transaction.save(function (err) {
 
 						if (err) {
 
+							// TODO Check error type
 							logger.error('Saving the updated transaction ' + transactionID +
 								' failed!');
-							res.status(400).send(err); // TODO Check error type
+							logger.error(err);
+							res.status(400).send(err);
 
 						} else {
 
@@ -256,17 +316,20 @@ exports.delete = function (req, res) {
 	logger.info('Deleting a specific transaction');
 
 	var transactionID = req.params.id;
+	var conditions = {
+		_id: transactionID
+	};
 
 	Transaction
-		.remove({
-			_id: transactionID
-		})
+		.remove(conditions)
 		.exec(function (err) {
 
 			if (err) {
 
+				// TODO Check error type
 				logger.error('Deleting the transaction ' + transactionID + ' failed!');
-				res.status(400).send(err); // TODO Check error type
+				logger.error(err);
+				res.status(400).send(err);
 
 			} else {
 

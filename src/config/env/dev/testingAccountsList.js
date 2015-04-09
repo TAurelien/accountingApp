@@ -11,10 +11,6 @@ module.exports = [
 		code: '1',
 		type: 'equity',
 		commodity: 'EUR',
-		balance: {
-			child: 2000,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: null,
@@ -29,10 +25,6 @@ module.exports = [
 		code: '12',
 		type: 'equity',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 2000
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eeeffbc1db710c291be44b',
@@ -49,10 +41,6 @@ module.exports = [
 		code: '2',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 14300,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: null,
@@ -65,10 +53,6 @@ module.exports = [
 		code: '21',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 5300,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c113',
@@ -81,10 +65,6 @@ module.exports = [
 		code: '211',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 3300
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c114',
@@ -97,10 +77,6 @@ module.exports = [
 		code: '212',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 2000
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c114',
@@ -113,10 +89,6 @@ module.exports = [
 		code: '22',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 9000,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c113',
@@ -129,10 +101,6 @@ module.exports = [
 		code: '221',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 9000
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c117',
@@ -145,10 +113,6 @@ module.exports = [
 		code: '222',
 		type: 'asset',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 0
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c117',
@@ -165,10 +129,6 @@ module.exports = [
 		code: '4',
 		type: 'liability',
 		commodity: 'EUR',
-		balance: {
-			child: 9300,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: null,
@@ -181,10 +141,6 @@ module.exports = [
 		code: '41',
 		type: 'liability',
 		commodity: 'EUR',
-		balance: {
-			child: 450,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c11a',
@@ -197,10 +153,6 @@ module.exports = [
 		code: '411',
 		type: 'liability',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 400
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c11b',
@@ -213,10 +165,6 @@ module.exports = [
 		code: '412',
 		type: 'liability',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 50
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c11b',
@@ -229,10 +177,6 @@ module.exports = [
 		code: '42',
 		type: 'liability',
 		commodity: 'EUR',
-		balance: {
-			child: 8850,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c11a',
@@ -245,10 +189,6 @@ module.exports = [
 		code: '421',
 		type: 'liability',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 8850
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c11e',
@@ -265,10 +205,6 @@ module.exports = [
 		code: '7',
 		type: 'income',
 		commodity: 'EUR',
-		balance: {
-			child: 4650,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: null,
@@ -281,10 +217,6 @@ module.exports = [
 		code: '71',
 		type: 'income',
 		commodity: 'EUR',
-		balance: {
-			child: 3650,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c120',
@@ -313,10 +245,6 @@ module.exports = [
 		code: '712',
 		type: 'income',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 650
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c121',
@@ -329,10 +257,6 @@ module.exports = [
 		code: '72',
 		type: 'income',
 		commodity: 'EUR',
-		balance: {
-			child: 1000,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c120',
@@ -365,10 +289,6 @@ module.exports = [
 		code: '6',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 1650,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: null,
@@ -381,10 +301,6 @@ module.exports = [
 		code: '61',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 1150,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c126',
@@ -397,10 +313,6 @@ module.exports = [
 		code: '611',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 800
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c127',
@@ -413,10 +325,6 @@ module.exports = [
 		code: '612',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 50
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c127',
@@ -429,10 +337,6 @@ module.exports = [
 		code: '613',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 300
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c127',
@@ -445,10 +349,6 @@ module.exports = [
 		code: '62',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 500,
-			own: 0
-		},
 		placeholder: true,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c126',
@@ -461,10 +361,6 @@ module.exports = [
 		code: '621',
 		type: 'expense',
 		commodity: 'EUR',
-		balance: {
-			child: 0,
-			own: 500
-		},
 		placeholder: false,
 		closed: false,
 		parent: '54eef4ba4326bb0c13b2c12b',

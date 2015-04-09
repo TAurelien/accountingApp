@@ -8,6 +8,8 @@ var _ = require('lodash');
 var async = require('async');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var path = require('path');
+var Amount = require(path.join(global.app.paths.controllersDir, './amount/amount.controller'));
 
 // Schema definition ==========================================================
 
@@ -104,15 +106,107 @@ var AccountSchema = new Schema({
  * Compute the balance of an account based on his transactions.
  * The balance is provided in the callback function.
  *
- * @param  {Number}   ownBalance TEMPORARY WILL BE REMOVE.
+ * @param  {String}   accountID The id of the account to compute balance.
  * @param  {Function} callback   Callback function.
  */
-function computeOwnBalance(ownBalance, callback) {
+function computeOwnBalance(accountID, nameRef, callback) {
 
-	// TODO Remove the ownBalance variable while computation will be possible
-	logger.info('computeOwnBalance - Getting the transactions balance');
+	// Check arguments
+	if ((_.isNull(callback) || !_.isFunction(callback)) && _.isFunction(nameRef)) {
+		callback = nameRef;
+	}
 
-	callback(null, ownBalance);
+	if (!_.isString(nameRef)) {
+		nameRef = accountID;
+	}
+
+	logger.info('computeOwnBalance - Getting the transactions balance of the account ' + nameRef);
+
+	var ownBalance = Object.create(Amount);
+	ownBalance.init(0, 100, 'EUR');
+	// TODO Deal with initialization of Amount object
+
+	var conditions = {};
+	conditions.splits = {
+		$elemMatch: {
+			account: accountID
+		}
+	};
+
+	mongoose.model('Transaction')
+		.find(conditions)
+		.exec(function (err, transactions) {
+
+			if (err) {
+
+				logger.error('Getting the transactions of the account ' + nameRef + ' failed');
+				callback(err);
+
+			} else if (_.isEmpty(transactions)) {
+
+				logger.warn('No transaction has been found for the account ' +
+					nameRef);
+				callback(null, ownBalance);
+
+			} else {
+
+				logger.info('Success of getting the transactions of the account ' + nameRef);
+
+				async.each(
+					_.toArray(transactions),
+
+					function (transaction, asyncCallback) {
+
+						var transactionID = transaction._id;
+
+						try {
+
+							_.forEach(transaction.splits, function (split) {
+								if (split.account + '' === accountID + '') {
+
+									var splitAmount = Object.create(Amount);
+									splitAmount.preciseValue = split.amount[0].value;
+									splitAmount.scale = split.amount[0].scaleFactor;
+									splitAmount.currency = split.currency;
+
+									ownBalance.add(splitAmount);
+
+								}
+							});
+
+						} catch (err) {
+
+							logger.error('There was an error while adding the amount of the transaction ' + transactionID + ' to the balance of the account ' + nameRef);
+							asyncCallback(err);
+							return;
+
+						}
+
+						asyncCallback(null);
+
+					},
+
+					function (err) {
+
+						if (err) {
+
+							logger.error('Getting the own balance for the account ' + nameRef + ' failed!');
+							callback(err);
+
+						} else {
+
+							logger.info('Own balance for the account ' + nameRef + ' = ' + ownBalance);
+							callback(null, ownBalance);
+
+						}
+
+					}
+
+				);
+
+			}
+
+		});
 
 }
 
@@ -123,48 +217,106 @@ function computeOwnBalance(ownBalance, callback) {
  * @param  {String}   accountID The id of the account to compute balance.
  * @param  {Function} callback  Callback function.
  */
-function computeChildBalance(accountID, callback) {
+function computeChildBalance(accountID, nameRef, callback) {
 
-	logger.info('computeChildBalance - Getting the childs balance');
+	// Check arguments
+	if ((_.isNull(callback) || !_.isFunction(callback)) && _.isFunction(nameRef)) {
+		callback = nameRef;
+	}
+
+	if (!_.isString(nameRef)) {
+		nameRef = accountID;
+	}
+
+	logger.info('computeChildBalance - Getting the childs balance of the account ' + nameRef);
+
+	var globalChildBalance = Object.create(Amount);
+	globalChildBalance.init(0, 100, 'EUR');
+	// TODO Deal with initialization of Amount object
 
 	var conditions = {
 		parent: accountID
 	};
 
-	mongoose.model('Account').find(conditions, function (err, childs) {
+	mongoose.model('Account')
+		.find(conditions)
+		.exec(function (err, childs) {
 
-		var childArray = [];
+			if (err) {
 
-		_.forIn(childs, function (child) {
-			childArray.push(child);
-		});
+				logger.error('Getting the child accounts of the account ' + nameRef + ' failed!');
+				callback(err);
 
-		async.map(
-			childArray,
+			} else if (_.isEmpty(childs)) {
 
-			function (child, asyncCallback) {
+				logger.warn('No child account has been found for the account ' + nameRef);
+				callback(null, globalChildBalance);
 
-				child.getBalance(function (err, balance) {
-					asyncCallback(err, balance);
-				});
+			} else {
 
-			},
+				logger.info('Success of getting the child accounts of the account ' + nameRef);
 
-			function (err, results) {
+				async.each(
+					_.toArray(childs),
 
-				var globalChildBalance = 0;
+					function (child, asyncCallback) {
 
-				_(results).forEach(function (childBalance) {
-					globalChildBalance += childBalance;
-				});
+						var childID = child._id;
+						var childName = child.name;
+						var childNameRef = childName + ' (' + childID + ')';
 
-				callback(err, globalChildBalance);
+						child.getBalance(function (err, childBalance) {
+
+							if (err) {
+
+								logger.error('Computing the balance of the child account ' + childNameRef + ' of ' + nameRef + ' failed!');
+								asyncCallback(err);
+
+							} else {
+
+								logger.info('The balance for the child account ' + childNameRef + ' of ' + nameRef + ' = ' + childBalance);
+
+								try {
+
+									globalChildBalance.add(childBalance);
+
+								} catch (err) {
+
+									logger.error('There was an error while adding the balance of the child account ' + childNameRef + ' of ' + nameRef + ' to its global child balance');
+									asyncCallback(err);
+									return;
+
+								}
+
+								asyncCallback(null);
+
+							}
+
+						});
+
+					},
+
+					function (err) {
+
+						if (err) {
+
+							logger.error('Getting the global child balance for the account ' + nameRef + ' failed!');
+							callback(err);
+
+						} else {
+
+							logger.info('Global child balance for the account ' + nameRef + ' = ' + globalChildBalance);
+							callback(null, globalChildBalance);
+
+						}
+
+					}
+
+				);
 
 			}
 
-		);
-
-	});
+		});
 
 }
 
@@ -177,44 +329,99 @@ function computeChildBalance(accountID, callback) {
  */
 AccountSchema.methods.getBalance = function (callback) {
 
-	var ownBalance = this.balance.own;
 	var accountID = this._id;
 	var name = this.name;
+	var nameRef = name + ' (' + accountID + ')';
 
-	logger.info('getBalance - Computing the account balance of ' + name);
+	logger.info('getBalance - Computing the balance of the account ' + nameRef);
+
+	var globalBalance = Object.create(Amount);
+	globalBalance.init(0, 100, 'EUR');
+	// TODO Deal with initialization of Amount object
 
 	async.parallel([
 
 			function (asyncCallback) {
 
-				computeOwnBalance(ownBalance, function (err, transactionsBalance) {
-					logger.info('Transaction balance for ' + name + ' = ' + transactionsBalance);
-					asyncCallback(err, transactionsBalance);
+				computeOwnBalance(accountID, nameRef, function (err, ownBalance) {
+
+					if (err) {
+
+						logger.error('Computing the transaction balance of the account ' + nameRef + ' failed!');
+						asyncCallback(err);
+
+					} else {
+
+						logger.info('Transaction balance for the account ' + nameRef + ' = ' + ownBalance);
+
+						try {
+
+							globalBalance.add(ownBalance);
+
+						} catch (err) {
+
+							logger.error('There was an error while adding the transaction balance of the account ' + nameRef + ' to its global balance');
+							asyncCallback(err);
+							return;
+
+						}
+
+						asyncCallback(null);
+
+					}
+
 				});
 
 			},
 
 			function (asyncCallback) {
 
-				computeChildBalance(accountID, function (err, childBbalance) {
-					logger.info('Child balance for ' + name + ' = ' + childBbalance);
-					asyncCallback(err, childBbalance);
+				computeChildBalance(accountID, nameRef, function (err, childBalance) {
+
+					if (err) {
+
+						logger.error('Computing the child balance of the account ' + nameRef + ' failed!');
+						asyncCallback(err);
+
+					} else {
+
+						logger.info('Child balance for the account ' + nameRef + ' = ' + childBalance);
+
+						try {
+
+							globalBalance.add(childBalance);
+
+						} catch (err) {
+
+							logger.error('There was an error while adding the own balance of the account ' + nameRef + ' to its global balance');
+							asyncCallback(err);
+							return;
+
+						}
+
+						asyncCallback(null);
+
+					}
+
 				});
 
 			}
 
 		],
 
-		function (err, results) {
+		function (err) {
 
-			var globalBalance = 0;
+			if (err) {
 
-			_.forIn(results, function (childAndOwnBalance) {
-				globalBalance += childAndOwnBalance;
-			});
-			logger.info('Global balance for ' + name + ' = ' + globalBalance);
+				logger.error('Computing the balance of the account ' + nameRef + ' failed!');
+				callback(err);
 
-			callback(err, globalBalance);
+			} else {
+
+				logger.info('Global balance for the account ' + nameRef + ' = ' + globalBalance);
+				callback(null, globalBalance);
+
+			}
 
 		});
 
@@ -227,9 +434,12 @@ AccountSchema.methods.getBalance = function (callback) {
  */
 AccountSchema.methods.getOwnBalance = function (callback) {
 
-	logger.info('getOwnBalance - Getting the transactions balance');
+	var accountID = this._id;
+	var name = this.name;
+	var nameRef = name + ' (' + accountID + ')';
 
-	computeOwnBalance(this.balance.own, callback);
+	logger.info('getOwnBalance - Getting the transactions balance of the account ' + nameRef);
+	computeOwnBalance(accountID, nameRef, callback);
 
 };
 
@@ -240,9 +450,12 @@ AccountSchema.methods.getOwnBalance = function (callback) {
  */
 AccountSchema.methods.getChildBalance = function (callback) {
 
-	logger.info('getChildBalance - Getting the childs balance');
+	var accountID = this._id;
+	var name = this.name;
+	var nameRef = name + ' (' + accountID + ')';
 
-	computeChildBalance(this._id, callback);
+	logger.info('getChildBalance - Getting the childs balance of the account ' + nameRef);
+	computeChildBalance(accountID, nameRef, callback);
 
 };
 
@@ -262,19 +475,48 @@ AccountSchema.pre('save', function (next) {
 
 	// level management -------------------------------------------------------
 
+	// TODO (2) Rework the level management while pre-saving an account
+
 	var accountId = this._id;
 
 	if (this.parent) {
-		mongoose.model('Account').findById(this.parent, function (err, parent) {
-			if (!err && accountId && parent) {
-				var newLevel = parent.level + 1;
-				mongoose.model('Account').findByIdAndUpdate(accountId, {
-					level: newLevel
-				}, {
-					new: true
-				}).exec();
-			}
-		});
+
+		mongoose.model('Account')
+			.findById(this.parent)
+			.exec(function (err, parent) {
+
+				if (err) {
+
+					logger.error('Getting the parent of account while pre-saving failed!');
+					logger.error(err);
+
+				} else {
+
+					if (accountId && parent) {
+
+						var update = {
+							level: parent.level + 1
+						};
+						var options = {
+							new: true
+						};
+
+						mongoose.model('Account')
+							.findByIdAndUpdate(accountId, update, options)
+							.exec(function (err) {
+
+								if (err) {
+									logger.error('Error while updating myself!');
+									logger.error(err);
+								}
+
+							});
+
+					}
+
+				}
+
+			});
 	}
 
 	// ------------------------------------------------------------------------
