@@ -1,0 +1,28 @@
+{
+
+	/*A properties file is required. Use this one as an example. 
+	Update the values accordingly to your environment and
+	rename the file properties.json*/
+
+	/*For environment specific properties, create a sub-folder corresponding
+	to your environment and add a properties.json with the specific values.
+	A merge will be done with the default ones.*/
+
+	"app": {
+		"title": "Accounting app",
+		"description": "Double-entry accounting application"
+	},
+
+	"server": {
+		"host": "localhost",
+		"port": 8081 // Mandatory
+	},
+
+	"db": {
+		"host": "your_production_host",
+		"port": "27017",
+		"database": "your_production_database_name",
+		"url": "mongodb://your_production_host/your_production_database_name" // Mandatory
+	}
+
+}
