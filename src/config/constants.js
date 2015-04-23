@@ -3,11 +3,20 @@
 
 var _ = require('lodash');
 
-module.exports = _.extend(
+function extractConstantCodesAsArray(constantsArray) {
+	var returnedArray = [];
+	_.forEach(constantsArray, function (item) {
+		returnedArray.push(item.code);
+	});
+	return returnedArray;
+}
 
-	// TODO Get all the files in the folder
+var constants = {};
 
-	require('./data/accountTypes.constant'),
-	require('./data/commodities.constant')
+constants.accountTypes = require('../../data/accountTypes.json');
+constants.accountTypeAsArray = extractConstantCodesAsArray(constants.accountTypes);
 
-);
+constants.currencies = require('../../data/currencies.json');
+currenciesAsArray = extractConstantCodesAsArray(constants.currencies);
+
+module.exports = constants;

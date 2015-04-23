@@ -53,12 +53,12 @@ var AccountSchema = new Schema({
 		default: ''
 	},
 
-	commodity: {
+	currency: {
 		type: String,
 		trim: true,
 		default: '',
 		required: true,
-		enum: constants.commoditiesAsArray
+		enum: constants.currenciesAsArray
 	},
 
 	balance: {
