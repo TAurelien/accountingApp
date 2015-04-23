@@ -23,6 +23,10 @@
 		"port": "27017",
 		"database": "your_production_database_name",
 		"url": "mongodb://your_production_host/your_production_database_name" // Mandatory
+	},
+
+	"plugins": {
+		"path": "../plugins" // Absolute path or relative to server.js
 	}
 
 }
