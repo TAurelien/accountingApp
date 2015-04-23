@@ -1,23 +1,23 @@
 [
 
 	{
-		"code": "equity",
+		"code": "equity"
 	},
 
 	{
-		"code": "asset",
+		"code": "asset"
 	},
 
 	{
-		"code": "liability",
+		"code": "liability"
 	},
 
 	{
-		"code": "income",
+		"code": "income"
 	},
 
 	{
-		"code": "expense",
+		"code": "expense"
 	}
 
 ]

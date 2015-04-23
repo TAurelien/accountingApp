@@ -17,6 +17,6 @@ constants.accountTypes = require('../../data/accountTypes.json');
 constants.accountTypeAsArray = extractConstantCodesAsArray(constants.accountTypes);
 
 constants.currencies = require('../../data/currencies.json');
-currenciesAsArray = extractConstantCodesAsArray(constants.currencies);
+constants.currenciesAsArray = extractConstantCodesAsArray(constants.currencies);
 
 module.exports = constants;
