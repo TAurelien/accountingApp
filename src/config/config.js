@@ -6,28 +6,32 @@ var logger = require(global.app.logger)('Config');
 var _ = require('lodash');
 var path = require('path');
 var mongoose = require('mongoose');
+var env = process.env.NODE_ENV;
+var allEnvConfig = require('./env/all');
+var currentEnvConfig = require('./env/' + env);
 
 // Module export ==============================================================
 
-// Export objects from environment definitions --------------------------------
-var envDef = _.extend(
+// Export application properties ----------------------------------------------
 
-	require('./env/all'),
-	require('./env/' + process.env.NODE_ENV) || {}
-
-);
-
-module.exports = envDef;
+var properties = require('../../properties/properties.json');
+if (env !== 'production') {
+	var envProperties = require('../../properties/' + env + '/properties.json');
+	_.merge(properties, envProperties);
+}
+module.exports.properties = properties;
 
 // Private functions ==========================================================
 
 /**
  * Connect to the database.
  *
- * @param  {String}   dbUrl    The database url.
- * @param  {Function} callback Callback function.
+ * @param  {Object}   dbProperties The database properties.
+ * @param  {Function} callback     Callback function.
  */
-function connectDB(dbUrl, callback) {
+function connectDB(dbProperties, callback) {
+
+	var dbUrl = dbProperties.url;
 
 	logger.info('Connecting to db ' + dbUrl);
 
@@ -58,8 +62,27 @@ function connectDB(dbUrl, callback) {
  */
 module.exports.init = function () {
 
-	logger.info('Global initialization of configuration');
+	logger.info('-----------------------------------------------------------');
+	logger.info('ENVIRONMENT');
+	logger.info('	' + env);
+	logger.info();
+	logger.info('APPLICATION');
+	logger.info('	Title: ' + properties.app.title);
+	logger.info('	Description: ' + properties.app.description);
+	logger.info();
+	logger.info('SERVER');
+	logger.info('	Host: ' + properties.server.host);
+	logger.info('	Port: ' + properties.server.port);
+	logger.info();
+	logger.info('DATABASE');
+	logger.info('	Host: ' + properties.db.host);
+	logger.info('	Port: ' + properties.db.port);
+	logger.info('	Database: ' + properties.db.database);
+	logger.info('	URL: ' + properties.db.url);
+	logger.info('-----------------------------------------------------------');
+	logger.info();
 
+	// TODO Remove global app variables
 	// Useful data stored in global variables ---------------------------------
 
 	global.app.utils = path.join(__dirname, '/utils');
@@ -80,23 +103,21 @@ module.exports.init = function () {
 
 	// Application environnement configuration --------------------------------
 
-	envDef.initAll();
-
-	envDef.initEnv();
+	allEnvConfig.preDBConnectionConfig();
+	currentEnvConfig.preDBConnectionConfig();
 
 	// Database connection ----------------------------------------------------
 
-	connectDB(envDef.db.url, function (err) {
+	connectDB(properties.db, function (err) {
 
 		// Post DB connection configuration -------------------------------
 
 		if (!err) {
 
-			logger.info('Post DB connection configuration after success');
+			logger.info('Post success DB connection configuration');
 
-			envDef.initAllPostDBConnection();
-
-			envDef.initEnvPostDBConnection();
+			allEnvConfig.postSuccessDBConnectionConfig();
+			currentEnvConfig.postSuccessDBConnectionConfig();
 
 			// Set the status information
 			global.app.status.initialConfig = 'completed';
@@ -104,7 +125,10 @@ module.exports.init = function () {
 
 		} else {
 
-			logger.info('Post DB connection configuration after failure');
+			logger.info('Post failure DB connection configuration');
+
+			allEnvConfig.postFailureDBConnectionConfig();
+			currentEnvConfig.postFailureDBConnectionConfig();
 
 			// Set the status information
 			global.app.status.initialConfig = 'preDBConnection';
