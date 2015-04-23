@@ -7,11 +7,12 @@ var publicDir = 'public';
 var libDir = 'lib';
 var binDir = 'bin';
 
-var properties = require('./' + binDir + '/properties.json');
-
 module.exports = function (grunt) {
 
+	var properties = require('./properties/properties.json');
+
 	var binFiles = {
+
 		serverFiles: [
 			binDir + '/**/*.js',
 			binDir + '/**/*.json',
@@ -37,6 +38,7 @@ module.exports = function (grunt) {
 			binDir + '/**/' + publicDir + '/**/*.scss',
 			'!' + binDir + '/**/' + publicDir + '/**/' + libDir
 		]
+
 	};
 
 	var srcFiles = {
@@ -69,8 +71,9 @@ module.exports = function (grunt) {
 
 	};
 
-	var dataCollections = {
+	var mongoDataCollections = {
 
+		// TODO Turn mongoDataCollection as a function that will get all the data from folder
 		all: [{
 			name: 'currencies',
 			type: 'json',
@@ -87,7 +90,7 @@ module.exports = function (grunt) {
 			drop: true
 		}],
 
-		dev: [{
+		development: [{
 			name: 'generalLedgers',
 			type: 'json',
 			file: 'data/development/generalLedgers.json',
@@ -144,7 +147,7 @@ module.exports = function (grunt) {
 		watch: {
 			serverFiles: {
 				files: srcFiles.serverFiles,
-				tasks: ['modif'],
+				tasks: ['jshint:modif', 'sync'],
 				options: {
 					livereload: false,
 					spawn: false
@@ -152,7 +155,7 @@ module.exports = function (grunt) {
 			},
 			clientViews: {
 				files: srcFiles.clientViews,
-				tasks: ['modif'],
+				tasks: ['jshint:modif', 'sync'],
 				options: {
 					livereload: true,
 					spawn: false
@@ -160,7 +163,7 @@ module.exports = function (grunt) {
 			},
 			clientJS: {
 				files: srcFiles.clientJS,
-				tasks: ['modif'],
+				tasks: ['jshint:modif', 'sync'],
 				options: {
 					livereload: true,
 					spawn: false
@@ -168,7 +171,7 @@ module.exports = function (grunt) {
 			},
 			clientCSS: {
 				files: srcFiles.clientCSS,
-				tasks: ['modif'],
+				tasks: ['jshint:modif', 'sync'],
 				options: {
 					livereload: true,
 					spawn: false
@@ -176,7 +179,7 @@ module.exports = function (grunt) {
 			},
 			clientSCSS: {
 				files: srcFiles.clientSCSS,
-				tasks: ['modif'],
+				tasks: ['jshint:modif', 'sync'],
 				options: {
 					livereload: true,
 					spawn: false
@@ -227,11 +230,11 @@ module.exports = function (grunt) {
 
 		mongoimport: {
 			options: {
-				db: properties.dev.db.database,
-				host: properties.dev.db.host,
-				port: properties.dev.db.port,
+				db: null,
+				host: null,
+				port: null,
 				stopOnError: false,
-				collections: dataCollections.dev
+				collections: null
 			}
 		},
 
@@ -266,7 +269,7 @@ module.exports = function (grunt) {
 					'web-host': 'localhost',
 					'debug-port': 5858,
 					'save-live-edit': true,
-					'no-preload': true,
+					'no-preload': false,
 					'stack-trace-limit': 50,
 					'hidden': []
 				}
@@ -331,26 +334,57 @@ module.exports = function (grunt) {
 	// Making grunt default to force in order not to break the project.
 	grunt.option('force', true);
 
-	// A Task for loading the configuration object
-	// Check Yo project
+	grunt.registerTask('setupEnvProperties', function () {
 
-	// Initialization tasks
+		var env = process.env.NODE_ENV;
+		console.log('Environment : ' + env);
+		if (!env) {
+			env = process.env.NODE_ENV = 'development';
+		}
+		if (env !== 'production') {
+			var envProperties = require('./properties/' + env + '/properties.json');
+			_.merge(properties, envProperties);
+		}
+
+	});
+
+	grunt.registerTask('setupMongoImportConf', function () {
+
+		var mongoImportOptions = {
+			db: properties.db.database,
+			host: properties.db.host,
+			port: properties.db.port,
+			stopOnError: false,
+			collections: mongoDataCollections[process.env.NODE_ENV]
+		};
+
+		grunt.config('mongoimport.options', mongoImportOptions);
+
+	});
+
+	// TODO Add the open grunt plugin to open directly node-inspector and/or app front-end
+
+	// Alias tasks
 	grunt.registerTask('lint', ['jshint:all']);
-	grunt.registerTask('init', ['lint', 'sync:default']);
-	grunt.registerTask('modif', ['jshint:modif', 'sync:default']);
-	grunt.registerTask('setup_dev_db', ['mongoimport'])
+	grunt.registerTask('populateDB', ['setupMongoImportConf', 'mongoimport'])
+	grunt.registerTask('setDevEnv', ['env:dev', 'setupEnvProperties', 'populateDB']);
+	grunt.registerTask('setTestEnv', ['env:test', 'setupEnvProperties', 'populateDB']);
 
-	// Starting tasks
-	grunt.registerTask('default', ['env:dev', 'setup_dev_db', 'init', 'concurrent:default']);
-	grunt.registerTask('debug', ['env:dev', 'setup_dev_db', 'init', 'concurrent:debug']);
-	grunt.registerTask('debugbrk', ['env:dev', 'setup_dev_db', 'init', 'concurrent:debugbrk']);
+	// Dev tasks
+	grunt.registerTask('initDev', ['setDevEnv', 'lint', 'sync']);
+	grunt.registerTask('dev', ['initDev', 'concurrent:default']);
+	grunt.registerTask('devDebug', ['initDev', 'concurrent:debug']);
+	grunt.registerTask('devDebugbrk', ['initDev', 'concurrent:debugbrk']);
 
-	// Testing tasks
+	// Test tasks
 	// TODO Define grunt test tasks
-	//grunt.registerTask('test', ['env:test', 'lint']);
+	grunt.registerTask('test', ['setTestEnv', 'lint', 'sync']);
 
 	// Build / Release tasks
 	// TODO Define grunt build tasks
-	//grunt.registerTask('test', ['env:prod', 'setup_test_db', 'lint']);
+	// TODO Define grunt release tasks
+	grunt.registerTask('release', []);
+
+	grunt.registerTask('default', ['dev']);
 
 };
