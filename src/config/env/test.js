@@ -1,8 +1,8 @@
-/** @module Env Dev */
+/** @module Env Test */
 'use strict';
 
 // Module dependencies ========================================================
-var logger = require(global.app.logger)('Test Dev');
+var logger = require(global.app.logger)('Env Test');
 
 // Exported functions =========================================================
 

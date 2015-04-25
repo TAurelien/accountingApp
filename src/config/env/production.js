@@ -1,8 +1,8 @@
-/** @module Env Dev */
+/** @module Env Prod */
 'use strict';
 
 // Module dependencies ========================================================
-var logger = require(global.app.logger)('Prod Dev');
+var logger = require(global.app.logger)('Env Prod');
 
 // Exported functions =========================================================
 
