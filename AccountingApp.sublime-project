@@ -9,18 +9,15 @@
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/properties",
-			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/properties"
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/data",
-			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/data"
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/src",
-			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/src"
 		},
 
 		{
@@ -29,8 +26,7 @@
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/test",
-			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/test"
 		}
 
 	],
