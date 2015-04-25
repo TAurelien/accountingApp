@@ -270,7 +270,7 @@ module.exports = function (grunt) {
 					'save-live-edit': false,
 					'no-preload': false,
 					'stack-trace-limit': 4,
-					'hidden': ["node_modules/**/*", "src/**/*"]
+					'hidden': ["node_modules", "src", "releases", "test", "data", "properties"]
 				}
 			}
 		},
@@ -301,6 +301,26 @@ module.exports = function (grunt) {
 			custom: {
 				path: null,
 				app: 'chrome'
+			}
+		},
+
+		release: {
+			options: {
+				changelog: true,
+				changelogText: '\n### v<%= version %>\n',
+				add: true,
+				commit: true,
+				tag: true,
+				tagName: 'v<%= version %>',
+				commitMessage: 'Release <%= version %>',
+				pushTag: true,
+				npm: false,
+				indentation: '\t',
+				github: {
+					repo: null,
+					usernameVar: null,
+					passwordVar: null
+				}
 			}
 		}
 
@@ -385,6 +405,25 @@ module.exports = function (grunt) {
 		}
 	});
 
+	grunt.registerTask('setupReleaseGithub', function () {
+		setupEnvProperties();
+		var github = {
+			repo: properties.tools.github.repo,
+			usernameVar: properties.tools.github.username,
+			passwordVar: properties.tools.github.password
+		};
+		grunt.config('release.options.github', github);
+	});
+
+	grunt.registerTask('releaseApp', function (type) {
+		grunt.task.run('setupReleaseGithub');
+		if (type) {
+			grunt.task.run('release:' + type);
+		} else {
+			grunt.task.run('release');
+		}
+	});
+
 	// Alias tasks
 	grunt.registerTask('lint', ['jshint:all']);
 	grunt.registerTask('populateDB', ['setupMongoImportConf', 'mongoimport']);
@@ -406,8 +445,6 @@ module.exports = function (grunt) {
 
 	// Build / Release tasks
 	// TODO @grunt Define grunt build tasks
-	// TODO @grunt Define grunt release tasks
-	grunt.registerTask('release', []);
 
 	grunt.registerTask('default', ['dev']);
 

@@ -6,7 +6,7 @@
 		"accounting"
 	],
 	"private": true,
-	"author": "",
+	"author": "TAurelien",
 	"contributor": [],
 	"license": "MIT",
 	"engines": {
@@ -15,14 +15,11 @@
 	},
 	"main": "bin/server.js",
 	"scripts": {
-		"start": "bin/server.js",
-		"dev": "grunt dev",
-		"test": "grunt test",
 		"postinstall": "bower install --config.interactive=false"
 	},
 	"repository": {
 		"type": "git",
-		"url": ""
+		"url": "https://github.com/TAurelien/accountingApp.git"
 	},
 	"dependencies": {
 		"async": "0.x",

@@ -5,7 +5,7 @@
 		{
 			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp",
 			"file_exclude_patterns": ["*.sublime-*", "*.cache"],
-			"folder_exclude_patterns": ["bin", "properties", "plugins", "dist", "node_modules", "src", "test", "data"]
+			"folder_exclude_patterns": ["bin", "properties", "plugins", "dist", "releases", "node_modules", "src", "test", "data"]
 		},
 
 		{

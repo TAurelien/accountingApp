@@ -1,2 +1,11 @@
 Accounting App
-version 0.0.1
+
+## Installation
+
+```bash
+$ npm install
+```
+
+## License
+
+  [MIT](LICENSE)
