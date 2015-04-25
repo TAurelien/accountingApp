@@ -1,46 +1,43 @@
-'use-strict';
-/* jshint unused:false */
+/** @module Server */
+'use strict';
 
-// modules =====================================================================
-var express        = require('express');
-var app            = express();
-var mongoose       = require('mongoose');
-var bodyParser     = require('body-parser');
-var methodOverride = require('method-override');
+// Module dependencies ========================================================
+var path = require('path');
 
+// Server definition ==========================================================
 
-// configuration ===============================================================
+// TODO Remove use of global app variable
+// Define a global app variable
+global.app = {};
+global.app.logger = path.join(__dirname, '/config/logger');
 
-// config files
+// Initialization of the environment if missing
+var env = process.env.NODE_ENV;
+if (!env) {
+	env = process.env.NODE_ENV = 'production';
+}
 
-// set our port
-var port = process.env.PORT || 8080;
+var logger = require(global.app.logger)('Server');
+logger.info('Starting application');
+logger.info();
+logger.info('-----------------------------------------------------------');
+logger.info('Application loading as a "' + env + '" environment');
+logger.info('-----------------------------------------------------------');
+logger.info();
 
-// connect to our mongoDB database
-// mongoose.connect(db.url);
+// Configure the application --------------------------------------------------
+var config = require('./config/config');
+var properties = config.properties;
+config.init();
 
-// get all data/stuff of the body (POST) parameters
-// --- parse application/json
-app.use(bodyParser.json());
+// Define the express application ---------------------------------------------
+var app = require('./config/express')();
 
-// --- parse application/vnd.api+json as json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+// Start the app --------------------------------------------------------------
+app.listen(properties.server.port);
 
-// --- parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
-app.use(methodOverride('X-HTTP-Method-Override'));
-
-// set the static files location
-app.use(express.static(__dirname + '/public'));
-
-
-// routes ======================================================================
-require('./app/routes')(app);
-
-
-// start app ===================================================================
-app.listen(port);
-console.log('Server started on port ' + port);
-exports = module.exports = app;
+logger.info();
+logger.info('-----------------------------------------------------------');
+logger.info(properties.app.title + ' started on port ' + properties.server.port);
+logger.info('-----------------------------------------------------------');
+logger.info();

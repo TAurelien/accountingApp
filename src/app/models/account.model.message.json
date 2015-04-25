@@ -1,0 +1,39 @@
+{
+
+	"info": {
+
+		"1": "computeOwnBalance - Getting the transactions balance",
+		"2": "Success of getting account\"s transactions",
+		"3": "computeChildBalance - Getting the childs balance",
+		"4": "getBalance - Computing the account balance of {name}",
+		"5": "Transaction balance for {name} = {transactionsBalance}",
+		"6": "Child balance for {name} = {childBbalance}",
+		"7": "getOwnBalance - Getting the transactions balance",
+		"8": "getChildBalance - Getting the childs balance",
+		"9": "Saved account {account.name} with _id : {account._id}"
+
+	},
+
+	"error": {
+
+		"1": "Getting transactions failed",
+		"2": "There was an error getting the amount of the transaction {transaction._id}",
+		"3": "There was an error computing the own balance of the account {accountID}",
+		"4": "Getting accounts failed!",
+		"5": "Getting balance of child accounts failed!",
+		"6": "Computing the own balance of the account failed!",
+		"7": "Computing the child balance of the account failed!",
+		"8": "Getting the balance of the account failed!",
+		"9": "Getting the parent of account while pre-saving failed!",
+		"10": "Error while updating myself!"
+
+	},
+
+	"warning": {
+
+		"1": "No transaction has been found",
+		"2": "No account has been found"
+
+	}
+
+}

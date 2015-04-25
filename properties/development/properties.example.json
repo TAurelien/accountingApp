@@ -1,0 +1,18 @@
+{
+
+	"app": {
+		"title": "[DEV] Accounting app"
+	},
+
+	"db": {
+		"host": "your_development_host",
+		"database": "your_development_database_name",
+		"url": "mongodb://your_development_host/your_development_database_name"
+	},
+
+	"github": {
+		"username": "",
+		"password": ""
+	}
+
+}

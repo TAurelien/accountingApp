@@ -1,0 +1,51 @@
+{
+
+	"folders": [
+
+		{
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp",
+			"file_exclude_patterns": ["*.sublime-*", "*.cache"],
+			"folder_exclude_patterns": ["bin", "properties", "plugins", "dist", "node_modules", "src", "test", "data"]
+		},
+
+		{
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/properties"
+		},
+
+		{
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/data"
+		},
+
+		{
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/src"
+		},
+
+		{
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/plugins",
+			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
+		},
+
+		{
+			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/test"
+		}
+
+	],
+
+	"settings": {
+
+		"todoreview": {
+			"exclude_folders": [
+				"*.git*",
+				"*bin*",
+				"*node_modules*"
+			],
+			"render_include_folder": false
+		},
+
+		"jsformat": {
+			"format_on_save": false
+		}
+
+	}
+
+}

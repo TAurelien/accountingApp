@@ -1,0 +1,13 @@
+{
+
+	"app": {
+		"title": "[TEST] Accounting app"
+	},
+
+	"db": {
+		"host": "your_test_host",
+		"database": "your_test_database_name",
+		"url": "mongodb://your_test_host/your_test_database_name"
+	}
+
+}

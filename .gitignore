@@ -3,11 +3,13 @@
 .sass-cache/
 npm-debug.log
 node_modules/
-public/lib
+**/lib
+**/libs
 app/tests/coverage/
 .bower-*/
 .idea/
 dist/
-src/public/assets/libs/
-*.sublime-project
+bin/
+properties/**/properties.json
 *.sublime-workspace
+*.sublime-grunt.cache
