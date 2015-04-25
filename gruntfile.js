@@ -14,8 +14,7 @@ module.exports = function (grunt) {
 	var binFiles = {
 
 		serverFiles: [
-			binDir + '/**/*.js',
-			binDir + '/**/*.json',
+			binDir + '/**/*',
 			'!' + binDir + '/**/' + publicDir
 		],
 
@@ -73,7 +72,7 @@ module.exports = function (grunt) {
 
 	var mongoDataCollections = {
 
-		// TODO Turn mongoDataCollection as a function that will get all the data from folder
+		// TODO @grunt Turn mongoDataCollection as a function that will get all the data from folder
 		all: [{
 			name: 'currencies',
 			type: 'json',
@@ -263,23 +262,23 @@ module.exports = function (grunt) {
 		},
 
 		'node-inspector': {
-			custom: {
+			dev: {
 				options: {
 					'web-port': 1337,
 					'web-host': 'localhost',
 					'debug-port': 5858,
-					'save-live-edit': true,
+					'save-live-edit': false,
 					'no-preload': false,
-					'stack-trace-limit': 50,
-					'hidden': []
+					'stack-trace-limit': 4,
+					'hidden': ["node_modules/**/*", "src/**/*"]
 				}
 			}
 		},
 
 		concurrent: {
 			default: ['nodemon:default', 'watch'],
-			debug: ['nodemon:debug', 'watch', 'node-inspector'],
-			debugbrk: ['nodemon:debugbrk', 'watch', 'node-inspector'],
+			debug: ['nodemon:debug', 'watch', 'node-inspector', 'setOpen:nodeInspector'],
+			debugbrk: ['nodemon:debugbrk', 'watch', 'node-inspector', 'setOpen:nodeInspector'],
 			options: {
 				logConcurrentOutput: true,
 				limit: 10
@@ -295,6 +294,13 @@ module.exports = function (grunt) {
 			},
 			test: {
 				NODE_ENV: 'test'
+			}
+		},
+
+		open: {
+			custom: {
+				path: null,
+				app: 'chrome'
 			}
 		}
 
@@ -334,22 +340,23 @@ module.exports = function (grunt) {
 	// Making grunt default to force in order not to break the project.
 	grunt.option('force', true);
 
-	grunt.registerTask('setupEnvProperties', function () {
-
+	function setupEnvProperties() {
 		var env = process.env.NODE_ENV;
-		console.log('Environment : ' + env);
 		if (!env) {
 			env = process.env.NODE_ENV = 'development';
 		}
+		console.log('Environment : ' + env);
 		if (env !== 'production') {
 			var envProperties = require('./properties/' + env + '/properties.json');
 			_.merge(properties, envProperties);
 		}
+	}
 
+	grunt.registerTask('setupEnvProperties', function () {
+		setupEnvProperties();
 	});
 
 	grunt.registerTask('setupMongoImportConf', function () {
-
 		var mongoImportOptions = {
 			db: properties.db.database,
 			host: properties.db.host,
@@ -357,18 +364,35 @@ module.exports = function (grunt) {
 			stopOnError: false,
 			collections: mongoDataCollections[process.env.NODE_ENV]
 		};
-
 		grunt.config('mongoimport.options', mongoImportOptions);
-
 	});
 
-	// TODO Add the open grunt plugin to open directly node-inspector and/or app front-end
+	grunt.registerTask('setOpen', function (app) {
+		setupEnvProperties();
+		if (properties.tools[app].launchBrowser) {
+
+			var browser = 'chrome';
+			if (properties.tools.browser.cmd) {
+				browser = properties.tools.browser.cmd;
+			}
+
+			var config = {
+				path: properties.tools[app].url,
+				app: browser
+			};
+			grunt.config('open.custom', config);
+			grunt.task.run('open');
+		}
+	});
 
 	// Alias tasks
 	grunt.registerTask('lint', ['jshint:all']);
-	grunt.registerTask('populateDB', ['setupMongoImportConf', 'mongoimport'])
+	grunt.registerTask('populateDB', ['setupMongoImportConf', 'mongoimport']);
 	grunt.registerTask('setDevEnv', ['env:dev', 'setupEnvProperties', 'populateDB']);
 	grunt.registerTask('setTestEnv', ['env:test', 'setupEnvProperties', 'populateDB']);
+
+	// Misc tasks
+	grunt.registerTask('ungit', ['setOpen:ungit']);
 
 	// Dev tasks
 	grunt.registerTask('initDev', ['setDevEnv', 'lint', 'sync']);
@@ -377,12 +401,12 @@ module.exports = function (grunt) {
 	grunt.registerTask('devDebugbrk', ['initDev', 'concurrent:debugbrk']);
 
 	// Test tasks
-	// TODO Define grunt test tasks
+	// TODO @grunt Define grunt test tasks
 	grunt.registerTask('test', ['setTestEnv', 'lint', 'sync']);
 
 	// Build / Release tasks
-	// TODO Define grunt build tasks
-	// TODO Define grunt release tasks
+	// TODO @grunt Define grunt build tasks
+	// TODO @grunt Define grunt release tasks
 	grunt.registerTask('release', []);
 
 	grunt.registerTask('default', ['dev']);
