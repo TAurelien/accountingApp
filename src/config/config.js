@@ -7,8 +7,16 @@ var _ = require('lodash');
 var path = require('path');
 var mongoose = require('mongoose');
 var env = process.env.NODE_ENV;
-var allEnvConfig = require('./env/all');
-var currentEnvConfig = require('./env/' + env);
+
+var allEnvConfig = null;
+var currentEnvConfig = null;
+try {
+	allEnvConfig = require('./env/all');
+	currentEnvConfig = require('./env/' + env);
+} catch (err) {
+	logger.error('Environment configuration file missing !');
+	logger.error(err);
+}
 
 // Module export ==============================================================
 
@@ -103,8 +111,16 @@ module.exports.init = function () {
 
 	// Application environnement configuration --------------------------------
 
-	allEnvConfig.preDBConnectionConfig();
-	currentEnvConfig.preDBConnectionConfig();
+	if (allEnvConfig) {
+		allEnvConfig.preDBConnectionConfig();
+	} else {
+		logger.warn('Cannot run allEnvConfig.preDBConnectionConfig() as file is missing');
+	}
+	if (currentEnvConfig) {
+		currentEnvConfig.preDBConnectionConfig();
+	} else {
+		logger.warn('Cannot run currentEnvConfig.preDBConnectionConfig() as file is missing');
+	}
 
 	// Database connection ----------------------------------------------------
 
@@ -116,8 +132,16 @@ module.exports.init = function () {
 
 			logger.info('Post success DB connection configuration');
 
-			allEnvConfig.postSuccessDBConnectionConfig();
-			currentEnvConfig.postSuccessDBConnectionConfig();
+			if (allEnvConfig) {
+				allEnvConfig.postSuccessDBConnectionConfig();
+			} else {
+				logger.warn('Cannot run allEnvConfig.postSuccessDBConnectionConfig() as file is missing');
+			}
+			if (currentEnvConfig) {
+				currentEnvConfig.postSuccessDBConnectionConfig();
+			} else {
+				logger.warn('Cannot run currentEnvConfig.postSuccessDBConnectionConfig() as file is missing');
+			}
 
 			// Set the status information
 			global.app.status.initialConfig = 'completed';
@@ -127,8 +151,16 @@ module.exports.init = function () {
 
 			logger.info('Post failure DB connection configuration');
 
-			allEnvConfig.postFailureDBConnectionConfig();
-			currentEnvConfig.postFailureDBConnectionConfig();
+			if (allEnvConfig) {
+				allEnvConfig.postFailureDBConnectionConfig();
+			} else {
+				logger.warn('Cannot run allEnvConfig.postFailureDBConnectionConfig() as file is missing');
+			}
+			if (currentEnvConfig) {
+				currentEnvConfig.postFailureDBConnectionConfig();
+			} else {
+				logger.warn('Cannot run currentEnvConfig.postFailureDBConnectionConfig() as file is missing');
+			}
 
 			// Set the status information
 			global.app.status.initialConfig = 'preDBConnection';
