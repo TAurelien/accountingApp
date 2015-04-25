@@ -10,12 +10,13 @@
 	"contributor": [],
 	"license": "MIT",
 	"engines": {
-		"node": "0.10.x",
-		"npm": "1.4.x"
+		"node": "0.x",
+		"npm": "2.x"
 	},
 	"main": "bin/server.js",
 	"scripts": {
-		"start": "grunt",
+		"start": "bin/server.js",
+		"dev": "grunt dev",
 		"test": "grunt test",
 		"postinstall": "bower install --config.interactive=false"
 	},
