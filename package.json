@@ -1,57 +1,57 @@
 {
-	"name": "accounting-app",
-	"version": "0.0.1",
-	"description": "",
-	"keywords": [
-		"accounting"
-	],
-	"private": true,
-	"author": "TAurelien",
-	"contributor": [],
-	"license": "MIT",
-	"engines": {
-		"node": "0.x",
-		"npm": "2.x"
-	},
-	"main": "bin/server.js",
-	"scripts": {
-		"postinstall": "bower install --config.interactive=false"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/TAurelien/accountingApp.git"
-	},
-	"dependencies": {
-		"async": "0.x",
-		"body-parser": "1.x",
-		"bower": "1.x",
-		"express": "4.x",
-		"glob": "4.x",
-		"grunt-cli": "0.x",
-		"lodash": "3.x",
-		"method-override": "2.x",
-		"moment": "2.x",
-		"mongoose": "4.x",
-		"on-finished": "2.x",
-		"winston": "0.x"
-	},
-	"devDependencies": {
-		"grunt-concurrent": "1.x",
-		"grunt-contrib-clean": "0.x",
-		"grunt-contrib-copy": "0.x",
-		"grunt-contrib-csslint": "0.x",
-		"grunt-contrib-cssmin": "0.x",
-		"grunt-contrib-jshint": "0.x",
-		"grunt-contrib-uglify": "0.x",
-		"grunt-contrib-watch": "0.x",
-		"grunt-env": "0.x",
-		"grunt-mongoimport": "0.x",
-		"grunt-node-inspector": "0.x",
-		"grunt-nodemon": "0.x",
-		"grunt-open": "0.x",
-		"grunt-release": "0.x",
-		"grunt-shell-spawn": "0.x",
-		"grunt-sync": "0.x",
-		"load-grunt-tasks": "0.x"
-	}
+  "name": "accounting-app",
+  "version": "0.0.2",
+  "description": "",
+  "keywords": [
+    "accounting"
+  ],
+  "private": true,
+  "author": "TAurelien",
+  "contributor": [],
+  "license": "MIT",
+  "engines": {
+    "node": "0.x",
+    "npm": "2.x"
+  },
+  "main": "bin/server.js",
+  "scripts": {
+    "postinstall": "bower install --config.interactive=false"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TAurelien/accountingApp.git"
+  },
+  "dependencies": {
+    "async": "0.x",
+    "body-parser": "1.x",
+    "bower": "1.x",
+    "express": "4.x",
+    "glob": "4.x",
+    "grunt-cli": "0.x",
+    "lodash": "3.x",
+    "method-override": "2.x",
+    "moment": "2.x",
+    "mongoose": "4.x",
+    "on-finished": "2.x",
+    "winston": "0.x"
+  },
+  "devDependencies": {
+    "grunt-concurrent": "1.x",
+    "grunt-contrib-clean": "0.x",
+    "grunt-contrib-copy": "0.x",
+    "grunt-contrib-csslint": "0.x",
+    "grunt-contrib-cssmin": "0.x",
+    "grunt-contrib-jshint": "0.x",
+    "grunt-contrib-uglify": "0.x",
+    "grunt-contrib-watch": "0.x",
+    "grunt-env": "0.x",
+    "grunt-mongoimport": "0.x",
+    "grunt-node-inspector": "0.x",
+    "grunt-nodemon": "0.x",
+    "grunt-open": "0.x",
+    "grunt-release": "0.x",
+    "grunt-shell-spawn": "0.x",
+    "grunt-sync": "0.x",
+    "load-grunt-tasks": "0.x"
+  }
 }
