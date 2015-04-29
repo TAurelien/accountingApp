@@ -3,30 +3,30 @@
 	"folders": [
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp",
+			"path": "./",
 			"file_exclude_patterns": ["*.sublime-*", "*.cache"],
 			"folder_exclude_patterns": ["bin", "properties", "plugins", "dist", "releases", "node_modules", "src", "test", "data"]
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/properties"
+			"path": "./properties"
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/data"
+			"path": "./data"
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/src"
+			"path": "./src"
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/plugins",
+			"path": "./plugins",
 			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
 		},
 
 		{
-			"path": "/D/Documents/perso/Dev/Workspaces/AccountingApp/test"
+			"path": "./test"
 		}
 
 	],
