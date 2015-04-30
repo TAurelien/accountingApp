@@ -7,15 +7,17 @@ Accounting App
 * node.js
 * mongodb
 
-While launching with grunt, followings are required
-* npm nodemon
-* npm jshint
-* (npm node-inspector)
-
 ## Installation
 
 ```bash
 $ npm install
+```
+
+To launch using grunt, following packages are also required:
+```bash
+$ npm install -g nodemon
+$ npm install -g jshint
+$ npm install -g node-inspector
 ```
 
 ## Usage
@@ -35,14 +37,14 @@ Check the example properties/properties.example.json.
 {
 	"server": {
 		"host": "localhost",
-		"port": 8081 // Mandatory
+		"port": 8081
 	},
 
 	"db": {
 		"host": "your_production_host",
-		"port": "27017",
+		"port": 27017,
 		"database": "your_production_database_name",
-		"url": "mongodb://your_production_host/your_production_database_name" // Mandatory
+		"url": "mongodb://your_production_host/your_production_database_name"
 	}
 }
 ```
