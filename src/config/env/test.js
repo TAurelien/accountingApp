@@ -2,32 +2,36 @@
 'use strict';
 
 // Module dependencies ========================================================
-var logger = require(global.app.logger)('Env Test');
 
-// Exported functions =========================================================
+// Export =====================================================================
 
-/**
- * Pre DB connection configuration of the environment.
- */
-module.exports.preDBConnectionConfig = function () {
+module.exports = function(appServices) {
 
-	logger.info('Configuration initialization of the test environment');
+	var logger = appServices.logger.get('Env Test');
 
-};
-/**
- * Post success DB connection configuration of the environment.
- */
-module.exports.postSuccessDBConnectionConfig = function () {
+	return {
 
-	logger.info('Post success DB connection configuration of the test environment');
+		/**
+		 * Pre DB connection configuration of the environment.
+		 */
+		preDBConnectionConfig: function () {
+			logger.info('Configuration initialization of the test environment');
+		},
 
-};
+		/**
+		 * Post success DB connection configuration of the environment.
+		 */
+		postSuccessDBConnectionConfig: function () {
+			logger.info('Post success DB connection configuration of the test environment');
+		},
 
-/**
- * Post failure DB connection configuration of the environment.
- */
-module.exports.postFailureDBConnectionConfig = function () {
+		/**
+		 * Post failure DB connection configuration of the environment.
+		 */
+		postFailureDBConnectionConfig: function () {
+			logger.info('Post failure DB connection configuration of the test environment');
+		}
 
-	logger.info('Post failure DB connection configuration of the test environment');
+	};
 
 };

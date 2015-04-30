@@ -13,29 +13,28 @@
     "node": "0.x",
     "npm": "2.x"
   },
-  "main": "bin/server.js",
-  "scripts": {
-    "postinstall": "bower install --config.interactive=false"
-  },
+  "main": "bin/app.js",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/TAurelien/accountingApp.git"
   },
   "dependencies": {
+    "architect": "^0.1.11",
     "async": "0.x",
     "body-parser": "1.x",
-    "bower": "1.x",
     "express": "4.x",
     "glob": "4.x",
-    "grunt-cli": "0.x",
     "lodash": "3.x",
     "method-override": "2.x",
     "moment": "2.x",
     "mongoose": "4.x",
     "on-finished": "2.x",
+    "socket.io": "1.x",
     "winston": "0.x"
   },
   "devDependencies": {
+    "grunt-cli": "0.x",
     "grunt-concurrent": "1.x",
     "grunt-contrib-clean": "0.x",
     "grunt-contrib-copy": "0.x",

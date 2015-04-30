@@ -2,65 +2,29 @@
 'use strict';
 
 // Module dependencies ========================================================
-var logger = require(global.app.logger)('Config');
 var _ = require('lodash');
-var path = require('path');
-var mongoose = require('mongoose');
 var env = process.env.NODE_ENV;
-
-var allEnvConfig = null;
-var currentEnvConfig = null;
-try {
-	allEnvConfig = require('./env/all');
-	currentEnvConfig = require('./env/' + env);
-} catch (err) {
-	logger.error('Environment configuration file missing !');
-	logger.error(err);
-}
 
 // Module export ==============================================================
 
 // Export application properties ----------------------------------------------
 
-var properties = require('../../properties/properties.json');
+var properties = {};
+try{
+	properties = require('../../properties/properties.json');
+} catch (err) {
+	console.error('No properties.json file found');
+}
+
 if (env !== 'production') {
-	var envProperties = require('../../properties/' + env + '/properties.json');
-	_.merge(properties, envProperties);
+	try {
+		var envProperties = require('../../properties/'+ env + '/properties.json');
+		_.merge(properties, envProperties);
+	} catch (err) {
+		console.warn('There is no properties file for the current environment');
+	}
 }
 module.exports.properties = properties;
-
-// Private functions ==========================================================
-
-/**
- * Connect to the database.
- *
- * @param  {Object}   dbProperties The database properties.
- * @param  {Function} callback     Callback function.
- */
-function connectDB(dbProperties, callback) {
-
-	var dbUrl = dbProperties.url;
-
-	logger.info('Connecting to db ' + dbUrl);
-
-	mongoose.connect(dbUrl, function (err) {
-
-		if (err) {
-
-			logger.error('Could not connect to database : ' + dbUrl);
-			logger.error(err);
-			callback(err);
-
-		} else {
-
-			logger.info('Successful connection to db ' + dbUrl);
-			callback(null);
-
-		}
-
-	});
-
-}
 
 // Exported functions =========================================================
 
@@ -68,46 +32,46 @@ function connectDB(dbProperties, callback) {
  * Run the initialization of the application, running required task for
  * the launch.
  */
-module.exports.init = function () {
+module.exports.init = function (appServices) {
+
+	var logger = appServices.logger.get('Server');
 
 	logger.info('-----------------------------------------------------------');
 	logger.info('ENVIRONMENT');
-	logger.info('	' + env);
+	logger.info('	', env);
 	logger.info();
 	logger.info('APPLICATION');
-	logger.info('	Title: ' + properties.app.title);
-	logger.info('	Description: ' + properties.app.description);
+	logger.info('	Title:', properties.app.title);
+	logger.info('	Description:', properties.app.description);
 	logger.info();
 	logger.info('SERVER');
-	logger.info('	Host: ' + properties.server.host);
-	logger.info('	Port: ' + properties.server.port);
+	logger.info('	Host:', properties.server.host);
+	logger.info('	Port:', properties.server.port);
 	logger.info();
 	logger.info('DATABASE');
-	logger.info('	Host: ' + properties.db.host);
-	logger.info('	Port: ' + properties.db.port);
-	logger.info('	Database: ' + properties.db.database);
-	logger.info('	URL: ' + properties.db.url);
+	logger.info('	Host:', properties.db.host);
+	logger.info('	Port:', properties.db.port);
+	logger.info('	Database:' , properties.db.database);
+	logger.info('	URL:', properties.db.url);
+	logger.info();
+	logger.info('MODULES');
+	_.forEach(appServices, function(service){
+		if (service.name){
+			logger.info('	', service.name);
+		}
+	});
 	logger.info('-----------------------------------------------------------');
 	logger.info();
 
-	// TODO Remove global app variables
-	// Useful data stored in global variables ---------------------------------
-
-	global.app.utils = path.join(__dirname, '/utils');
-	global.app.config = __filename;
-	global.app.constants = path.join(__dirname, '/constants');
-	global.app.status = {};
-
-	// Paths declaration
-	global.app.paths = {};
-	global.app.paths.configDir = __dirname;
-	global.app.paths.pluginsDir = path.join(__dirname, '../plugins');
-	global.app.paths.publicDir = path.join(__dirname, '../public');
-	global.app.paths.routesDir = path.join(__dirname, '../app/routes');
-	global.app.paths.coreRoutesDir = path.join(__dirname, '../app/routes/core');
-	global.app.paths.apiRoutesDir = path.join(__dirname, '../app/routes/api');
-	global.app.paths.modelsDir = path.join(__dirname, '../app/models');
-	global.app.paths.controllersDir = path.join(__dirname, '../app/controllers');
+	var allEnvConfig = null;
+	var currentEnvConfig = null;
+	try {
+		allEnvConfig = require('./env/all')(appServices);
+		currentEnvConfig = require('./env/' + env)(appServices);
+	} catch (err) {
+		logger.error('Environment configuration file missing !');
+		logger.error(err);
+	}
 
 	// Application environnement configuration --------------------------------
 
@@ -124,30 +88,12 @@ module.exports.init = function () {
 
 	// Database connection ----------------------------------------------------
 
-	connectDB(properties.db, function (err) {
+	var db = appServices.db;
+	var dbUrl = properties.db.url;
 
-		// Post DB connection configuration -------------------------------
+	db.connect(dbUrl, function (err) {
 
-		if (!err) {
-
-			logger.info('Post success DB connection configuration');
-
-			if (allEnvConfig) {
-				allEnvConfig.postSuccessDBConnectionConfig();
-			} else {
-				logger.warn('Cannot run allEnvConfig.postSuccessDBConnectionConfig() as file is missing');
-			}
-			if (currentEnvConfig) {
-				currentEnvConfig.postSuccessDBConnectionConfig();
-			} else {
-				logger.warn('Cannot run currentEnvConfig.postSuccessDBConnectionConfig() as file is missing');
-			}
-
-			// Set the status information
-			global.app.status.initialConfig = 'completed';
-			global.app.status.dbConnection = true;
-
-		} else {
+		if (err) {
 
 			logger.info('Post failure DB connection configuration');
 
@@ -162,9 +108,20 @@ module.exports.init = function () {
 				logger.warn('Cannot run currentEnvConfig.postFailureDBConnectionConfig() as file is missing');
 			}
 
-			// Set the status information
-			global.app.status.initialConfig = 'preDBConnection';
-			global.app.status.dbConnection = false;
+		} else {
+
+			logger.info('Post success DB connection configuration');
+
+			if (allEnvConfig) {
+				allEnvConfig.postSuccessDBConnectionConfig();
+			} else {
+				logger.warn('Cannot run allEnvConfig.postSuccessDBConnectionConfig() as file is missing');
+			}
+			if (currentEnvConfig) {
+				currentEnvConfig.postSuccessDBConnectionConfig();
+			} else {
+				logger.warn('Cannot run currentEnvConfig.postSuccessDBConnectionConfig() as file is missing');
+			}
 
 		}
 

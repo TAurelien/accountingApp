@@ -2,33 +2,36 @@
 'use strict';
 
 // Module dependencies ========================================================
-var logger = require(global.app.logger)('Env All');
 
-// Exported functions =========================================================
+// Export =====================================================================
 
-/**
- * Pre DB connection initialization of the environment.
- */
-module.exports.preDBConnectionConfig = function () {
+module.exports = function(appServices) {
 
-	logger.info('Configuration initialization of all environments');
+	var logger = appServices.logger.get('Env all');
 
-};
+	return {
 
-/**
- * Post success DB connection configuration of the environment.
- */
-module.exports.postSuccessDBConnectionConfig = function () {
+		/**
+		 * Pre DB connection configuration of the environment.
+		 */
+		preDBConnectionConfig: function () {
+			logger.info('Configuration initialization of all environments');
+		},
 
-	logger.info('Post success DB connection configuration of all environments');
+		/**
+		 * Post success DB connection configuration of the environment.
+		 */
+		postSuccessDBConnectionConfig: function () {
+			logger.info('Post success DB connection configuration of all environments');
+		},
 
-};
+		/**
+		 * Post failure DB connection configuration of the environment.
+		 */
+		postFailureDBConnectionConfig: function () {
+			logger.info('Post failure DB connection configuration of all environments');
+		}
 
-/**
- * Post failure DB connection configuration of the environment.
- */
-module.exports.postFailureDBConnectionConfig = function () {
-
-	logger.info('Post failure DB connection configuration of all environments');
+	};
 
 };

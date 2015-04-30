@@ -239,21 +239,21 @@ module.exports = function (grunt) {
 
 		nodemon: {
 			default: {
-				script: binDir + '/server.js',
+				script: binDir + '/app.js',
 				options: {
 					nodeArgs: [''],
 					watch: binFiles.serverFiles
 				}
 			},
 			debug: {
-				script: binDir + '/server.js',
+				script: binDir + '/app.js',
 				options: {
 					nodeArgs: ['--debug'],
 					watch: binFiles.serverFiles
 				}
 			},
 			debugbrk: {
-				script: binDir + '/server.js',
+				script: binDir + '/app.js',
 				options: {
 					nodeArgs: ['--debug-brk'],
 					watch: binFiles.serverFiles
