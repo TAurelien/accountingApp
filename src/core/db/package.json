@@ -1,0 +1,13 @@
+{
+	"name": "db",
+	"version": "0.0.1",
+	"description": "",
+	"main": "bin/index.js",
+	"plugin": {
+		"consumes": ["logger"],
+		"provides": ["db"]
+	},
+	"dependencies": {
+		"mongoose": "4.x"
+	}
+}

@@ -1,0 +1,15 @@
+{
+	"name": "expressApp",
+	"version": "0.0.1",
+	"description": "",
+	"main": "bin/index.js",
+	"plugin": {
+		"consumes": ["logger"],
+		"provides": ["expressApp"]
+	},
+	"dependencies": {
+		"express": "4.x",
+		"body-parser": "1.x",
+		"method-override": "2.x"
+	}
+}

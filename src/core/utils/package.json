@@ -1,0 +1,12 @@
+{
+	"name": "utils",
+	"version": "0.0.1",
+	"description": "",
+	"main": "bin/utils.js",
+	"plugin": {
+		"consumes": ["logger"],
+		"provides": ["utils"]
+	},
+	"dependencies": {
+	}
+}
