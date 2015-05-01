@@ -5,7 +5,7 @@
 		{
 			"path": "./",
 			"file_exclude_patterns": ["*.sublime-*", "*.cache"],
-			"folder_exclude_patterns": ["bin", "properties", "plugins", "dist", "releases", "node_modules", "src", "test", "data"]
+			"folder_exclude_patterns": ["bin", "properties", "plugins", "dist", "doc", "releases", "node_modules", "src", "test", "data"]
 		},
 
 		{
@@ -27,6 +27,10 @@
 
 		{
 			"path": "./test"
+		},
+
+		{
+			"path": "./doc"
 		}
 
 	],

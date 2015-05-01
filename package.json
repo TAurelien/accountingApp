@@ -44,6 +44,7 @@
     "grunt-contrib-uglify": "0.x",
     "grunt-contrib-watch": "0.x",
     "grunt-env": "0.x",
+    "grunt-jsdoc": "^0.6.3",
     "grunt-mongoimport": "0.x",
     "grunt-node-inspector": "0.x",
     "grunt-nodemon": "0.x",

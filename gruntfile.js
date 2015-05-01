@@ -6,6 +6,7 @@ var srcDir = 'src';
 var publicDir = 'public';
 var libDir = 'lib';
 var binDir = 'bin';
+var docDir = 'doc';
 
 module.exports = function (grunt) {
 
@@ -200,7 +201,8 @@ module.exports = function (grunt) {
 		},
 
 		clean: {
-			all: [binDir + '/*']
+			all: [binDir + '/*'],
+			doc: [docDir + '/*']
 		},
 
 		copy: {
@@ -301,6 +303,10 @@ module.exports = function (grunt) {
 			custom: {
 				path: null,
 				app: 'chrome'
+			},
+			doc: {
+				path: docDir + '/index.html',
+				app: 'chrome'
 			}
 		},
 
@@ -320,6 +326,16 @@ module.exports = function (grunt) {
 					repo: null,
 					usernameVar: null,
 					passwordVar: null
+				}
+			}
+		},
+
+		jsdoc: {
+			dist: {
+				src: [srcDir + '/src/*'],
+				options: {
+					destination: docDir,
+					private: false
 				}
 			}
 		}
@@ -432,6 +448,8 @@ module.exports = function (grunt) {
 
 	// Misc tasks
 	grunt.registerTask('ungit', ['setOpen:ungit']);
+	grunt.registerTask('generateDoc', ['clean:doc', 'jsdoc']);
+	grunt.registerTask('openDoc', ['open:doc']);
 
 	// Dev tasks
 	grunt.registerTask('initDev', ['setDevEnv', 'lint', 'sync']);
