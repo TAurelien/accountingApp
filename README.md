@@ -13,13 +13,6 @@ Accounting App
 $ npm install
 ```
 
-To launch using grunt, following packages are also required:
-```bash
-$ npm install -g nodemon
-$ npm install -g jshint
-$ npm install -g node-inspector
-```
-
 ## Usage
 
 With mongodb running
