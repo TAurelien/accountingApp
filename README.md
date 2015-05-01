@@ -34,10 +34,10 @@ Check the example properties/properties.example.json.
 	},
 
 	"db": {
-		"host": "your_production_host",
+		"host": "your_host",
 		"port": 27017,
-		"database": "your_production_database_name",
-		"url": "mongodb://your_production_host/your_production_database_name"
+		"database": "your_database_name",
+		"url": "mongodb://your_host/your_database_name"
 	}
 }
 ```
