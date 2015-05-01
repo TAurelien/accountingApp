@@ -2,7 +2,10 @@
 	"name": "accounts",
 	"version": "0.0.1",
 	"description": "",
-	"main": "src/index.js",
-	"dependencies": {
-	}
+	"main": "src/accounts.js",
+	"plugin": {
+		"consumes": ["logger", "expressApp", "io"],
+		"provides": ["accounts"]
+	},
+	"dependencies": {}
 }
