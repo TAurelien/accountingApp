@@ -30,7 +30,7 @@ module.exports.define = function (options, imports, emitter) {
 
 	var logger = imports.logger.get('Accounts Model');
 
-	var generalLedgerModelName = options.generalLedgerModelName;
+	var generalLedgerModelName = options.generalLedgerModelName || 'GeneralLedger';
 
 	// Schema definition ======================================================
 
