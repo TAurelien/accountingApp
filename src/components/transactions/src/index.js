@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up a component module ...');
+	console.log('Setting up the transactions component module ...    [Not yet operationnal]');
 
 	// Register --------------
 
