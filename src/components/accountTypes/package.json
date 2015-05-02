@@ -2,7 +2,10 @@
 	"name": "accountTypes",
 	"version": "0.0.1",
 	"description": "",
-	"main": "src/index.js",
-	"dependencies": {
-	}
+	"main": "src/accountTypes.js",
+	"plugin": {
+		"consumes": ["logger", "nomenclatures"],
+		"provides": ["accountTypes"]
+	},
+	"dependencies": {}
 }
