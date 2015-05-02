@@ -55,7 +55,6 @@ module.exports = function (options, imports, emitter) {
 					emitter.emitCreate();
 				}
 			});
-
 		},
 
 		/**
@@ -197,7 +196,6 @@ module.exports = function (options, imports, emitter) {
 						emitter.emitDelete();
 					}
 				});
-
 		},
 
 		/**
