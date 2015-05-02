@@ -1,8 +1,12 @@
 {
-	"name": "amount",
+	"name": "amounts",
 	"version": "0.0.1",
 	"description": "",
-	"main": "src/index.js",
+	"main": "src/amounts.js",
+	"plugin": {
+		"consumes": ["logger"],
+		"provides": ["amounts"]
+	},
 	"dependencies": {
 	}
 }
