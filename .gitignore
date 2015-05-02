@@ -10,7 +10,8 @@ app/tests/coverage/
 .idea/
 dist/
 bin/
+doc/
 releases/
-properties/**/properties.json
+**/properties.json
 *.sublime-workspace
 *.sublime-grunt.cache
