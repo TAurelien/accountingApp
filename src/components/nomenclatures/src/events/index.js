@@ -3,7 +3,7 @@
  *
  *  @access   private
  *  @author   TAurelien
- *  @date     2015-05-01
+ *  @date     2015-05-02
  *  @version  1.0.0
  */
 'use strict';
@@ -21,7 +21,7 @@ module.exports = function (options, imports, Nomenclatures) {
 		 *
 		 *  @access   private
 		 *  @author   TAurelien
-		 *  @date     2015-05-01
+		 *  @date     2015-05-02
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */

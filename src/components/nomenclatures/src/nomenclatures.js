@@ -12,7 +12,8 @@
 var events = require('events');
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the nomenclatures component module ...');
+	console.log();
+	console.log('Registering the nomenclatures component module ...');
 
 	/**
 	 *  Nomenclatures

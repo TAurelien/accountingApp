@@ -45,7 +45,7 @@ module.exports = function (options, imports, emitter, Nomenclatures) {
 		};
 		Nomenclature.on(updateEventName, function (updatedData, updatedIdArray) {
 			logger.info('Updating the nomenclature', name);
-			this._data[name] = {
+			Nomenclatures._data[name] = {
 				data: updatedData,
 				idArray: updatedIdArray
 			};
@@ -59,6 +59,8 @@ module.exports = function (options, imports, emitter, Nomenclatures) {
 	 *  @param    {String}    name  The name of the nomenclature to get the data.
 	 *  @return   {Array}           The list of data.
 	 *
+	 *  @throws   {Error}           If the expected nomenclature is not defined.
+	 *
 	 *  @access   public
 	 *  @author   TAurelien
 	 *  @date     2015-05-02
@@ -69,7 +71,7 @@ module.exports = function (options, imports, emitter, Nomenclatures) {
 		logger.info('Getting the nomenclature data of', name);
 		var reference = this._data[name];
 		if (!reference) {
-			throw new Error('The reference is undefined');
+			throw new Error('The nomenclature is undefined');
 		}
 		return this._data[name].data;
 	};
@@ -79,6 +81,8 @@ module.exports = function (options, imports, emitter, Nomenclatures) {
 	 *
 	 *  @param    {String}    name  The name of the nomenclature to get the ids.
 	 *  @return   {Array}           The list of ids.
+	 *
+	 *  @throws   {Error}           If the expected nomenclature is not defined.
 	 *
 	 *  @access   public
 	 *  @author   TAurelien
@@ -90,7 +94,7 @@ module.exports = function (options, imports, emitter, Nomenclatures) {
 		logger.info('Getting the nomenclature data ids of', name);
 		var reference = this._data[name];
 		if (!reference) {
-			throw new Error('The reference is undefined');
+			throw new Error('The nomenclature is undefined');
 		}
 		return this._data[name].idArray;
 	};
