@@ -5,7 +5,7 @@
 	"main": "src/index.js",
 	"plugin": {
 		"consumes": ["logger"],
-		"provides": ["expressApp"]
+		"provides": ["express"]
 	},
 	"dependencies": {
 		"express": "4.x",

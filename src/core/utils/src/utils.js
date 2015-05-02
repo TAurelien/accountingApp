@@ -2,7 +2,8 @@
 'use strict';
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the Utils core module ...');
+	console.log();
+	console.log('Registering the Utils core module ...');
 
 	var api = require('./api')(options, imports);
 

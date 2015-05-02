@@ -72,7 +72,7 @@ architect.loadConfig(path.resolve(__dirname, './config/moduleConfig'), function 
 				// Start the app ----------------------------------------------
 				var port = properties.server.port;
 				var title = properties.app.title;
-				var server = architectApp.services.expressApp;
+				var server = architectApp.services.express;
 
 				server.start(properties.server.port, function(){
 					logger.info();

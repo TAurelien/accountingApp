@@ -13,7 +13,8 @@ var _ = require('lodash');
 var events = require('events');
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the amounts component module ...');
+	console.log();
+	console.log('Registering the amounts component module ...');
 
 	/**
 	 *  Amount object.
@@ -28,7 +29,7 @@ module.exports = function setup(options, imports, register) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	var Amount = function(preciseValue, scale, currency) {
+	var Amount = function (preciseValue, scale, currency) {
 
 		if (_.isFinite(preciseValue)) {
 			this.preciseValue = preciseValue;
@@ -55,7 +56,6 @@ module.exports = function setup(options, imports, register) {
 
 	Amounts.schema = require('./model')(options, imports);
 	Amounts.Amount = Amount;
-
 
 	// Register --------------
 

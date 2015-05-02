@@ -1,11 +1,12 @@
 'use strict';
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the io core module ...');
+	console.log();
+	console.log('Registering the io core module ...');
 
 	var logger = imports.logger.get('IO');
-	
-	var server = imports.expressApp.server;
+
+	var server = imports.express.server;
 	var io = require('socket.io')(server);
 
 	io.on('connection', function (socket) {

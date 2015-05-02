@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "src/io.js",
 	"plugin": {
-		"consumes": ["logger", "expressApp", "auth"],
+		"consumes": ["logger", "express", "auth"],
 		"provides": ["io"]
 	},
 	"dependencies": {

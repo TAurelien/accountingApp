@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "src/generalLedgers.js",
 	"plugin": {
-		"consumes": ["logger", "expressApp", "io"],
+		"consumes": ["logger", "express", "io", "nomenclatures", "currencies"],
 		"provides": ["generalLedgers"]
 	},
 	"dependencies": {}

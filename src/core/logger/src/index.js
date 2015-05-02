@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the logger core module ...');
+	console.log();
+	console.log('Registering the logger core module ...');
 
 	// Register --------------
 

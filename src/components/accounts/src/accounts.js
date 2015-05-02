@@ -11,7 +11,8 @@
 var events = require('events');
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the accounts component module ...');
+	console.log();
+	console.log('Registering the accounts component module ...');
 
 	/**
 	 *  Accounts

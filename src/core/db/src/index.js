@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the db core module ...');
+	console.log();
+	console.log('Registering the db core module ...');
 
 	var db = require('./db')(options, imports);
 

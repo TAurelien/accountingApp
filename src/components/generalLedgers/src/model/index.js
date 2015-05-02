@@ -30,6 +30,12 @@ module.exports.define = function (options, imports, emitter) {
 
 	var logger = imports.logger.get('General Ledgers Model');
 
+	var nomenclatures = imports.nomenclatures;
+	var currencies = nomenclatures.getIds('currencies');
+	// TODO Deal with nomenclatures update
+
+	var defaultCurrency = options.defaultCurrency || currencies[0];
+
 	// Schema definition ======================================================
 
 	/**
@@ -62,7 +68,9 @@ module.exports.define = function (options, imports, emitter) {
 			defaultCurrency: {
 				type: String,
 				trim: true,
-				default: ''
+				default: defaultCurrency,
+				required: true,
+				enum: currencies
 			}
 
 		},

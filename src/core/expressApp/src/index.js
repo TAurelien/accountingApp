@@ -7,7 +7,8 @@ var methodOverride = require('method-override');
 var _ = require('lodash');
 
 module.exports = function setup(options, imports, register) {
-	console.log('Setting up the Express App core module ...');
+	console.log();
+	console.log('Registering the Express core module ...');
 
 	var app = express();
 
@@ -36,9 +37,9 @@ module.exports = function setup(options, imports, register) {
 
 		var logger = imports.logger.get('Express App');
 
-		if (_.isFunction(port)){
+		if (_.isFunction(port)) {
 			callback = port;
-			port = options.port;
+			port = options.port || 8080;
 			logger.warn('No port defined to start the app, using', port, 'by default');
 		}
 
@@ -49,7 +50,7 @@ module.exports = function setup(options, imports, register) {
 
 	register(null, {
 
-		expressApp: {
+		express: {
 			app: app,
 			server: server,
 			start: start

@@ -30,6 +30,13 @@ module.exports.define = function (options, imports, emitter) {
 
 	var logger = imports.logger.get('Accounts Model');
 
+	var nomenclatures = imports.nomenclatures;
+	var currencies = nomenclatures.getIds('currencies');
+	var accountTypes = nomenclatures.getIds('accountTypes');
+
+	// TODO Deal with nomenclatures update
+
+	var defaultCurrency = options.defaultCurrency || currencies[0];
 	var generalLedgerModelName = options.generalLedgerModelName || 'GeneralLedger';
 
 	// Schema definition ======================================================
@@ -60,7 +67,7 @@ module.exports.define = function (options, imports, emitter) {
 			trim: true,
 			default: '',
 			required: true,
-			//enum: // TODO Set the enumeration of the Account model
+			enum: accountTypes
 		},
 
 		code: {
@@ -72,9 +79,9 @@ module.exports.define = function (options, imports, emitter) {
 		currency: {
 			type: String,
 			trim: true,
-			default: '',
+			default: defaultCurrency,
 			required: true,
-			//enum: // TODO Set the enumeration of the Account model
+			enum: currencies
 		},
 
 		placeholder: {
