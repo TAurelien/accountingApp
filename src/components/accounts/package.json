@@ -4,7 +4,11 @@
 	"description": "",
 	"main": "src/accounts.js",
 	"plugin": {
-		"consumes": ["logger", "express", "io", "nomenclatures", "currencies", "accountTypes"],
+		"consumes": [
+			"logger", "express", "io",
+			"nomenclatures", "currencies", "accountTypes",
+			"amounts", "transactions"
+		],
 		"provides": ["accounts"]
 	},
 	"dependencies": {}

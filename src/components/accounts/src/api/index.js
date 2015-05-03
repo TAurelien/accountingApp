@@ -10,6 +10,7 @@
 
 // Module dependencies ========================================================
 var _ = require('lodash');
+var async = require('async');
 
 module.exports = function (options, imports, emitter) {
 
@@ -211,10 +212,144 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		getBalance: function (accountID, includeChilds, callback) {
-			logger.info('Getting the net worth of a specific account');
-			callback(new Error('Not yet implemented'));
-			// TODO Implement the getBalance function
+		getBalanceById: function (accountID, includeChilds, callback) {
+			// TODO Optimize by passing the mongoose object or an array of ids/mongoose objects
+			logger.info('Getting the balance of the account', accountID);
+
+			// TODO Test function arguments
+
+			var balance = new imports.amounts.Amount(0, 100, 'EUR');
+			// TODO Deal with initialization of Amount object
+
+			var asyncFunctions = [
+				function (asyncCallback) {
+
+					// Own transactions
+
+					// TODO Find a way to ease the query defintion
+					var query = {};
+					query.conditions = {
+						splits: {
+							$elemMatch: {
+								account: accountID
+							}
+						}
+					};
+					query.order = null;
+					query.selection = null;
+
+					var Transaction = imports.transactions.model;
+
+					Transaction.list(query, function (err, transactions) {
+
+						if (err) {
+
+							logger.error('Getting the transactions of the account', accountID, 'failed');
+							asyncCallback(err);
+
+						} else if (_.isEmpty(transactions)) {
+
+							logger.warn('No transaction has been found for the account', accountID);
+							asyncCallback(null);
+
+						} else {
+
+							logger.info('Success of getting the transactions of the account', accountID);
+
+							async.each(
+								_.toArray(transactions),
+
+								function (transaction, asyncCallback) {
+
+									var transactionID = transaction._id;
+
+									Transaction.getAmountById(transactionID, accountID, function (err, amount) {
+
+										if (err) {
+
+											logger.error('Getting the amount of the transaction', transactionID, 'for the account', accountID, 'failed');
+											asyncCallback(err);
+
+										} else {
+
+											try {
+
+												balance.add(amount);
+
+											} catch (err) {
+
+												logger.error('Error while adding the amount of the transaction', transactionID, 'to the balance of the account', accountID);
+												asyncCallback(err);
+												return;
+
+											}
+											asyncCallback(null);
+
+										}
+
+									});
+
+								},
+
+								function (err) {
+
+									if (err) {
+
+										logger.error('Getting the balance for the account', accountID, 'failed');
+										asyncCallback(err);
+
+									} else {
+
+										logger.info('The balance of the account', accountID, 'has been computed successfully');
+										asyncCallback(null);
+
+									}
+
+								}
+
+							);
+
+						}
+
+					});
+
+				},
+
+				function (asyncCallback) {
+
+					// Child balances
+
+					if (includeChilds) {
+
+						// TODO Implement Child balance computation
+						asyncCallback(new Error('Getting child account balances is not yet implemented'));
+
+					} else {
+
+						asyncCallback(null);
+
+					}
+
+				}
+
+			];
+
+			async.parallel(asyncFunctions, function (err) {
+
+				if (err) {
+
+					logger.error('Computing the balance of the account', accountID, 'failed');
+					callback(err);
+
+				} else {
+
+					logger.info('The balance of the account', accountID, 'has been computed successfully');
+					callback(null, balance);
+
+				}
+
+			});
+
 		}
 
 	};
