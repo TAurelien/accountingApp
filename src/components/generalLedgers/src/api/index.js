@@ -10,6 +10,7 @@
 
 // Module dependencies ========================================================
 var _ = require('lodash');
+var async = require('async');
 
 module.exports = function (options, imports, emitter) {
 
@@ -211,9 +212,107 @@ module.exports = function (options, imports, emitter) {
 		 *  @since    1.0.0
 		 */
 		getNetWorth: function (generalLedgerID, callback) {
-			logger.info('Getting the net worth of a specific general ledger');
-			callback(new Error('Not yet implemented'));
-			// TODO Implement the getNetWorth function
+			// TODO Optimize by passing the mongoose object or an array of ids/mongoose objects
+			logger.info('Getting the net worth of the general ledger', generalLedgerID);
+
+			// TODO Test function arguments
+
+			var netWorth = new imports.amounts.Amount(0, 100, 'EUR');
+			// TODO Deal with initialization of Amount object
+
+			// TODO Find a way to ease the query defintion
+			var query = {};
+			query.conditions = {
+				generalLedger: generalLedgerID,
+				$or: [{
+					type: 'asset'
+				}, {
+					type: 'liability'
+				}]
+			};
+			query.order = null;
+			query.selection = {
+				type: 1
+			};
+
+			var Account = imports.accounts.model;
+
+			Account.list(query, function (err, accounts) {
+
+				if (err) {
+
+					logger.error('Getting the accounts of the general ledger', generalLedgerID, 'failed');
+					callback(err);
+
+				} else if (_.isEmpty(accounts)) {
+
+					logger.info('No account found for the general ledger', generalLedgerID);
+					callback({
+						message: 'No accounts found for this general ledger'
+					});
+
+				} else {
+
+					logger.info('Success of getting the accounts of the general ledger', generalLedgerID);
+
+					async.each(
+						_.toArray(accounts),
+
+						function (account, asyncCallback) {
+
+							var accountID = account._id;
+							var type = account.type;
+
+							Account.getBalanceById(accountID, false, function (err, balance) {
+
+								if (err) {
+
+									logger.error('Computing the balance of', accountID, 'failed');
+									asyncCallback(err);
+
+								} else {
+
+									try {
+
+										if (type === 'asset') {
+											netWorth.add(balance);
+										} else if (type === 'liability') {
+											netWorth.subtract(balance);
+										}
+										asyncCallback(null);
+
+									} catch (err) {
+
+										logger.error('There was an error while adding the balance of the account', accountID, 'to the net worth of the general ledger', generalLedgerID);
+										asyncCallback(err);
+
+									}
+
+								}
+
+							});
+
+						},
+
+						function (err) {
+
+							if (err) {
+
+								logger.error('Computing the net worth of the general ledger', generalLedgerID, 'failed');
+								callback(err);
+
+							} else {
+
+								logger.info('The net worth of the general ledger', generalLedgerID, 'has been computed successfully');
+								callback(null, netWorth);
+
+							}
+
+						});
+				}
+
+			});
+
 		}
 
 	};
