@@ -196,6 +196,31 @@ module.exports = function (options, imports, emitter) {
 						emitter.emitDelete();
 					}
 				});
+		},
+
+		/**
+		 *  Get the amount of a specific transaction for an account.
+		 *
+		 *  @param    {String}    transactionID  The id of the transaction.
+		 *  @param    {String}    accountID      The id of the account.
+		 *  @param    {Function}  callback       The callback function.
+		 *
+		 *  @access   public
+		 *  @author   TAurelien
+		 *  @date     2015-05-03
+		 *  @version  1.0.0
+		 *  @since    1.0.0
+		 */
+		getAmountById: function (transactionID, accountID, callback) {
+			// TODO Optimize by passing the mongoose object or an array of ids/mongoose objects
+			logger.info('Getting the amount of a specific transaction for an account');
+			callback(new Error('Not yet implemented'));
+			// TODO Implement the getAmount function
+
+			// TODO Test function arguments
+
+			//var amount = new imports.amounts.Amount(0, 100, 'EUR');
+
 		}
 
 	};

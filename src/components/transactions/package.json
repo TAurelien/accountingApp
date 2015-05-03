@@ -4,7 +4,11 @@
 	"description": "",
 	"main": "src/transactions.js",
 	"plugin": {
-		"consumes": ["logger", "express", "io", "nomenclatures", "currencies", "amounts"],
+		"consumes": [
+			"logger", "express", "io",
+			"nomenclatures", "currencies",
+			"amounts"
+		],
 		"provides": ["transactions"]
 	},
 	"dependencies": {}
