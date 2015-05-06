@@ -12,11 +12,11 @@ var _ = require('lodash');
 var config = require('./config');
 var globalProperties = config.properties;
 
-// Secure the optoins and plugins properties
-if (!globalProperties.options){
+// Secure the options and plugins properties
+if (!globalProperties.options) {
 	globalProperties.options = {};
 }
-if (!globalProperties.plugins){
+if (!globalProperties.plugins) {
 	globalProperties.plugins = {
 		paths: []
 	};

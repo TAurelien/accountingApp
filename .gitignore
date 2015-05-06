@@ -12,6 +12,7 @@ dist/
 bin/
 doc/
 releases/
+plugins/
 **/properties.json
 *.sublime-workspace
 *.sublime-grunt.cache

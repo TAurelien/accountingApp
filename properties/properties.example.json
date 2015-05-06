@@ -26,8 +26,8 @@
 	},
 
 	"plugins": {
-		"path": [
-			"../plugins" // Absolute path or relative to server.js
+		"paths": [
+			"./plugins" // Absolute path or relative to cwd
 		]
 	}
 

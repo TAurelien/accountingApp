@@ -22,7 +22,7 @@
 
 		{
 			"path": "./plugins",
-			"folder_exclude_patterns": ["bin", "properties", "src", "test"]
+			"folder_exclude_patterns": []
 		},
 
 		{

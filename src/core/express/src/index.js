@@ -52,6 +52,7 @@ module.exports = function setup(options, imports, register) {
 
 		express: {
 			app: app,
+			express: express,
 			server: server,
 			start: start
 		}
