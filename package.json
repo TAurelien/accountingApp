@@ -20,7 +20,7 @@
     "url": "https://github.com/TAurelien/accountingApp.git"
   },
   "dependencies": {
-    "architect": "^0.1.11",
+    "architect": "0.x",
     "async": "0.x",
     "body-parser": "1.x",
     "express": "4.x",
@@ -38,10 +38,7 @@
     "grunt-concurrent": "1.x",
     "grunt-contrib-clean": "0.x",
     "grunt-contrib-copy": "0.x",
-    "grunt-contrib-csslint": "0.x",
-    "grunt-contrib-cssmin": "0.x",
     "grunt-contrib-jshint": "0.x",
-    "grunt-contrib-uglify": "0.x",
     "grunt-contrib-watch": "0.x",
     "grunt-env": "0.x",
     "grunt-jsdoc": "^0.6.3",
@@ -52,6 +49,6 @@
     "grunt-release": "0.x",
     "grunt-shell-spawn": "0.x",
     "grunt-sync": "0.x",
-    "load-grunt-tasks": "0.x"
+    "load-grunt-tasks": "3.x"
   }
 }

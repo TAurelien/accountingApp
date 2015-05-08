@@ -1,142 +1,68 @@
 'use strict';
 
+// Module dependencies ========================================================
+var fs = require('fs');
+var path = require('path');
 var _ = require('lodash');
 
 var srcDir = 'src';
-var publicDir = 'public';
-var libDir = 'lib';
 var binDir = 'bin';
+var testDir = 'test';
 var docDir = 'doc';
+var dataDir = 'data';
+
+var starterFile = binDir + '/app.js';
 
 module.exports = function (grunt) {
 
 	var properties = require('./properties/properties.json');
 
-	var binFiles = {
+	var binFiles = [binDir + '/**/*'];
+	var srcFiles = [srcDir + '/**/*', '!' + srcDir + '/**/' + testDir + '/**/*'];
+	var testFiles = [srcDir + '/**/' + testDir + '/**/*.js', testDir + '/**/*.js'];
+	var jsFiles = [srcDir + '/**/*.js', testDir + '/**/*.js'];
+	var jsonFiles = [srcDir + '/**/*.json', testDir + '/**/*.json'];
 
-		serverFiles: [
-			binDir + '/**/*',
-			'!' + binDir + '/**/' + publicDir
-		],
+	var mongoDataCollections = (function () {
+		var collections = {};
+		var dataPath = path.resolve(process.cwd(), './' + dataDir);
+		var envDirs = (function () {
+			try {
+				return fs.readdirSync(dataPath).filter(function (file) {
+					return fs.statSync(path.join(dataPath, file)).isDirectory();
+				});
+			} catch (err) {
+				return [];
+			}
+		})();
 
-		clientViews: [
-			binDir + '/**/' + publicDir + '/**/*.html',
-			'!' + binDir + '/**/' + publicDir + '/**/' + libDir
-		],
+		_.forEach(envDirs, function (envDir) {
+			var envCollections = [];
+			var envDataPath = path.join(dataPath, '/' + envDir);
+			var collectionFiles = (function () {
+				try {
+					return fs.readdirSync(envDataPath).filter(function (file) {
+						return fs.statSync(path.join(envDataPath, file)).isFile();
+					});
+				} catch (err) {
+					return [];
+				}
+			})();
 
-		clientJS: [
-			binDir + '/**/' + publicDir + '/**/*.js',
-			'!' + binDir + '/**/' + publicDir + '/**/' + libDir
-		],
-
-		clientCSS: [
-			binDir + '/**/' + publicDir + '/**/*.css',
-			'!' + binDir + '/**/' + publicDir + '/**/' + libDir
-		],
-
-		clientSCSS: [
-			binDir + '/**/' + publicDir + '/**/*.scss',
-			'!' + binDir + '/**/' + publicDir + '/**/' + libDir
-		]
-
-	};
-
-	var srcFiles = {
-
-		serverFiles: [
-			srcDir + '/**/*.js',
-			srcDir + '/**/*.json',
-			'!' + srcDir + '/**/' + publicDir
-		],
-
-		clientViews: [
-			srcDir + '/**/' + publicDir + '/**/*.html',
-			'!' + srcDir + '/**/' + publicDir + '/**/' + libDir
-		],
-
-		clientJS: [
-			srcDir + '/**/' + publicDir + '/**/*.js',
-			'!' + srcDir + '/**/' + publicDir + '/**/' + libDir
-		],
-
-		clientCSS: [
-			srcDir + '/**/' + publicDir + '/**/*.css',
-			'!' + srcDir + '/**/' + publicDir + '/**/' + libDir
-		],
-
-		clientSCSS: [
-			srcDir + '/**/' + publicDir + '/**/*.scss',
-			'!' + srcDir + '/**/' + publicDir + '/**/' + libDir
-		]
-
-	};
-
-	var mongoDataCollections = {
-
-		// TODO @grunt Turn mongoDataCollection as a function that will get all the data from folder
-		all: [{
-			name: 'currencies',
-			type: 'json',
-			file: 'data/currencies.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}, {
-			name: 'accountTypes',
-			type: 'json',
-			file: 'data/accountTypes.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}],
-
-		development: [{
-			name: 'generalLedgers',
-			type: 'json',
-			file: 'data/development/generalLedgers.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}, {
-			name: 'accounts',
-			type: 'json',
-			file: 'data/development/accounts.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}, {
-			name: 'transactions',
-			type: 'json',
-			file: 'data/development/transactions.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}],
-
-		test: [{
-			name: 'generalLedgers',
-			type: 'json',
-			file: 'data/test/generalLedgers.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}, {
-			name: 'accounts',
-			type: 'json',
-			file: 'data/test/accounts.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}, {
-			name: 'transactions',
-			type: 'json',
-			file: 'data/test/transactions.json',
-			jsonArray: true,
-			upsert: true,
-			drop: true
-		}]
-
-	}
+			_.forEach(collectionFiles, function (file) {
+				envCollections.push({
+					name: file.replace('.json', ''),
+					type: 'json',
+					file: dataDir + '/' + envDir + '/' + file,
+					jsonArray: true,
+					upsert: true,
+					drop: true
+				});
+			});
+			collections[envDir] = envCollections;
+		});
+		return collections;
+	})();
 
 	// ========================================================================
 
@@ -146,42 +72,10 @@ module.exports = function (grunt) {
 
 		watch: {
 			serverFiles: {
-				files: srcFiles.serverFiles,
-				tasks: ['jshint:modif', 'sync'],
+				files: srcFiles,
+				tasks: ['jshint:modif', 'sync:default'],
 				options: {
 					livereload: false,
-					spawn: false
-				}
-			},
-			clientViews: {
-				files: srcFiles.clientViews,
-				tasks: ['jshint:modif', 'sync'],
-				options: {
-					livereload: true,
-					spawn: false
-				}
-			},
-			clientJS: {
-				files: srcFiles.clientJS,
-				tasks: ['jshint:modif', 'sync'],
-				options: {
-					livereload: true,
-					spawn: false
-				}
-			},
-			clientCSS: {
-				files: srcFiles.clientCSS,
-				tasks: ['jshint:modif', 'sync'],
-				options: {
-					livereload: true,
-					spawn: false
-				}
-			},
-			clientSCSS: {
-				files: srcFiles.clientSCSS,
-				tasks: ['jshint:modif', 'sync'],
-				options: {
-					livereload: true,
 					spawn: false
 				}
 			}
@@ -191,8 +85,8 @@ module.exports = function (grunt) {
 			default: {
 				files: [{
 					cwd: srcDir + '/',
-					src: ['**', '!**/*.scss'],
-					dest: binDir + '/',
+					src: ['**', '!**/' + testDir + '/**'],
+					dest: binDir + '/'
 				}],
 				pretend: false,
 				verbose: true,
@@ -201,22 +95,22 @@ module.exports = function (grunt) {
 		},
 
 		clean: {
-			all: [binDir + '/*'],
+			bin: [binDir + '/*'],
 			doc: [docDir + '/*']
 		},
 
 		copy: {
-			all: {
+			bin: {
 				expand: true,
 				cwd: srcDir + '/',
-				src: ['**', '!**/*.scss'],
+				src: ['**', '!**/' + testDir + '/**'],
 				dest: binDir + '/'
 			}
 		},
 
 		jshint: {
 			all: {
-				src: srcFiles.clientJS.concat(srcFiles.serverFiles),
+				src: jsFiles,
 				options: {
 					jshintrc: true
 				}
@@ -241,24 +135,24 @@ module.exports = function (grunt) {
 
 		nodemon: {
 			default: {
-				script: binDir + '/app.js',
+				script: starterFile,
 				options: {
 					nodeArgs: [''],
-					watch: binFiles.serverFiles
+					watch: binFiles
 				}
 			},
 			debug: {
-				script: binDir + '/app.js',
+				script: starterFile,
 				options: {
 					nodeArgs: ['--debug'],
-					watch: binFiles.serverFiles
+					watch: binFiles
 				}
 			},
 			debugbrk: {
-				script: binDir + '/app.js',
+				script: starterFile,
 				options: {
 					nodeArgs: ['--debug-brk'],
-					watch: binFiles.serverFiles
+					watch: binFiles
 				}
 			}
 		},
@@ -332,7 +226,7 @@ module.exports = function (grunt) {
 
 		jsdoc: {
 			dist: {
-				src: [srcDir + '/**/*.js'],
+				src: srcFiles,
 				options: {
 					destination: docDir,
 					private: false
@@ -452,14 +346,14 @@ module.exports = function (grunt) {
 	grunt.registerTask('openDoc', ['open:doc']);
 
 	// Dev tasks
-	grunt.registerTask('initDev', ['setDevEnv', 'lint', 'sync']);
+	grunt.registerTask('initDev', ['setDevEnv', 'lint', 'sync:default']);
 	grunt.registerTask('dev', ['initDev', 'concurrent:default']);
 	grunt.registerTask('devDebug', ['initDev', 'concurrent:debug']);
 	grunt.registerTask('devDebugbrk', ['initDev', 'concurrent:debugbrk']);
 
 	// Test tasks
 	// TODO @grunt Define grunt test tasks
-	grunt.registerTask('test', ['setTestEnv', 'lint', 'sync']);
+	grunt.registerTask('test', ['setTestEnv', 'lint', 'sync:default']);
 
 	// Build / Release tasks
 	// TODO @grunt Define grunt build tasks
