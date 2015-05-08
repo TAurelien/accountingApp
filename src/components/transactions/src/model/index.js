@@ -11,7 +11,7 @@
 // Module dependencies ========================================================
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var modelName = 'Transaction';
+var modelName = 'transactions';
 
 /**
  *  Define the mongoose schema and model of Transaction.
@@ -37,7 +37,7 @@ module.exports.define = function (options, imports, emitter) {
 
 	// TODO Deal with nomenclatures update
 
-	var accountModelName = options.accountModelName || 'Account';
+	var accountModelName = options.accountModelName || 'accounts';
 
 	// Schema definition ======================================================
 

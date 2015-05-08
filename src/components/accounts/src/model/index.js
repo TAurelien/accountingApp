@@ -11,7 +11,7 @@
 // Module dependencies ========================================================
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var modelName = 'Account';
+var modelName = 'accounts';
 
 /**
  *  Define the mongoose schema and model of Account.
@@ -37,7 +37,7 @@ module.exports.define = function (options, imports, emitter) {
 	// TODO Deal with nomenclatures update
 
 	var defaultCurrency = options.defaultCurrency || currencies[0];
-	var generalLedgerModelName = options.generalLedgerModelName || 'GeneralLedger';
+	var generalLedgerModelName = options.generalLedgerModelName || 'generalledgers';
 
 	// Schema definition ======================================================
 

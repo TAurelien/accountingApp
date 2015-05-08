@@ -25,7 +25,7 @@ module.exports = function setup(options, imports, register) {
 	// Test -------------------------------------------------------------------
 	var path = require('path');
 	var _ = require('lodash');
-	var data = require(path.join(process.cwd(), './data/development/accountTypes.json'));
+	var data = require(path.join(process.cwd(), './data/development/accounttypes.json'));
 	var idArray = _.map(data, function (item) {
 		return item.code;
 	});

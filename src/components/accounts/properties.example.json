@@ -1,6 +1,6 @@
 {
 	"options": {
 		"defaultCurrency": "EUR",
-		"generalLedgerModelName": "GeneralLedger"
+		"generalLedgerModelName": "generalledgers"
 	}
 }

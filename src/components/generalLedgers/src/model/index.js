@@ -11,7 +11,7 @@
 // Module dependencies ========================================================
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var modelName = 'GeneralLedger';
+var modelName = 'generalledgers';
 
 /**
  *  Define the mongoose schema and model of General Ledger.
@@ -102,7 +102,7 @@ module.exports.define = function (options, imports, emitter) {
 	// Post processing ========================================================
 
 	GeneralLedgerSchema.post('save', function (generalLedger) {
-		logger.info('General ledger', generalLedger.name, '(', generalLedger._id, ') successfully saved');
+		logger.info('General ledger', generalLedger.name, '(' + generalLedger._id + ') successfully saved');
 	});
 
 	mongoose.model(modelName, GeneralLedgerSchema);
