@@ -215,6 +215,10 @@ module.exports = function (options, imports, emitter) {
 			// TODO Optimize by passing the mongoose object or an array of ids/mongoose objects
 			logger.info('Getting the net worth of the general ledger', generalLedgerID);
 
+			callback(new Error('Not yet implemented'));
+			return;
+			// TODO Implement the getNetWorth function
+
 			// TODO Test function arguments
 
 			var netWorth = new imports.amounts.Amount(0, 100, 'EUR');

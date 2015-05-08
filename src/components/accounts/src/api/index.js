@@ -200,7 +200,7 @@ module.exports = function (options, imports, emitter) {
 		},
 
 		/**
-		 *  Get the net worth of a specific account.
+		 *  Get the balance of a specific account.
 		 *
 		 *  @param    {String}    accountID      The id of the account.
 		 *  @param    {Boolean}   includeChilds  Whether child balances are included or not. Default true.
@@ -215,6 +215,10 @@ module.exports = function (options, imports, emitter) {
 		getBalanceById: function (accountID, includeChilds, callback) {
 			// TODO Optimize by passing the mongoose object or an array of ids/mongoose objects
 			logger.info('Getting the balance of the account', accountID);
+
+			callback(new Error('Not yet implemented'));
+			return;
+			// TODO Implement the getBalanceById function
 
 			// TODO Test function arguments
 
