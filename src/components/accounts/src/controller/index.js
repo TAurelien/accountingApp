@@ -56,9 +56,9 @@ module.exports = function (options, imports, emitter) {
 
 		// --------------------------------------------------------------------
 
-		socket.on(prefix + '.update', function (item) {
+		socket.on(prefix + '.update', function (id, item) {
 			logger.info('Receiving a update event');
-			api.update(item, function (err, updatedItem) {
+			api.update(id, item, function (err, updatedItem) {
 				IO.emit(prefix + '.updated', err, updatedItem);
 			});
 		});
