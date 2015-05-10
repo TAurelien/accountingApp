@@ -232,6 +232,15 @@ module.exports = function (grunt) {
 					private: false
 				}
 			}
+		},
+
+		mochaTest: {
+			test: {
+				src: testFiles,
+				options: {
+					reporter: 'spec'
+				}
+			}
 		}
 
 	});
@@ -353,7 +362,7 @@ module.exports = function (grunt) {
 
 	// Test tasks
 	// TODO @grunt Define grunt test tasks
-	grunt.registerTask('test', ['setTestEnv', 'lint', 'sync:default']);
+	grunt.registerTask('test', ['setTestEnv', 'lint', 'mochaTest']);
 
 	// Build / Release tasks
 	// TODO @grunt Define grunt build tasks
