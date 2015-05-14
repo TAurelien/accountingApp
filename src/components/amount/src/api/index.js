@@ -76,7 +76,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.multiply = function(number) {
+	Amount.prototype.multiply = function (number) {
 
 		if (_.isNull(this.preciseValue)) {
 			throw new Error('The precise value must be defined');
@@ -103,7 +103,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.divide = function(number) {
+	Amount.prototype.divide = function (number) {
 
 		if (_.isNull(this.preciseValue)) {
 			throw new Error('The precise value must be defined');
@@ -135,7 +135,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.getValue = function() {
+	Amount.prototype.getValue = function () {
 
 		try {
 			privateApi.checkObject(this);
@@ -173,7 +173,7 @@ module.exports = function (options, imports, Amount) {
 		}
 
 		try {
-			privateApi.checkObject(this);
+			privateApi.checkObject(amount);
 		} catch (err) {
 			throw err;
 		}
