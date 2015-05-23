@@ -220,7 +220,6 @@ module.exports = function (options, imports, emitter) {
 			// TODO Test function arguments
 
 			//var amount = new imports.amounts.Amount(0, 100, 'EUR');
-
 		}
 
 	};
