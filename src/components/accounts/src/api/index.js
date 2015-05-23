@@ -353,7 +353,6 @@ module.exports = function (options, imports, emitter) {
 				}
 
 			});
-
 		}
 
 	};

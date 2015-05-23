@@ -8,6 +8,7 @@
  */
 'use strict';
 
+var _ = require('lodash');
 var events = require('events');
 
 module.exports = function setup(options, imports, register) {
@@ -18,21 +19,38 @@ module.exports = function setup(options, imports, register) {
 
 	var emitter = require('./events')(options, imports, AccountTypes);
 
-	var nomenclatures = imports.nomenclatures;
+	var model = require('./model');
+	model.define(options, imports, emitter);
 
-	// TODO Define the accountTypes module controller, model and api
+	require('./controller')(options, imports, emitter);
 
-	// Test -------------------------------------------------------------------
-	var path = require('path');
-	var _ = require('lodash');
-	var data = require(path.join(process.cwd(), './data/development/accounttypes.json'));
-	var idArray = _.map(data, function (item) {
-		return item.code;
-	});
-	// ------------------------------------------------------------------------
+	var api = require('./api')(options, imports, emitter);
+
+	AccountTypes.model = model.get();
+	AccountTypes.api = api;
 
 	// Add the accountTypes to the global nomenclatures
-	nomenclatures.addNomenclature('accountTypes', data, idArray, AccountTypes, 'accountTypes.update');
+	var nomenclatures = imports.nomenclatures;
+	nomenclatures.addNomenclature('accountTypes', [], [], AccountTypes, 'accountTypes.update');
+
+	var logger = imports.logger.get('Account types');
+
+	AccountTypes.postSuccessDBConnectionConfig = function () {
+		logger.info('Configuring the accountTypes module after successful db connection');
+
+		api.getNomenclatureData(function (err, data) {
+			if (err) {
+				logger.error('Getting nomenclature data failed');
+			} else if (_.isEmpty(data)) {
+				logger.warn('No nomenclature data has been found');
+			} else {
+				// Update the accountTypes nomenclature
+				var idArray = api.extractId(data);
+				emitter.emitUpdate(data, idArray);
+			}
+		});
+
+	};
 
 	// Register --------------
 

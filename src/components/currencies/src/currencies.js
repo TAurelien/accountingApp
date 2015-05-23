@@ -8,6 +8,7 @@
  */
 'use strict';
 
+var _ = require('lodash');
 var events = require('events');
 
 module.exports = function setup(options, imports, register) {
@@ -18,21 +19,38 @@ module.exports = function setup(options, imports, register) {
 
 	var emitter = require('./events')(options, imports, Currencies);
 
-	var nomenclatures = imports.nomenclatures;
+	var model = require('./model');
+	model.define(options, imports, emitter);
 
-	// TODO Define the currencies module controller, model and api
+	require('./controller')(options, imports, emitter);
 
-	// Test -------------------------------------------------------------------
-	var path = require('path');
-	var _ = require('lodash');
-	var data = require(path.join(process.cwd(), './data/development/currencies.json'));
-	var idArray = _.map(data, function (item) {
-		return item.code;
-	});
-	// ------------------------------------------------------------------------
+	var api = require('./api')(options, imports, emitter);
+
+	Currencies.model = model.get();
+	Currencies.api = api;
 
 	// Add the currencies to the global nomenclatures
-	nomenclatures.addNomenclature('currencies', data, idArray, Currencies, 'currencies.update');
+	var nomenclatures = imports.nomenclatures;
+	nomenclatures.addNomenclature('currencies', [], [], Currencies, 'currencies.update');
+
+	var logger = imports.logger.get('Currencies');
+
+	Currencies.postSuccessDBConnectionConfig = function () {
+		logger.info('Configuring the currencies module after successful db connection');
+
+		api.getNomenclatureData(function (err, data) {
+			if (err) {
+				logger.error('Getting nomenclature data failed');
+			} else if (_.isEmpty(data)) {
+				logger.warn('No nomenclature data has been found');
+			} else {
+				// Update the currencies nomenclature
+				var idArray = api.extractId(data);
+				emitter.emitUpdate(data, idArray);
+			}
+		});
+
+	};
 
 	// Register --------------
 
