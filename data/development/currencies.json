@@ -1,11 +1,17 @@
 [
 
 	{
+		"_id": {
+			"$oid": "5554ab1a021e480866cf5d25"
+		},
 		"code": "EUR",
 		"symbol": "€"
 	},
 
 	{
+		"_id": {
+			"$oid": "5554ab1a021e480866cf5d26"
+		},
 		"code": "USD",
 		"symbol": "$"
 	}

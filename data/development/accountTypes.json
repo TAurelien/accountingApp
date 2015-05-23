@@ -1,22 +1,37 @@
 [
 
 	{
+		"_id": {
+			"$oid": "5554e243021e480866cf5d2c"
+		},
 		"code": "equity"
 	},
 
 	{
+		"_id": {
+			"$oid": "5554e243021e480866cf5d2d"
+		},
 		"code": "asset"
 	},
 
 	{
+		"_id": {
+			"$oid": "5554e243021e480866cf5d2e"
+		},
 		"code": "liability"
 	},
 
 	{
+		"_id": {
+			"$oid": "5554e243021e480866cf5d2f"
+		},
 		"code": "income"
 	},
 
 	{
+		"_id": {
+			"$oid": "5554e243021e480866cf5d30"
+		},
 		"code": "expense"
 	}
 
