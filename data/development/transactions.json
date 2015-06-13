@@ -472,7 +472,7 @@
 			},
 			"currency": "EUR",
 			"amount": [{
-				"value": 5000,
+				"value": -5000,
 				"scaleFactor": 100
 			}]
 		}, {
