@@ -33,12 +33,18 @@ module.exports = function setup(options, imports, register) {
 
 		if (_.isFinite(preciseValue)) {
 			this.preciseValue = preciseValue;
+		} else {
+			this.preciseValue = 0;
 		}
 		if (_.isFinite(scale)) {
 			this.scale = scale;
+		} else {
+			this.scale = options.defaultScale || 100;
 		}
 		if (_.isString(currency)) {
 			this.currency = currency;
+		} else {
+			this.currency = options.defaultCurrency || null;
 		}
 
 	};

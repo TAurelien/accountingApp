@@ -28,7 +28,7 @@ var _ = require('lodash');
  *  @version  1.0.0
  *  @since    1.0.0
  */
-var checkObject = function(amountObject) {
+var checkObject = function (amountObject) {
 
 	if (!amountObject.isAmountObject) {
 		throw new Error('An amount object is required');
@@ -66,7 +66,7 @@ module.exports.checkObject = checkObject;
  *  @version  1.0.0
  *  @since    1.0.0
  */
-var alignScale = function(a, b) {
+var alignScale = function (a, b) {
 
 	var scaleDiff = 1;
 
@@ -108,48 +108,48 @@ module.exports.alignScale = alignScale;
  *  @version  1.0.0
  *  @since    1.0.0
  */
-var makeAddOrSub = function(currentAmount, otherAmount, operation) {
+var makeAddOrSub = function (currentAmount, otherAmount, operation) {
 
 	try {
-			checkObject(otherAmount);
-		} catch (err) {
-			throw err;
-		}
+		checkObject(otherAmount);
+	} catch (err) {
+		throw err;
+	}
 
-		if (_.isNull(currentAmount.currency)) {
-			currentAmount.currency = otherAmount.currency;
-		}
+	if (_.isNull(currentAmount.currency)) {
+		currentAmount.currency = otherAmount.currency;
+	}
 
-		if (currentAmount.currency !== otherAmount.currency) {
-			throw new Error('The currency of both amount must be similar');
-		}
+	if (currentAmount.currency !== otherAmount.currency) {
+		throw new Error('The currency of both amount must be similar');
+	}
 
-		if (_.isNull(currentAmount.preciseValue)) {
-			currentAmount.preciseValue = 0;
-		}
+	if (_.isNull(currentAmount.preciseValue)) {
+		currentAmount.preciseValue = 0;
+	}
 
-		if (_.isNull(currentAmount.scale)) {
-			currentAmount.scale = otherAmount.scale;
-		}
+	if (_.isNull(currentAmount.scale)) {
+		currentAmount.scale = otherAmount.scale;
+	}
 
-		// TODO Find how to clone the object
-		//var clonedOtherAmount = _.clone(otherAmount, true);
-		var clonedOtherAmount = {
-			isAmountObject: true,
-			preciseValue: otherAmount.preciseValue,
-			scale: otherAmount.scale,
-			currency: otherAmount.currency
-		};
+	// TODO Find how to clone the object
+	//var clonedOtherAmount = _.clone(otherAmount, true);
+	var clonedOtherAmount = {
+		isAmountObject: true,
+		preciseValue: otherAmount.preciseValue,
+		scale: otherAmount.scale,
+		currency: otherAmount.currency
+	};
 
-		alignScale(currentAmount, clonedOtherAmount);
+	alignScale(currentAmount, clonedOtherAmount);
 
-		if (operation === 'Add') {
-			currentAmount.preciseValue = Math.round(currentAmount.preciseValue + clonedOtherAmount.preciseValue);
-		} else {
-			currentAmount.preciseValue = Math.round(currentAmount.preciseValue - clonedOtherAmount.preciseValue);
-		}
+	if (operation === 'Add') {
+		currentAmount.preciseValue = Math.round(currentAmount.preciseValue + clonedOtherAmount.preciseValue);
+	} else {
+		currentAmount.preciseValue = Math.round(currentAmount.preciseValue - clonedOtherAmount.preciseValue);
+	}
 
-		return currentAmount;
+	return currentAmount;
 
 };
 

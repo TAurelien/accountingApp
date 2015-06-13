@@ -17,9 +17,6 @@ module.exports = function (options, imports, Amount) {
 	var privateApi = require('./private');
 
 	Amount.prototype.isAmountObject = true;
-	Amount.prototype.preciseValue = null;
-	Amount.prototype.scale = null;
-	Amount.prototype.currency = null;
 
 	/**
 	 *  Make the addition of the Amount passed in argument to the current Amount.
@@ -76,7 +73,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.multiply = function(number) {
+	Amount.prototype.multiply = function (number) {
 
 		if (_.isNull(this.preciseValue)) {
 			throw new Error('The precise value must be defined');
@@ -103,7 +100,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.divide = function(number) {
+	Amount.prototype.divide = function (number) {
 
 		if (_.isNull(this.preciseValue)) {
 			throw new Error('The precise value must be defined');
@@ -135,7 +132,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.getValue = function() {
+	Amount.prototype.getValue = function () {
 
 		try {
 			privateApi.checkObject(this);
