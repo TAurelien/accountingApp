@@ -74,6 +74,15 @@ module.exports = function (options, imports, emitter) {
 
 		// --------------------------------------------------------------------
 
+		socket.on(prefix + '.getAmount', function (accountID, transactionRef) {
+			logger.info('Receiving a getAmount event');
+			api.getAmount(accountID, transactionRef, function (err, amount) {
+				IO.emit(prefix + '.amount', err, amount);
+			});
+		});
+
+		// --------------------------------------------------------------------
+
 	});
 
 };
