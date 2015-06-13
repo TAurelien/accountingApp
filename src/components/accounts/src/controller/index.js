@@ -74,6 +74,15 @@ module.exports = function (options, imports, emitter) {
 
 		// --------------------------------------------------------------------
 
+		socket.on(prefix + '.getBalance', function (accountRef, includeChilds) {
+			logger.info('Receiving a getBalance event');
+			api.getBalance(accountRef, includeChilds, function (err, balance) {
+				IO.emit(prefix + '.balance', err, balance);
+			});
+		});
+
+		// --------------------------------------------------------------------
+
 	});
 
 };
