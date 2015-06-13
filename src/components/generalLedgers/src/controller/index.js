@@ -74,6 +74,15 @@ module.exports = function (options, imports, emitter) {
 
 		// --------------------------------------------------------------------
 
+		socket.on(prefix + '.getNetWorth', function (generalLedgerRef) {
+			logger.info('Receiving a getNetWorth event');
+			api.getNetWorth(generalLedgerRef, function (err, netWorth) {
+				IO.emit(prefix + '.netWorth', err, netWorth);
+			});
+		});
+
+		// --------------------------------------------------------------------
+
 	});
 
 };
