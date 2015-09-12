@@ -4,7 +4,17 @@
 		"_id": {
 			"$oid": "54ef204e923c579c1967379a"
 		},
-		"name": "General ledger dev test"
+		"name": "Dev test",
+		"description": "testing general ledger",
+		"closed": false,
+		"netWorth": [{
+			"value": 515000,
+			"scale": 100,
+			"currency": "EUR"
+		}],
+		"settings": {
+			"defaultCurrency": "EUR"
+		}
 	}
 
 ]
