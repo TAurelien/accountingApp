@@ -14,6 +14,12 @@ var imports = {
 				error: function (msg) {}
 			};
 		}
+	},
+	nomenclatures: {
+		getIds: function (nomenclature) {
+			'use strict';
+			return ["EUR", "USD"];
+		}
 	}
 };
 
@@ -47,12 +53,12 @@ describe('Amount module', function () {
 			testAmount.isAmountObject.should.be.equal(true);
 		});
 
-		it('should have a property preciseValue set to null', function () {
-			should(testAmount.preciseValue).be.equal(null);
+		it('should have a property value set to 0', function () {
+			should(testAmount.value).be.equal(0);
 		});
 
-		it('should have a property scale set to null', function () {
-			should(testAmount.scale).be.equal(null);
+		it('should have a property scale set to 100', function () {
+			should(testAmount.scale).be.equal(100);
 		});
 
 		it('should have a property currency set to null', function () {
@@ -97,8 +103,8 @@ describe('Amount module', function () {
 			testAmount.isAmountObject.should.be.equal(true);
 		});
 
-		it('should have a property preciseValue set to the argument value', function () {
-			testAmount.preciseValue.should.be.equal(5000);
+		it('should have a property value set to the argument value', function () {
+			testAmount.value.should.be.equal(5000);
 		});
 
 		it('should have a property scale set to the argument value', function () {
@@ -151,16 +157,18 @@ describe('Amount module', function () {
 			testAmount.getValue().should.be.exactly(0.05);
 		});
 
-		it('should throws an error if the precise value is not defined', function () {
+		it('should throws an error if the value is not defined', function () {
 			(function () {
 				var testAmount = new amounts.Amount(null, 100, 'EUR');
+				testAmount.value = null;
 				testAmount.getValue();
-			}).should.throw('The precise value must be defined');
+			}).should.throw('The value must be defined');
 		});
 
 		it('should throws an error if the scale is not defined', function () {
-			var testAmount = new amounts.Amount(5000, null, 'EUR');
 			(function () {
+				var testAmount = new amounts.Amount(5000, null, 'EUR');
+				testAmount.scale = null;
 				testAmount.getValue();
 			}).should.throw('The scale must be defined');
 		});
@@ -187,35 +195,35 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(1000, 100, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(6000);
+			testAmount_B.value.should.be.equal(6000);
 		});
 
 		it('should perform the operation (negative values)', function () {
 			var testAmount_A = new amounts.Amount(-5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(-1000, 100, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(-6000);
+			testAmount_B.value.should.be.equal(-6000);
 		});
 
 		it('should perform the operation (positive and negative values)', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(-1000, 100, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(4000);
+			testAmount_B.value.should.be.equal(4000);
 		});
 
 		it('should perform the operation even if the precise value of the current is not defined', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(null, 100, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(5000);
+			testAmount_B.value.should.be.equal(5000);
 		});
 
 		it('should inherit the scale from the argument if not defined in current', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(0, null, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(5000);
+			testAmount_B.value.should.be.equal(5000);
 			testAmount_B.scale.should.be.equal(100);
 		});
 
@@ -223,7 +231,7 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(0, 100, null);
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(5000);
+			testAmount_B.value.should.be.equal(5000);
 			testAmount_B.currency.should.equal('EUR');
 		});
 
@@ -231,9 +239,9 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(10000, 1000, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(60000);
+			testAmount_B.value.should.be.equal(60000);
 			testAmount_B.scale.should.be.equal(1000);
-			testAmount_A.preciseValue.should.be.equal(5000);
+			testAmount_A.value.should.be.equal(5000);
 			testAmount_A.scale.should.be.equal(100);
 		});
 
@@ -241,7 +249,7 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(50000, 1000, 'EUR');
 			var testAmount_B = new amounts.Amount(1000, 100, 'EUR');
 			testAmount_B.add(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(60000);
+			testAmount_B.value.should.be.equal(60000);
 			testAmount_B.scale.should.be.equal(1000);
 		});
 
@@ -253,17 +261,19 @@ describe('Amount module', function () {
 			}).should.throw('The currency of both amount must be similar');
 		});
 
-		it('should throws an error if the precise value of the argument is not defined', function () {
+		it('should throws an error if the value of the argument is not defined', function () {
 			(function () {
 				var testAmount_A = new amounts.Amount(null, 100, 'EUR');
+				testAmount_A.value = null;
 				var testAmount_B = new amounts.Amount(0, 100, 'EUR');
 				testAmount_B.add(testAmount_A);
-			}).should.throw('The precise value must be defined');
+			}).should.throw('The value must be defined');
 		});
 
 		it('should throws an error if the scale of the argument is not defined', function () {
 			(function () {
 				var testAmount_A = new amounts.Amount(5000, null, 'EUR');
+				testAmount_A.scale = null;
 				var testAmount_B = new amounts.Amount(0, 100, 'EUR');
 				testAmount_B.add(testAmount_A);
 			}).should.throw('The scale must be defined');
@@ -293,35 +303,35 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(1000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(5000, 100, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(4000);
+			testAmount_B.value.should.be.equal(4000);
 		});
 
 		it('should perform the operation (negative values)', function () {
 			var testAmount_A = new amounts.Amount(-1000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(-5000, 100, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(-4000);
+			testAmount_B.value.should.be.equal(-4000);
 		});
 
 		it('should perform the operation (positive and negative values)', function () {
 			var testAmount_A = new amounts.Amount(1000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(-5000, 100, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(-6000);
+			testAmount_B.value.should.be.equal(-6000);
 		});
 
 		it('should perform the operation even if the precise value of the current is not defined', function () {
 			var testAmount_A = new amounts.Amount(1000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(null, 100, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(-1000);
+			testAmount_B.value.should.be.equal(-1000);
 		});
 
 		it('should inherit the scale from the argument if not defined in current', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(0, null, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(-5000);
+			testAmount_B.value.should.be.equal(-5000);
 			testAmount_B.scale.should.be.equal(100);
 		});
 
@@ -329,7 +339,7 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(0, 100, null);
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(-5000);
+			testAmount_B.value.should.be.equal(-5000);
 			testAmount_B.currency.should.equal('EUR');
 		});
 
@@ -337,9 +347,9 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(1000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(50000, 1000, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(40000);
+			testAmount_B.value.should.be.equal(40000);
 			testAmount_B.scale.should.be.equal(1000);
-			testAmount_A.preciseValue.should.be.equal(1000);
+			testAmount_A.value.should.be.equal(1000);
 			testAmount_A.scale.should.be.equal(100);
 		});
 
@@ -347,7 +357,7 @@ describe('Amount module', function () {
 			var testAmount_A = new amounts.Amount(10000, 1000, 'EUR');
 			var testAmount_B = new amounts.Amount(5000, 100, 'EUR');
 			testAmount_B.subtract(testAmount_A);
-			testAmount_B.preciseValue.should.be.equal(40000);
+			testAmount_B.value.should.be.equal(40000);
 			testAmount_B.scale.should.be.equal(1000);
 		});
 
@@ -359,17 +369,19 @@ describe('Amount module', function () {
 			}).should.throw('The currency of both amount must be similar');
 		});
 
-		it('should throws an error if the precise value of the argument is not defined', function () {
+		it('should throws an error if the value of the argument is not defined', function () {
 			(function () {
 				var testAmount_A = new amounts.Amount(null, 100, 'EUR');
+				testAmount_A.value = null;
 				var testAmount_B = new amounts.Amount(0, 100, 'EUR');
 				testAmount_B.subtract(testAmount_A);
-			}).should.throw('The precise value must be defined');
+			}).should.throw('The value must be defined');
 		});
 
 		it('should throws an error if the scale of the argument is not defined', function () {
 			(function () {
 				var testAmount_A = new amounts.Amount(5000, null, 'EUR');
+				testAmount_A.scale = null;
 				var testAmount_B = new amounts.Amount(0, 100, 'EUR');
 				testAmount_B.subtract(testAmount_A);
 			}).should.throw('The scale must be defined');
@@ -395,25 +407,28 @@ describe('Amount module', function () {
 
 	describe('multiply(Number) function', function () {
 
-		it('should multiply the precise value by the argument', function () {
+		it('should multiply the value by the argument', function () {
 			var testAmount = new amounts.Amount(5000, 100, 'EUR');
 			testAmount.multiply(2);
-			testAmount.preciseValue.should.be.equal(10000);
+			testAmount.value.should.be.equal(10000);
 			testAmount.scale.should.be.equal(100);
 		});
 
 		it('should allow the operation whatever the scale and currency', function () {
 			var testAmount = new amounts.Amount(5000, null, null);
+			testAmount.scale = null;
+			testAmount.currency = null;
 			testAmount.multiply(2);
-			testAmount.preciseValue.should.be.equal(10000);
+			testAmount.value.should.be.equal(10000);
 			should(testAmount.scale).be.equal(null);
 		});
 
-		it('should throws an error if the precise value is not defined', function () {
+		it('should throws an error if the value is not defined', function () {
 			var testAmount = new amounts.Amount(null, 100, 'EUR');
+			testAmount.value = null;
 			(function () {
 				testAmount.multiply(2);
-			}).should.throw('The precise value must be defined');
+			}).should.throw('The value must be defined');
 		});
 
 		it('should throws an error if the argument is not a number', function () {
@@ -427,33 +442,36 @@ describe('Amount module', function () {
 
 	describe('divide(Number) function', function () {
 
-		it('should divide the precise value by the argument', function () {
+		it('should divide the value by the argument', function () {
 			var testAmount = new amounts.Amount(5000, 100, 'EUR');
 			testAmount.divide(2);
-			testAmount.preciseValue.should.be.equal(2500);
+			testAmount.value.should.be.equal(2500);
 			testAmount.scale.should.be.equal(100);
 			testAmount.currency.should.be.equal('EUR');
 		});
 
-		it('should round the precise value to always get an integer', function () {
+		it('should round the value to always get an integer', function () {
 			var testAmount = new amounts.Amount(1000, 100, 'EUR');
 			testAmount.divide(3);
-			testAmount.preciseValue.should.be.equal(333);
-			testAmount.preciseValue.should.not.be.equal(333.33);
+			testAmount.value.should.be.equal(333);
+			testAmount.value.should.not.be.equal(333.33);
 		});
 
 		it('should allow the operation whatever the scale and currency', function () {
 			var testAmount = new amounts.Amount(5000, null, null);
+			testAmount.scale = null;
+			testAmount.currency = null;
 			testAmount.divide(2);
-			testAmount.preciseValue.should.be.equal(2500);
+			testAmount.value.should.be.equal(2500);
 			should(testAmount.scale).be.equal(null);
 		});
 
-		it('should throws an error if the precise value is not defined', function () {
+		it('should throws an error if the value is not defined', function () {
 			var testAmount = new amounts.Amount(null, 100, 'EUR');
+			testAmount.value = null;
 			(function () {
 				testAmount.divide(2);
-			}).should.throw('The precise value must be defined');
+			}).should.throw('The value must be defined');
 		});
 
 		it('should throws an error the argument equals 0', function () {
@@ -508,6 +526,7 @@ describe('Amount module', function () {
 		it('should throws an error if the current has something wrong', function () {
 			var testAmount_A = new amounts.Amount(5000, 100, 'EUR');
 			var testAmount_B = new amounts.Amount(0, null, 'EUR');
+			testAmount_B.scale = null;
 			(function () {
 				testAmount_B.compareTo(testAmount_A);
 			}).should.throw();
@@ -515,6 +534,7 @@ describe('Amount module', function () {
 
 		it('should throws an error if the argument has something wrong', function () {
 			var testAmount_A = new amounts.Amount(5000, null, 'EUR');
+			testAmount_A.scale = null;
 			var testAmount_B = new amounts.Amount(0, 100, 'EUR');
 			(function () {
 				testAmount_B.compareTo(testAmount_A);
