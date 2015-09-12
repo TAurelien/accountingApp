@@ -76,7 +76,7 @@ module.exports = function (options, imports, Amount) {
 	Amount.prototype.multiply = function (number) {
 
 		if (_.isNull(this.value)) {
-			throw new Error('The precise value must be defined');
+			throw new Error('The value must be defined');
 		}
 
 		if (!_.isFinite(number)) {
@@ -103,7 +103,7 @@ module.exports = function (options, imports, Amount) {
 	Amount.prototype.divide = function (number) {
 
 		if (_.isNull(this.value)) {
-			throw new Error('The precise value must be defined');
+			throw new Error('The value must be defined');
 		}
 
 		if (!_.isFinite(number)) {
@@ -140,7 +140,7 @@ module.exports = function (options, imports, Amount) {
 			throw err;
 		}
 
-		var exactValue = this.alue / this.scale;
+		var exactValue = this.value / this.scale;
 		return exactValue;
 
 	};

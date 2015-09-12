@@ -31,6 +31,8 @@ module.exports = function setup(options, imports, register) {
 	 */
 	var Amount = function (value, scale, currency) {
 
+		// TODO Allow initialization from a Amount mongoose object
+
 		if (_.isFinite(value)) {
 			this.value = value;
 		} else {

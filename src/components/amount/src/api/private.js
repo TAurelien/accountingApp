@@ -35,7 +35,7 @@ var checkObject = function (amountObject) {
 	}
 
 	if (_.isNull(amountObject.value)) {
-		throw new Error('The precise value must be defined');
+		throw new Error('The value must be defined');
 	}
 
 	if (_.isNull(amountObject.scale)) {
