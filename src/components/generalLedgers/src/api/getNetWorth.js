@@ -14,9 +14,11 @@ module.exports = function (options, imports, emitter) {
 
 	var getNetWorthByObject = function (generalLedger, callback) {
 
+		var generalLedgerID = generalLedger.id;
+
 		var queryAsset = {};
 		queryAsset.conditions = {
-			generalLedger: generalLedger.id,
+			generalLedger: generalLedgerID,
 			type: 'asset'
 		};
 		queryAsset.order = null;
@@ -26,7 +28,7 @@ module.exports = function (options, imports, emitter) {
 
 		var queryLiability = {};
 		queryLiability.conditions = {
-			generalLedger: generalLedger.id,
+			generalLedger: generalLedgerID,
 			type: 'liability'
 		};
 		queryLiability.order = null;
@@ -73,7 +75,7 @@ module.exports = function (options, imports, emitter) {
 			if (err) {
 				logger.error('');
 			} else {
-				callback(null, netWorth);
+				callback(null, netWorth, generalLedgerID);
 			}
 		});
 

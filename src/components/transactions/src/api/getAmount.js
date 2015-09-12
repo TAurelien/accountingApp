@@ -37,18 +37,18 @@ module.exports = function (options, imports, emitter) {
 			_.forEach(transaction.splits, function (split) {
 				if (split.account + '' === accountID + '') {
 					var splitAmount = new Amount();
-					splitAmount.preciseValue = split.amount[0].value;
-					splitAmount.scale = split.amount[0].scaleFactor;
+					splitAmount.value = split.amount[0].value;
+					splitAmount.scale = split.amount[0].scale;
 					splitAmount.currency = split.currency;
 					try {
 						transactionAmount.add(splitAmount);
 					} catch (err) {
-						logger.error('Error while adding the splitAmount to transactionAmount');
+						logger.error('Error while adding the splitAmount to transactionAmount for transaction', transactionID);
 						logger.error(err);
 					}
 				}
 			});
-			logger.debug('Computed amount:', transactionAmount);
+			logger.debug('Computed amount of transaction (' + transactionID + '):', transactionAmount);
 			callback(null, transactionAmount);
 		} else {
 			logger.error('');

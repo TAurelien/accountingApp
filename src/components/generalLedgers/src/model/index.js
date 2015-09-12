@@ -30,6 +30,8 @@ module.exports.define = function (options, imports, emitter) {
 
 	var logger = imports.logger.get('General Ledgers Model');
 
+	var AmountSchema = imports.amounts.schema;
+
 	var nomenclatures = imports.nomenclatures;
 	var currencies = nomenclatures.getIds('currencies');
 	// TODO Deal with nomenclatures update
@@ -62,6 +64,8 @@ module.exports.define = function (options, imports, emitter) {
 			type: Boolean,
 			default: false
 		},
+
+		netWorth: [AmountSchema],
 
 		settings: {
 

@@ -4,9 +4,8 @@
 	"description": "",
 	"main": "src/amounts.js",
 	"plugin": {
-		"consumes": ["logger"],
+		"consumes": ["logger", "nomenclatures", "currencies"],
 		"provides": ["amounts"]
 	},
-	"dependencies": {
-	}
+	"dependencies": {}
 }

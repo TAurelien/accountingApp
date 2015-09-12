@@ -34,7 +34,7 @@ var checkObject = function (amountObject) {
 		throw new Error('An amount object is required');
 	}
 
-	if (_.isNull(amountObject.preciseValue)) {
+	if (_.isNull(amountObject.value)) {
 		throw new Error('The precise value must be defined');
 	}
 
@@ -76,13 +76,13 @@ var alignScale = function (a, b) {
 	if (b.scale > a.scale) {
 
 		scaleDiff = b.scale / a.scale;
-		a.preciseValue = a.preciseValue * scaleDiff;
+		a.value = a.value * scaleDiff;
 		a.scale = b.scale;
 
 	} else if (a.scale > b.scale) {
 
 		scaleDiff = a.scale / b.scale;
-		b.preciseValue = b.preciseValue * scaleDiff;
+		b.value = b.value * scaleDiff;
 		b.scale = a.scale;
 
 	}
@@ -124,8 +124,8 @@ var makeAddOrSub = function (currentAmount, otherAmount, operation) {
 		throw new Error('The currency of both amount must be similar');
 	}
 
-	if (_.isNull(currentAmount.preciseValue)) {
-		currentAmount.preciseValue = 0;
+	if (_.isNull(currentAmount.value)) {
+		currentAmount.value = 0;
 	}
 
 	if (_.isNull(currentAmount.scale)) {
@@ -136,7 +136,7 @@ var makeAddOrSub = function (currentAmount, otherAmount, operation) {
 	//var clonedOtherAmount = _.clone(otherAmount, true);
 	var clonedOtherAmount = {
 		isAmountObject: true,
-		preciseValue: otherAmount.preciseValue,
+		value: otherAmount.value,
 		scale: otherAmount.scale,
 		currency: otherAmount.currency
 	};
@@ -144,9 +144,9 @@ var makeAddOrSub = function (currentAmount, otherAmount, operation) {
 	alignScale(currentAmount, clonedOtherAmount);
 
 	if (operation === 'Add') {
-		currentAmount.preciseValue = Math.round(currentAmount.preciseValue + clonedOtherAmount.preciseValue);
+		currentAmount.value = Math.round(currentAmount.value + clonedOtherAmount.value);
 	} else {
-		currentAmount.preciseValue = Math.round(currentAmount.preciseValue - clonedOtherAmount.preciseValue);
+		currentAmount.value = Math.round(currentAmount.value - clonedOtherAmount.value);
 	}
 
 	return currentAmount;

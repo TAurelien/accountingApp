@@ -1,7 +1,7 @@
 /**
  *  @module   General ledgers
  *
- * @access public
+ *  @access public
  *  @author   TAurelien
  *  @date     2015-05-01
  *  @version  1.0.0

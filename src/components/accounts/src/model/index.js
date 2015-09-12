@@ -30,6 +30,8 @@ module.exports.define = function (options, imports, emitter) {
 
 	var logger = imports.logger.get('Accounts Model');
 
+	var AmountSchema = imports.amounts.schema;
+
 	var nomenclatures = imports.nomenclatures;
 	var currencies = nomenclatures.getIds('currencies');
 	var accountTypes = nomenclatures.getIds('accountTypes');
@@ -98,6 +100,14 @@ module.exports.define = function (options, imports, emitter) {
 			type: Schema.ObjectId,
 			ref: modelName
 		},
+
+		// TODO: Add the path
+
+		balance: [AmountSchema],
+
+		ownBalance: [AmountSchema],
+
+		childBalance: [AmountSchema],
 
 		level: {
 			type: Number,

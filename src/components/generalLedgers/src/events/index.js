@@ -11,7 +11,7 @@
 module.exports = function (options, imports, GeneralLedgers) {
 
 	var logger = imports.logger.get('General Ledgers events');
-
+	var IO = imports.io;
 	var prefix = 'generalLedgers';
 
 	return {
@@ -32,6 +32,7 @@ module.exports = function (options, imports, GeneralLedgers) {
 			 *  @event GeneralLedgers#generalLedgers.create
 			 */
 			GeneralLedgers.emit(eventName);
+			//IO.emit(prefix + '.created', err, createdItem);
 		},
 
 		/**
@@ -50,6 +51,7 @@ module.exports = function (options, imports, GeneralLedgers) {
 			 *  @event GeneralLedgers#generalLedgers.update
 			 */
 			GeneralLedgers.emit(eventName);
+			//IO.emit(prefix + '.updated', err, updatedItem);
 		},
 
 		/**
@@ -68,6 +70,7 @@ module.exports = function (options, imports, GeneralLedgers) {
 			 *  @event GeneralLedgers#generalLedgers.delete
 			 */
 			GeneralLedgers.emit(eventName);
+			//IO.emit(prefix + '.deleted', err);
 		},
 
 		/**
@@ -86,6 +89,7 @@ module.exports = function (options, imports, GeneralLedgers) {
 			 *  @event GeneralLedgers#generalLedgers.netWorthChange
 			 */
 			GeneralLedgers.emit(eventName);
+			//IO.emit(prefix + '.netWorthChanged', err);
 		}
 
 	};

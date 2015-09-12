@@ -31,6 +31,7 @@ module.exports = function (options, imports, emitter) {
 
 		if (!_.isNull(account)) {
 			var accountID = account.id;
+			var type = account.type;
 			logger.info('Getting balance of account', accountID);
 
 			Transaction.getAmount(accountID, function (err, amount) {
@@ -39,7 +40,10 @@ module.exports = function (options, imports, emitter) {
 					callback(err);
 				} else {
 					logger.debug('Computed balance for', accountID, amount);
-					callback(null, amount);
+					if (type === 'asset' | type === 'expense') {
+						amount.value = -amount.value;
+					}
+					callback(null, amount, accountID);
 				}
 			});
 
