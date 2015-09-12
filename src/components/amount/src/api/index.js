@@ -17,9 +17,6 @@ module.exports = function (options, imports, Amount) {
 	var privateApi = require('./private');
 
 	Amount.prototype.isAmountObject = true;
-	Amount.prototype.preciseValue = null;
-	Amount.prototype.scale = null;
-	Amount.prototype.currency = null;
 
 	/**
 	 *  Make the addition of the Amount passed in argument to the current Amount.
@@ -76,9 +73,9 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.multiply = function(number) {
+	Amount.prototype.multiply = function (number) {
 
-		if (_.isNull(this.preciseValue)) {
+		if (_.isNull(this.value)) {
 			throw new Error('The precise value must be defined');
 		}
 
@@ -86,7 +83,7 @@ module.exports = function (options, imports, Amount) {
 			throw new Error('The argument must be a number');
 		}
 
-		this.preciseValue = Math.round(this.preciseValue * number);
+		this.value = Math.round(this.value * number);
 		return this;
 
 	};
@@ -103,9 +100,9 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.divide = function(number) {
+	Amount.prototype.divide = function (number) {
 
-		if (_.isNull(this.preciseValue)) {
+		if (_.isNull(this.value)) {
 			throw new Error('The precise value must be defined');
 		}
 
@@ -117,7 +114,7 @@ module.exports = function (options, imports, Amount) {
 			throw new Error('The argument must be different than 0');
 		}
 
-		this.preciseValue = Math.round(this.preciseValue / number);
+		this.value = Math.round(this.value / number);
 		return this;
 
 	};
@@ -135,7 +132,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	Amount.prototype.getValue = function() {
+	Amount.prototype.getValue = function () {
 
 		try {
 			privateApi.checkObject(this);
@@ -143,8 +140,8 @@ module.exports = function (options, imports, Amount) {
 			throw err;
 		}
 
-		var value = this.preciseValue / this.scale;
-		return value;
+		var exactValue = this.alue / this.scale;
+		return exactValue;
 
 	};
 
@@ -210,7 +207,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @since    1.0.0
 	 */
 	Amount.prototype.toString = function () {
-		return this.getValue() + ' ' + this.currency + ' (' + this.preciseValue + ' / ' + this.scale + ')';
+		return this.getValue() + ' ' + this.currency + ' (' + this.value + ' / ' + this.scale + ')';
 	};
 
 	/**
@@ -225,7 +222,7 @@ module.exports = function (options, imports, Amount) {
 	 *  @since    1.0.0
 	 */
 	Amount.prototype.debug = function () {
-		return 'PreciseValue: ' + this.preciseValue + ' | Scale: ' + this.scale + ' | currency: ' + this.currency;
+		return 'Value: ' + this.value + ' | Scale: ' + this.scale + ' | currency: ' + this.currency;
 	};
 
 };

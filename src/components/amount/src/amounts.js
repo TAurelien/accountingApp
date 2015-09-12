@@ -19,7 +19,7 @@ module.exports = function setup(options, imports, register) {
 	/**
 	 *  Amount object.
 	 *
-	 *  @param    {Number}    preciseValue  The precise value of the amount.
+	 *  @param    {Number}    value         The precise value of the amount.
 	 *  @param    {Number}    scale         The scale of the amount.
 	 *  @param    {String}    currency      The currency of the amount.
 	 *
@@ -29,16 +29,22 @@ module.exports = function setup(options, imports, register) {
 	 *  @version  1.0.0
 	 *  @since    1.0.0
 	 */
-	var Amount = function (preciseValue, scale, currency) {
+	var Amount = function (value, scale, currency) {
 
-		if (_.isFinite(preciseValue)) {
-			this.preciseValue = preciseValue;
+		if (_.isFinite(value)) {
+			this.value = value;
+		} else {
+			this.value = 0;
 		}
 		if (_.isFinite(scale)) {
 			this.scale = scale;
+		} else {
+			this.scale = options.defaultScale || 100;
 		}
 		if (_.isString(currency)) {
 			this.currency = currency;
+		} else {
+			this.currency = options.defaultCurrency || null;
 		}
 
 	};

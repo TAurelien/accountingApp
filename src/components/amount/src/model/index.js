@@ -16,14 +16,21 @@ module.exports = function (options, imports) {
 
 	var logger = imports.logger.get('Amount Model');
 
+	var nomenclatures = imports.nomenclatures;
+	var currencies = nomenclatures.getIds('currencies');
+
+	// TODO Deal with nomenclatures update
+
+	var defaultCurrency = options.defaultCurrency || currencies[0];
+	var defaultScale = options.defaultScale || 100;
+
 	// Schema definition ======================================================
 
 	var AmountSchema = new Schema({
 
 		quantity: {
 			type: Number,
-			default: 1,
-			required: true
+			default: 1
 		},
 
 		unitary: {
@@ -32,12 +39,21 @@ module.exports = function (options, imports) {
 
 		value: {
 			type: Number,
-			required: true
+			required: true,
+			default: 0
 		},
 
-		scaleFactor: {
+		scale: {
 			type: Number,
-			required: true
+			required: true,
+			default: defaultScale
+		},
+
+		currency: {
+			type: String,
+			trim: true,
+			default: defaultCurrency,
+			enum: currencies
 		}
 
 	});

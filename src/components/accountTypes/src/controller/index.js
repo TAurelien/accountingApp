@@ -1,17 +1,17 @@
 /**
- *  @module   General ledgers Controller
+ *  @module   Account Types Controller
  *
  *  @access   private
  *  @author   TAurelien
- *  @date     2015-05-01
+ *  @date     2015-05-14
  *  @version  1.0.0
  */
 'use strict';
 
 module.exports = function (options, imports, emitter) {
 
-	var logger = imports.logger.get('General Ledgers ctrl');
-	var prefix = 'generalLedgers';
+	var logger = imports.logger.get('Account types ctrl');
+	var prefix = 'accountTypes';
 
 	var IO = imports.io;
 	var api = require('../api')(options, imports, emitter);
@@ -72,15 +72,6 @@ module.exports = function (options, imports, emitter) {
 			logger.info(idLogged, 'Receiving a delete event');
 			api.delete(query, function (err) {
 				IO.emit(prefix + '.deleted', err);
-			});
-		});
-
-		// --------------------------------------------------------------------
-
-		socket.on(prefix + '.getNetWorth', function (generalLedgerRef) {
-			logger.info(idLogged, 'Receiving a getNetWorth event');
-			api.getNetWorth(generalLedgerRef, function (err, netWorth, generalLedgerId) {
-				socket.emit(prefix + '.netWorth', err, netWorth, generalLedgerId);
 			});
 		});
 

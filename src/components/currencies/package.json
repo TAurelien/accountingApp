@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "src/currencies.js",
 	"plugin": {
-		"consumes": ["logger", "nomenclatures"],
+		"consumes": ["logger", "io", "nomenclatures"],
 		"provides": ["currencies"]
 	},
 	"dependencies": {}
