@@ -170,7 +170,7 @@ module.exports = function (options, imports, Amount) {
 		}
 
 		try {
-			privateApi.checkObject(this);
+			privateApi.checkObject(amount);
 		} catch (err) {
 			throw err;
 		}
