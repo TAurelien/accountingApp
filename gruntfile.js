@@ -51,7 +51,7 @@ module.exports = function (grunt) {
 
 			_.forEach(collectionFiles, function (file) {
 				envCollections.push({
-					name: file.replace('.json', ''),
+					name: file.replace('.json', '').toLowerCase(),
 					type: 'json',
 					file: dataDir + '/' + envDir + '/' + file,
 					jsonArray: true,
