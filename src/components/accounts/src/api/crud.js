@@ -8,18 +8,16 @@ module.exports = function (options, imports, emitter) {
 	var logger = imports.logger.get('Accounts API');
 	var Account = require('../model').get();
 
-	var create = function (account, callback) {
+	var create = function (data, callback) {
 		logger.info('Creating a new account');
 
-		if (!account) {
+		if (!data) {
 			callback(new Error('account is not defined'));
 			return;
 		}
 
-		var newAccount = new Account();
-		_.merge(newAccount, account);
-
-		newAccount.save(function (err) {
+		var account = new Account(data);
+		account.save(function (err) {
 			if (err) {
 				// TODO Check error type
 				logger.error('Account creation failed');
@@ -33,24 +31,24 @@ module.exports = function (options, imports, emitter) {
 		});
 	};
 
-	var get = function (accountID, query, callback) {
+	var get = function (id, query, callback) {
 		logger.info('Getting a specific account');
 		Account
-			.findById(accountID)
+			.findById(id)
 			.select(query.selection)
-			.exec(function (err, account) {
+			.exec(function (err, item) {
 				if (err) {
 					// TODO Check error type
-					logger.error('Getting the account', accountID, 'failed');
+					logger.error('Getting the account', id, 'failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					if (_.isNull(account)) {
-						logger.warn('No account has been found for id', accountID);
+					if (_.isNull(item)) {
+						logger.warn('No account has been found for id', id);
 					} else {
-						logger.info('Success of getting the account', accountID);
+						logger.info('Success of getting the account', id);
 					}
-					callback(null, account);
+					callback(null, item);
 				}
 			});
 	};
@@ -61,36 +59,36 @@ module.exports = function (options, imports, emitter) {
 			.find(query.conditions)
 			.sort(query.order)
 			.select(query.selection)
-			.exec(function (err, accounts) {
+			.exec(function (err, items) {
 				if (err) {
 					// TODO Check error type
 					logger.error('Getting accounts failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					if (_.isEmpty(accounts)) {
+					if (_.isEmpty(items)) {
 						logger.warn('No account has been found');
 					} else {
 						logger.info('Success of getting accounts');
 					}
-					callback(null, accounts);
+					callback(null, items);
 				}
 			});
 	};
 
-	var update = function (accountID, update, callback) {
+	var update = function (id, data, callback) {
 		logger.info('Updating a specific account');
 		Account
-			.findByIdAndUpdate(accountID, update)
-			.exec(function (err, updatedAccount) {
+			.findByIdAndUpdate(id, data)
+			.exec(function (err, updatedItem) {
 				if (err) {
 					// TODO Check error type
-					logger.error('Updating account', accountID, 'failed');
+					logger.error('Updating account', id, 'failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					logger.info('The account', accountID, 'has been successfully updated');
-					callback(null, updatedAccount);
+					logger.info('The account', id, 'has been successfully updated');
+					callback(null, updatedItem);
 					emitter.emitUpdate();
 				}
 			});

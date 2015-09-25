@@ -38,6 +38,7 @@ module.exports.define = function (options, imports, emitter) {
 	// TODO Deal with nomenclatures update
 
 	var accountModelName = options.accountModelName || 'accounts';
+	var defaultCurrency = options.defaultCurrency || currencies[0];
 
 	// Schema definition ======================================================
 
@@ -54,7 +55,7 @@ module.exports.define = function (options, imports, emitter) {
 		currency: {
 			type: String,
 			trim: true,
-			default: '',
+			default: defaultCurrency,
 			required: true,
 			enum: currencies
 		},

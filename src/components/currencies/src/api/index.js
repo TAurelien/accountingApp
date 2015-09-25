@@ -18,12 +18,12 @@ module.exports = function (options, imports, emitter) {
 
 	return {
 
-		create: function (currency, callback) {
+		create: function (data, callback) {
 			// TODO Define the create function on currencies api
 			throw new Error('Not yet implemented');
 		},
 
-		get: function (currencyID, query, callback) {
+		get: function (id, query, callback) {
 			// TODO Define the get function on currencies api
 			throw new Error('Not yet implemented');
 		},
@@ -33,7 +33,7 @@ module.exports = function (options, imports, emitter) {
 			throw new Error('Not yet implemented');
 		},
 
-		update: function (currencyID, update, callback) {
+		update: function (id, data, callback) {
 			// TODO Define the update function on currencies api
 			throw new Error('Not yet implemented');
 		},

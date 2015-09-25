@@ -32,9 +32,9 @@ module.exports = function (options, imports, emitter) {
 
 		// --------------------------------------------------------------------
 
-		socket.on(prefix + '.create', function (item) {
+		socket.on(prefix + '.create', function (data) {
 			logger.info(idLogged, 'Receiving a create event');
-			api.create(item, function (err, createdItem) {
+			api.create(data, function (err, createdItem) {
 				IO.emit(prefix + '.created', err, createdItem);
 			});
 		});
@@ -59,9 +59,9 @@ module.exports = function (options, imports, emitter) {
 
 		// --------------------------------------------------------------------
 
-		socket.on(prefix + '.update', function (id, item) {
+		socket.on(prefix + '.update', function (id, data) {
 			logger.info(idLogged, 'Receiving a update event');
-			api.update(id, item, function (err, updatedItem) {
+			api.update(id, data, function (err, updatedItem) {
 				IO.emit(prefix + '.updated', err, updatedItem);
 			});
 		});

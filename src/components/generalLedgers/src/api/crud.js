@@ -8,18 +8,16 @@ module.exports = function (options, imports, emitter) {
 	var logger = imports.logger.get('General Ledgers API');
 	var GeneralLedger = require('../model').get();
 
-	var create = function (generalLedger, callback) {
+	var create = function (data, callback) {
 		logger.info('Creating a new general ledger');
 
-		if (!generalLedger) {
+		if (!data) {
 			callback(new Error('generalLedger is not defined'));
 			return;
 		}
 
-		var newGeneralLedger = new GeneralLedger();
-		_.merge(newGeneralLedger, generalLedger);
-
-		newGeneralLedger.save(function (err) {
+		var generalLedger = new GeneralLedger(data);
+		generalLedger.save(function (err) {
 			if (err) {
 				// TODO Check error type
 				logger.error('General ledger creation failed');
@@ -33,24 +31,24 @@ module.exports = function (options, imports, emitter) {
 		});
 	};
 
-	var get = function (generalLedgerID, query, callback) {
+	var get = function (id, query, callback) {
 		logger.info('Getting a specific general ledger');
 		GeneralLedger
-			.findById(generalLedgerID)
+			.findById(id)
 			.select(query.selection)
-			.exec(function (err, generalLedger) {
+			.exec(function (err, item) {
 				if (err) {
 					// TODO Check error type
-					logger.error('Getting the general ledger', generalLedgerID, 'failed');
+					logger.error('Getting the general ledger', id, 'failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					if (_.isNull(generalLedger)) {
-						logger.warn('No general ledger has been found for id', generalLedgerID);
+					if (_.isNull(item)) {
+						logger.warn('No general ledger has been found for id', id);
 					} else {
-						logger.info('Success of getting the general ledger', generalLedgerID);
+						logger.info('Success of getting the general ledger', id);
 					}
-					callback(null, generalLedger);
+					callback(null, item);
 				}
 			});
 	};
@@ -61,36 +59,36 @@ module.exports = function (options, imports, emitter) {
 			.find(query.conditions)
 			.sort(query.order)
 			.select(query.selection)
-			.exec(function (err, generalLedgers) {
+			.exec(function (err, items) {
 				if (err) {
 					// TODO Check error type
 					logger.error('Getting general ledgers failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					if (_.isEmpty(generalLedgers)) {
+					if (_.isEmpty(items)) {
 						logger.warn('No general ledger has been found');
 					} else {
 						logger.info('Success of getting general ledgers');
 					}
-					callback(null, generalLedgers);
+					callback(null, items);
 				}
 			});
 	};
 
-	var update = function (generalLedgerID, update, callback) {
+	var update = function (id, data, callback) {
 		logger.info('Updating a specific general ledger');
 		GeneralLedger
-			.findByIdAndUpdate(generalLedgerID, update)
-			.exec(function (err, updatedGeneralLedger) {
+			.findByIdAndUpdate(id, data)
+			.exec(function (err, updatedItem) {
 				if (err) {
 					// TODO Check error type
-					logger.error('Updating general ledger', generalLedgerID, 'failed');
+					logger.error('Updating general ledger', id, 'failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					logger.info('The general ledger', generalLedgerID, 'has been successfully updated');
-					callback(null, updatedGeneralLedger);
+					logger.info('The general ledger', id, 'has been successfully updated');
+					callback(null, updatedItem);
 					emitter.emitUpdate();
 				}
 			});

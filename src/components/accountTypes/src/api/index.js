@@ -18,12 +18,12 @@ module.exports = function (options, imports, emitter) {
 
 	return {
 
-		create: function (accountType, callback) {
+		create: function (data, callback) {
 			// TODO Define the create function on account types api
 			throw new Error('Not yet implemented');
 		},
 
-		get: function (accountTypeID, query, callback) {
+		get: function (id, query, callback) {
 			// TODO Define the get function on account types api
 			throw new Error('Not yet implemented');
 		},
@@ -33,7 +33,7 @@ module.exports = function (options, imports, emitter) {
 			throw new Error('Not yet implemented');
 		},
 
-		update: function (accountTypeID, update, callback) {
+		update: function (id, data, callback) {
 			// TODO Define the update function on account types api
 			throw new Error('Not yet implemented');
 		},

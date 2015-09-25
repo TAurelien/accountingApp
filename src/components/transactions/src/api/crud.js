@@ -8,18 +8,16 @@ module.exports = function (options, imports, emitter) {
 	var logger = imports.logger.get('Transactions API');
 	var Transaction = require('../model').get();
 
-	var create = function (transaction, callback) {
+	var create = function (data, callback) {
 		logger.info('Creating a new transaction');
 
-		if (!transaction) {
+		if (!data) {
 			callback(new Error('transaction is not defined'));
 			return;
 		}
 
-		var newTransaction = new Transaction();
-		_.merge(newTransaction, transaction);
-
-		newTransaction.save(function (err) {
+		var transaction = new Transaction(data);
+		transaction.save(function (err) {
 			if (err) {
 				// TODO Check error type
 				logger.error('Transaction creation failed');
@@ -33,24 +31,24 @@ module.exports = function (options, imports, emitter) {
 		});
 	};
 
-	var get = function (transactionID, query, callback) {
+	var get = function (id, query, callback) {
 		logger.info('Getting a specific transaction');
 		Transaction
-			.findById(transactionID)
+			.findById(id)
 			.select(query.selection)
-			.exec(function (err, transaction) {
+			.exec(function (err, item) {
 				if (err) {
 					// TODO Check error type
-					logger.error('Getting the transaction', transactionID, 'failed');
+					logger.error('Getting the transaction', id, 'failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					if (_.isNull(transaction)) {
-						logger.warn('No transaction has been found for id', transactionID);
+					if (_.isNull(item)) {
+						logger.warn('No transaction has been found for id', id);
 					} else {
-						logger.info('Success of getting the transaction', transactionID);
+						logger.info('Success of getting the transaction', id);
 					}
-					callback(null, transaction);
+					callback(null, item);
 				}
 			});
 	};
@@ -61,36 +59,36 @@ module.exports = function (options, imports, emitter) {
 			.find(query.conditions)
 			.sort(query.order)
 			.select(query.selection)
-			.exec(function (err, transactions) {
+			.exec(function (err, items) {
 				if (err) {
 					// TODO Check error type
 					logger.error('Getting transactions failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					if (_.isEmpty(transactions)) {
+					if (_.isEmpty(items)) {
 						logger.warn('No transaction has been found');
 					} else {
 						logger.info('Success of getting transactions');
 					}
-					callback(null, transactions);
+					callback(null, items);
 				}
 			});
 	};
 
-	var update = function (transactionID, update, callback) {
+	var update = function (id, data, callback) {
 		logger.info('Updating a specific transaction');
 		Transaction
-			.findByIdAndUpdate(transactionID, update)
-			.exec(function (err, updatedTransaction) {
+			.findByIdAndUpdate(id, data)
+			.exec(function (err, updatedItem) {
 				if (err) {
 					// TODO Check error type
-					logger.error('Updating transaction', transactionID, 'failed');
+					logger.error('Updating transaction', id, 'failed');
 					logger.error(err);
 					callback(err);
 				} else {
-					logger.info('The transaction', transactionID, 'has been successfully updated');
-					callback(null, updatedTransaction);
+					logger.info('The transaction', id, 'has been successfully updated');
+					callback(null, updatedItem);
 					emitter.emitUpdate();
 				}
 			});
