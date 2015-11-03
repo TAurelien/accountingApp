@@ -1,10 +1,10 @@
 /**
- *  @module   General ledgers
+ * @module   General ledgers
  *
- *  @access public
- *  @author   TAurelien
- *  @date     2015-05-01
- *  @version  1.0.0
+ * @access   public
+ * @author   TAurelien
+ * @date     2015-05-01
+ * @version  1.0.0
  */
 'use strict';
 
@@ -22,13 +22,13 @@ module.exports = function setup(options, imports, register) {
 	 *  @type  {events}
 	 */
 	var GeneralLedgers = new events.EventEmitter();
-
-	var emitter = require('./events')(options, imports, GeneralLedgers);
+	GeneralLedgers.events = require('./events').events;
+	var emitter = require('./events').emitter(options, imports, GeneralLedgers);
 
 	var model = require('./model');
 	model.define(options, imports, emitter);
 
-	require('./controller')(options, imports, emitter);
+	require('./controller')(options, imports, emitter, GeneralLedgers);
 
 	var api = require('./api')(options, imports, emitter);
 

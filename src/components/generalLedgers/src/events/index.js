@@ -8,11 +8,34 @@
  */
 'use strict';
 
-module.exports = function (options, imports, GeneralLedgers) {
+var prefix = 'generalLedgers';
+
+var events = {
+
+	// Inputs
+	TO_CREATE: prefix + '.to_create',
+	TO_GET: prefix + '.to_get',
+	TO_LIST: prefix + '.to_list',
+	TO_UPDATE: prefix + '.to_update',
+	TO_DELETE: prefix + '.to_delete',
+	TO_GET_NET_WORTH: prefix + '.to_get_net_worth',
+
+	// Outputs
+	CREATED: prefix + '.created',
+	GET: prefix + '.get',
+	LIST: prefix + '.list',
+	UPDATED: prefix + '.updated',
+	DELETED: prefix + '.deleted',
+	NET_WORTH_CHANGED: prefix + '.net_worth_changed',
+	NET_WORTH: prefix + '.net_worth'
+
+};
+
+module.exports.events = events;
+
+module.exports.emitter = function (options, imports, GeneralLedgers) {
 
 	var logger = imports.logger.get('General Ledgers events');
-	var IO = imports.io;
-	var prefix = 'generalLedgers';
 
 	return {
 
@@ -25,14 +48,12 @@ module.exports = function (options, imports, GeneralLedgers) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitCreate: function () {
-			var eventName = prefix + '.create';
-			logger.info('Emitting', eventName);
+		emitCreated: function (createdItem) {
+			logger.info('Emitting', events.CREATED);
 			/**
 			 *  @event GeneralLedgers#generalLedgers.create
 			 */
-			GeneralLedgers.emit(eventName);
-			//IO.emit(prefix + '.created', err, createdItem);
+			GeneralLedgers.emit(events.CREATED, createdItem);
 		},
 
 		/**
@@ -44,14 +65,12 @@ module.exports = function (options, imports, GeneralLedgers) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitUpdate: function () {
-			var eventName = prefix + '.update';
-			logger.info('Emitting', eventName);
+		emitUpdated: function (updatedItem) {
+			logger.info('Emitting', events.UPDATED);
 			/**
 			 *  @event GeneralLedgers#generalLedgers.update
 			 */
-			GeneralLedgers.emit(eventName);
-			//IO.emit(prefix + '.updated', err, updatedItem);
+			GeneralLedgers.emit(events.UPDATED, updatedItem);
 		},
 
 		/**
@@ -63,14 +82,12 @@ module.exports = function (options, imports, GeneralLedgers) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitDelete: function () {
-			var eventName = prefix + '.delete';
-			logger.info('Emitting', eventName);
+		emitDeleted: function (deletedItem) {
+			logger.info('Emitting', events.DELETED);
 			/**
 			 *  @event GeneralLedgers#generalLedgers.delete
 			 */
-			GeneralLedgers.emit(eventName);
-			//IO.emit(prefix + '.deleted', err);
+			GeneralLedgers.emit(events.DELETED, deletedItem);
 		},
 
 		/**
@@ -82,14 +99,12 @@ module.exports = function (options, imports, GeneralLedgers) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitNetWorthChange: function () {
-			var eventName = prefix + '.netWorthChange';
-			logger.info('Emitting', eventName);
+		emitNetWorthChanged: function (item) {
+			logger.info('Emitting', events.NET_WORTH_CHANGED);
 			/**
 			 *  @event GeneralLedgers#generalLedgers.netWorthChange
 			 */
-			GeneralLedgers.emit(eventName);
-			//IO.emit(prefix + '.netWorthChanged', err);
+			GeneralLedgers.emit(events.NET_WORTH_CHANGED, item);
 		}
 
 	};

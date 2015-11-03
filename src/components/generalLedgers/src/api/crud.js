@@ -17,7 +17,7 @@ module.exports = function (options, imports, emitter) {
 		}
 
 		var generalLedger = new GeneralLedger(data);
-		generalLedger.save(function (err) {
+		generalLedger.save(function (err, createdItem) {
 			if (err) {
 				// TODO Check error type
 				logger.error('General ledger creation failed');
@@ -25,8 +25,8 @@ module.exports = function (options, imports, emitter) {
 				callback(err);
 			} else {
 				logger.info('General ledger creation successful');
-				callback(null);
-				emitter.emitCreate();
+				callback(null, createdItem);
+				emitter.emitCreated(createdItem);
 			}
 		});
 	};
@@ -89,7 +89,7 @@ module.exports = function (options, imports, emitter) {
 				} else {
 					logger.info('The general ledger', id, 'has been successfully updated');
 					callback(null, updatedItem);
-					emitter.emitUpdate();
+					emitter.emitUpdated(updatedItem);
 				}
 			});
 	};
@@ -104,7 +104,7 @@ module.exports = function (options, imports, emitter) {
 
 		GeneralLedger
 			.remove(query.conditions)
-			.exec(function (err) {
+			.exec(function (err, deletedItem) {
 				if (err) {
 					// TODO Check error type
 					logger.error('General ledger deletion failed');
@@ -112,8 +112,8 @@ module.exports = function (options, imports, emitter) {
 					callback(err);
 				} else {
 					logger.info('General ledger deletion successful');
-					callback(null);
-					emitter.emitDelete();
+					callback(null, deletedItem);
+					emitter.emitDeleted(deletedItem);
 				}
 			});
 	};
