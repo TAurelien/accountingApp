@@ -17,7 +17,7 @@ module.exports = function (options, imports, emitter) {
 		}
 
 		var account = new Account(data);
-		account.save(function (err) {
+		account.save(function (err, createdItem) {
 			if (err) {
 				// TODO Check error type
 				logger.error('Account creation failed');
@@ -25,8 +25,8 @@ module.exports = function (options, imports, emitter) {
 				callback(err);
 			} else {
 				logger.info('Account creation successful');
-				callback(null);
-				emitter.emitCreate();
+				callback(null, createdItem);
+				emitter.emitCreated(createdItem);
 			}
 		});
 	};
@@ -89,7 +89,7 @@ module.exports = function (options, imports, emitter) {
 				} else {
 					logger.info('The account', id, 'has been successfully updated');
 					callback(null, updatedItem);
-					emitter.emitUpdate();
+					emitter.emitUpdated(updatedItem);
 				}
 			});
 	};
@@ -104,7 +104,7 @@ module.exports = function (options, imports, emitter) {
 
 		Account
 			.remove(query.conditions)
-			.exec(function (err) {
+			.exec(function (err, deletedItem) {
 				if (err) {
 					// TODO Check error type
 					logger.error('Account deletion failed');
@@ -112,8 +112,8 @@ module.exports = function (options, imports, emitter) {
 					callback(err);
 				} else {
 					logger.info('Account deletion successful');
-					callback(null);
-					emitter.emitDelete();
+					callback(null, deletedItem);
+					emitter.emitDeleted(deletedItem);
 				}
 			});
 	};

@@ -22,13 +22,13 @@ module.exports = function setup(options, imports, register) {
 	 *  @type  {events}
 	 */
 	var Accounts = new events.EventEmitter();
-
-	var emitter = require('./events')(options, imports, Accounts);
+	Accounts.events = require('./events').events;
+	var emitter = require('./events').emitter(options, imports, Accounts);
 
 	var model = require('./model');
 	model.define(options, imports, emitter);
 
-	require('./controller')(options, imports, emitter);
+	require('./controller')(options, imports, emitter, Accounts);
 
 	var api = require('./api')(options, imports, emitter);
 

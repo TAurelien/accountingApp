@@ -8,11 +8,36 @@
  */
 'use strict';
 
-module.exports = function (options, imports, Accounts) {
+var prefix = 'accounts';
+
+var events = {
+
+	// Inputs
+	TO_CREATE: prefix + '.to_create',
+	TO_GET: prefix + '.to_get',
+	TO_GET_ALL: prefix + '.to_get_all',
+	TO_LIST: prefix + '.to_list',
+	TO_UPDATE: prefix + '.to_update',
+	TO_DELETE: prefix + '.to_delete',
+	TO_GET_BALANCE: prefix + '.to_get_balance',
+
+	// Outputs
+	CREATED: prefix + '.created',
+	GET: prefix + '.get',
+	GET_ALL: prefix + '.get_all',
+	LIST: prefix + '.list',
+	UPDATED: prefix + '.updated',
+	DELETED: prefix + '.deleted',
+	BALANCE_CHANGED: prefix + '.balance_changed',
+	BALANCE: prefix + '.balance'
+
+};
+
+module.exports.events = events;
+
+module.exports.emitter = function (options, imports, Accounts) {
 
 	var logger = imports.logger.get('Accounts events');
-
-	var prefix = 'accounts';
 
 	return {
 
@@ -25,13 +50,12 @@ module.exports = function (options, imports, Accounts) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitCreate: function () {
-			var eventName = prefix + '.create';
-			logger.info('Emitting', eventName);
+		emitCreated: function (createdItem) {
+			logger.info('Emitting', events.CREATED);
 			/**
 			 *  @event Accounts#accounts.create
 			 */
-			Accounts.emit(eventName);
+			Accounts.emit(events.CREATED, createdItem);
 		},
 
 		/**
@@ -43,13 +67,12 @@ module.exports = function (options, imports, Accounts) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitUpdate: function () {
-			var eventName = prefix + '.update';
-			logger.info('Emitting', eventName);
+		emitUpdated: function (updatedItem) {
+			logger.info('Emitting', events.UPDATED);
 			/**
 			 *  @event Accounts#accounts.update
 			 */
-			Accounts.emit(eventName);
+			Accounts.emit(events.UPDATED, updatedItem);
 		},
 
 		/**
@@ -61,13 +84,12 @@ module.exports = function (options, imports, Accounts) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitDelete: function () {
-			var eventName = prefix + '.delete';
-			logger.info('Emitting', eventName);
+		emitDeleted: function (deletedItem) {
+			logger.info('Emitting', events.DELETED);
 			/**
 			 *  @event Accounts#accounts.delete
 			 */
-			Accounts.emit(eventName);
+			Accounts.emit(events.DELETED, deletedItem);
 		},
 
 		/**
@@ -79,13 +101,12 @@ module.exports = function (options, imports, Accounts) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitBalanceChange: function () {
-			var eventName = prefix + '.balanceChange';
-			logger.info('Emitting', eventName);
+		emitBalanceChanged: function (item) {
+			logger.info('Emitting', events.BALANCE_CHANGED);
 			/**
 			 *  @event Accounts#accounts.balanceChange
 			 */
-			Accounts.emit(eventName);
+			Accounts.emit(events.BALANCE_CHANGED, item);
 		}
 
 	};
