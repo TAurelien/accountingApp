@@ -15,13 +15,13 @@ module.exports = function setup(options, imports, register) {
 	console.log('Registering the transactions component module ...');
 
 	var Transactions = new events.EventEmitter();
-
-	var emitter = require('./events')(options, imports, Transactions);
+	Transactions.events = require('./events').events;
+	var emitter = require('./events').emitter(options, imports, Transactions);
 
 	var model = require('./model');
 	model.define(options, imports, emitter);
 
-	require('./controller')(options, imports, emitter);
+	require('./controller')(options, imports, emitter, Transactions);
 
 	var api = require('./api')(options, imports, emitter);
 

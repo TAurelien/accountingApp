@@ -8,11 +8,33 @@
  */
 'use strict';
 
-module.exports = function (options, imports, Transactions) {
+var prefix = 'transactions';
+
+var events = {
+
+	// Inputs
+	TO_CREATE: prefix + '.to_create',
+	TO_GET: prefix + '.to_get',
+	TO_LIST: prefix + '.to_list',
+	TO_UPDATE: prefix + '.to_update',
+	TO_DELETE: prefix + '.to_delete',
+	TO_GET_AMOUNT: prefix + '.to_get_amount',
+
+	// Outputs
+	CREATED: prefix + '.created',
+	GET: prefix + '.get',
+	LIST: prefix + '.list',
+	UPDATED: prefix + '.updated',
+	DELETED: prefix + '.deleted',
+	AMOUNT: prefix + '.amount'
+
+};
+
+module.exports.events = events;
+
+module.exports.emitter = function (options, imports, Transactions) {
 
 	var logger = imports.logger.get('Transactions events');
-
-	var prefix = 'transactions';
 
 	return {
 
@@ -25,13 +47,12 @@ module.exports = function (options, imports, Transactions) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitCreate: function () {
-			var eventName = prefix + '.create';
-			logger.info('Emitting', eventName);
+		emitCreated: function (createdItem) {
+			logger.info('Emitting', events.CREATED);
 			/**
 			 *  @event Transactions#transactions.create
 			 */
-			Transactions.emit(eventName);
+			Transactions.emit(events.CREATED, createdItem);
 		},
 
 		/**
@@ -43,13 +64,12 @@ module.exports = function (options, imports, Transactions) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitUpdate: function () {
-			var eventName = prefix + '.update';
-			logger.info('Emitting', eventName);
+		emitUpdated: function (updatedItem) {
+			logger.info('Emitting', events.UPDATED);
 			/**
 			 *  @event Transactions#transactions.update
 			 */
-			Transactions.emit(eventName);
+			Transactions.emit(events.UPDATED, updatedItem);
 		},
 
 		/**
@@ -61,13 +81,12 @@ module.exports = function (options, imports, Transactions) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		emitDelete: function () {
-			var eventName = prefix + '.delete';
-			logger.info('Emitting', eventName);
+		emitDeleted: function (deletedItem) {
+			logger.info('Emitting', events.DELETED);
 			/**
 			 *  @event Transactions#transactions.delete
 			 */
-			Transactions.emit(eventName);
+			Transactions.emit(events.DELETED, deletedItem);
 		}
 
 	};

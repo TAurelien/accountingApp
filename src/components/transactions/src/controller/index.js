@@ -8,10 +8,9 @@
  */
 'use strict';
 
-module.exports = function (options, imports, emitter) {
+module.exports = function (options, imports, emitter, Transactions) {
 
 	var logger = imports.logger.get('Transactions ctrl');
-	var prefix = 'transactions';
 
 	var IO = imports.io;
 	var api = require('../api')(options, imports, emitter);
@@ -22,66 +21,93 @@ module.exports = function (options, imports, emitter) {
 		var id = socket.id;
 		var idLogged = '[socket:' + id + ']';
 
-		logger.info(idLogged, 'Client connected to', prefix, 'IO');
+		logger.info(idLogged, 'Client connected to transactions IO');
 
 		// --------------------------------------------------------------------
 
 		socket.on('disconnect', function () {
-			logger.info(idLogged, 'Client disconnected from', prefix, 'IO');
+			logger.info(idLogged, 'Client disconnected from transactions IO');
 		});
 
 		// --------------------------------------------------------------------
 
-		socket.on(prefix + '.create', function (data) {
-			logger.info(idLogged, 'Receiving a create event');
-			api.create(data, function (err, createdItem) {
-				IO.emit(prefix + '.created', err, createdItem);
-			});
-		});
-
-		// --------------------------------------------------------------------
-
-		socket.on(prefix + '.get', function (id, query) {
-			logger.info(idLogged, 'Receiving a get event');
+		socket.on(Transactions.events.TO_GET, function (id, query) {
+			logger.info(idLogged, 'Receiving a', Transactions.events.TO_GET, 'event');
 			api.get(id, query, function (err, item) {
-				socket.emit(prefix + '.get', err, item);
+				socket.emit(Transactions.events.GET, err, item);
 			});
 		});
 
 		// --------------------------------------------------------------------
 
-		socket.on(prefix + '.list', function (query) {
-			logger.info(idLogged, 'Receiving a list event');
+		socket.on(Transactions.events.TO_LIST, function (query) {
+			logger.info(idLogged, 'Receiving a', Transactions.events.TO_LIST, 'event');
 			api.list(query, function (err, items) {
-				socket.emit(prefix + '.list', err, items);
+				socket.emit(Transactions.events.LIST, err, items);
 			});
 		});
 
 		// --------------------------------------------------------------------
 
-		socket.on(prefix + '.update', function (id, data) {
-			logger.info(idLogged, 'Receiving a update event');
-			api.update(id, data, function (err, updatedItem) {
-				IO.emit(prefix + '.updated', err, updatedItem);
-			});
-		});
-
-		// --------------------------------------------------------------------
-
-		socket.on(prefix + '.delete', function (query) {
-			logger.info(idLogged, 'Receiving a delete event');
-			api.delete(query, function (err) {
-				IO.emit(prefix + '.deleted', err);
-			});
-		});
-
-		// --------------------------------------------------------------------
-
-		socket.on(prefix + '.getAmount', function (accountID, transactionRef) {
-			logger.info(idLogged, 'Receiving a getAmount event');
+		socket.on(Transactions.events.TO_GET_AMOUNT, function (accountID, transactionRef) {
+			logger.info(idLogged, 'Receiving a', Transactions.events.TO_GET_AMOUNT, 'event');
 			api.getAmount(accountID, transactionRef, function (err, amount) {
-				socket.emit(prefix + '.amount', err, amount);
+				socket.emit(Transactions.events.AMOUNT, err, amount);
 			});
+		});
+
+		// --------------------------------------------------------------------
+
+		socket.on(Transactions.events.TO_CREATE, function (data) {
+			logger.info(idLogged, 'Receiving a', Transactions.events.TO_CREATE, 'event');
+			api.create(data, function (err) {
+				if (err) {
+					socket.emit(Transactions.events.CREATED, err);
+				}
+			});
+		});
+
+		// --------------------------------------------------------------------
+
+		socket.on(Transactions.events.TO_UPDATE, function (id, data) {
+			logger.info(idLogged, 'Receiving a', Transactions.events.TO_UPDATE, 'event');
+			api.update(id, data, function (err) {
+				if (err) {
+					socket.emit(Transactions.events.UPDATED, err);
+				}
+			});
+		});
+
+		// --------------------------------------------------------------------
+
+		socket.on(Transactions.events.TO_DELETE, function (query) {
+			logger.info(idLogged, 'Receiving a', Transactions.events.TO_DELETE, 'event');
+			api.delete(query, function (err) {
+				if (err) {
+					socket.emit(Transactions.events.DELETED, err);
+				}
+			});
+		});
+
+		// --------------------------------------------------------------------
+
+		Transactions.on(Transactions.events.CREATED, function (createdItem) {
+			logger.info('Handling a', Transactions.events.CREATED, 'event');
+			IO.emit(Transactions.events.CREATED, null, createdItem);
+		});
+
+		// --------------------------------------------------------------------
+
+		Transactions.on(Transactions.events.UPDATED, function (updatedItem) {
+			logger.info('Handling a', Transactions.events.UPDATED, 'event');
+			IO.emit(Transactions.events.UPDATED, null, updatedItem);
+		});
+
+		// --------------------------------------------------------------------
+
+		Transactions.on(Transactions.events.DELETED, function (deletedItem) {
+			logger.info('Handling a', Transactions.events.DELETED, 'event');
+			IO.emit(Transactions.events.DELETED, null, deletedItem);
 		});
 
 		// --------------------------------------------------------------------
