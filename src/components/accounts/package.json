@@ -5,7 +5,7 @@
 	"main": "src/accounts.js",
 	"plugin": {
 		"consumes": [
-			"logger", "express", "io",
+			"logger", "express", "io", "restApi",
 			"nomenclatures", "currencies", "accountTypes",
 			"amounts", "transactions"
 		],

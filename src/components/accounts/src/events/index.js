@@ -11,26 +11,10 @@
 var prefix = 'accounts';
 
 var events = {
-
-	// Inputs
-	TO_CREATE: prefix + '.to_create',
-	TO_GET: prefix + '.to_get',
-	TO_GET_ALL: prefix + '.to_get_all',
-	TO_LIST: prefix + '.to_list',
-	TO_UPDATE: prefix + '.to_update',
-	TO_DELETE: prefix + '.to_delete',
-	TO_GET_BALANCE: prefix + '.to_get_balance',
-
-	// Outputs
 	CREATED: prefix + '.created',
-	GET: prefix + '.get',
-	GET_ALL: prefix + '.get_all',
-	LIST: prefix + '.list',
 	UPDATED: prefix + '.updated',
 	DELETED: prefix + '.deleted',
-	BALANCE_CHANGED: prefix + '.balance_changed',
-	BALANCE: prefix + '.balance'
-
+	BALANCE_CHANGED: prefix + '.balance_changed'
 };
 
 module.exports.events = events;
