@@ -5,7 +5,7 @@
 	"main": "src/transactions.js",
 	"plugin": {
 		"consumes": [
-			"logger", "express", "io",
+			"logger", "express", "io", "restApi",
 			"nomenclatures", "currencies",
 			"amounts"
 		],

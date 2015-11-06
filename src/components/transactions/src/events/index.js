@@ -11,23 +11,9 @@
 var prefix = 'transactions';
 
 var events = {
-
-	// Inputs
-	TO_CREATE: prefix + '.to_create',
-	TO_GET: prefix + '.to_get',
-	TO_LIST: prefix + '.to_list',
-	TO_UPDATE: prefix + '.to_update',
-	TO_DELETE: prefix + '.to_delete',
-	TO_GET_AMOUNT: prefix + '.to_get_amount',
-
-	// Outputs
 	CREATED: prefix + '.created',
-	GET: prefix + '.get',
-	LIST: prefix + '.list',
 	UPDATED: prefix + '.updated',
 	DELETED: prefix + '.deleted',
-	AMOUNT: prefix + '.amount'
-
 };
 
 module.exports.events = events;
