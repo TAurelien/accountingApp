@@ -11,24 +11,10 @@
 var prefix = 'generalLedgers';
 
 var events = {
-
-	// Inputs
-	TO_CREATE: prefix + '.to_create',
-	TO_GET: prefix + '.to_get',
-	TO_LIST: prefix + '.to_list',
-	TO_UPDATE: prefix + '.to_update',
-	TO_DELETE: prefix + '.to_delete',
-	TO_GET_NET_WORTH: prefix + '.to_get_net_worth',
-
-	// Outputs
 	CREATED: prefix + '.created',
-	GET: prefix + '.get',
-	LIST: prefix + '.list',
 	UPDATED: prefix + '.updated',
 	DELETED: prefix + '.deleted',
-	NET_WORTH_CHANGED: prefix + '.net_worth_changed',
-	NET_WORTH: prefix + '.net_worth'
-
+	NET_WORTH_CHANGED: prefix + '.net_worth_changed'
 };
 
 module.exports.events = events;
