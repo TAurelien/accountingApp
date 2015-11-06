@@ -9,6 +9,7 @@ module.exports = function (options, imports, api) {
 
 		generalLedgersRoute.get(function (req, res) {
 
+			// TODO deal with the query
 			var query = {
 				conditions: null,
 				order: null,

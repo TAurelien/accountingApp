@@ -22,6 +22,7 @@ module.exports = function (options, imports, api, GeneralLedgers) {
 
 		GeneralLedgers.on(GeneralLedgers.events.CREATED, function (createdItem) {
 			logger.info('Handling a', GeneralLedgers.events.CREATED, 'event');
+			// TODO Remove err arg from event emitter
 			IO.emit(GeneralLedgers.events.CREATED, null, createdItem);
 		});
 
@@ -29,6 +30,7 @@ module.exports = function (options, imports, api, GeneralLedgers) {
 
 		GeneralLedgers.on(GeneralLedgers.events.UPDATED, function (updatedItem) {
 			logger.info('Handling a', GeneralLedgers.events.UPDATED, 'event');
+			// TODO Remove err arg from event emitter
 			IO.emit(GeneralLedgers.events.UPDATED, null, updatedItem);
 		});
 
@@ -36,6 +38,7 @@ module.exports = function (options, imports, api, GeneralLedgers) {
 
 		GeneralLedgers.on(GeneralLedgers.events.DELETED, function (deletedItem) {
 			logger.info('Handling a', GeneralLedgers.events.DELETED, 'event');
+			// TODO Remove err arg from event emitter
 			IO.emit(GeneralLedgers.events.DELETED, null, deletedItem);
 		});
 
@@ -43,6 +46,7 @@ module.exports = function (options, imports, api, GeneralLedgers) {
 
 		GeneralLedgers.on(GeneralLedgers.events.NET_WORTH_CHANGED, function (updatedItem) {
 			logger.info('Handling a', GeneralLedgers.events.NET_WORTH_CHANGED, 'event');
+			// TODO Remove err arg from event emitter
 			IO.emit(GeneralLedgers.events.NET_WORTH_CHANGED, null, updatedItem);
 		});
 
