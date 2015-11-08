@@ -32,8 +32,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		create: function (account, callback) {
-			crud.create(account, callback);
+		create: function (account, callback, lean) {
+			crud.create(account, callback, lean);
 		},
 
 		/**
@@ -49,8 +49,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		get: function (accountID, query, callback) {
-			crud.get(accountID, query, callback);
+		get: function (accountID, query, callback, lean) {
+			crud.get(accountID, query, callback, lean);
 		},
 
 		/**
@@ -65,8 +65,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		list: function (query, callback) {
-			crud.list(query, callback);
+		list: function (query, callback, lean) {
+			crud.list(query, callback, lean);
 		},
 
 		/**
@@ -84,8 +84,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		update: function (accountID, update, callback) {
-			crud.update(accountID, update, callback);
+		update: function (accountID, update, callback, lean) {
+			crud.update(accountID, update, callback, lean);
 		},
 
 		/**
@@ -102,8 +102,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		delete: function (query, callback) {
-			crud.delete(query, callback);
+		delete: function (query, callback, lean) {
+			crud.delete(query, callback, lean);
 		},
 
 		// TODO Update the doc

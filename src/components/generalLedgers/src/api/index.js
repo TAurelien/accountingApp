@@ -32,8 +32,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		create: function (generalLedger, callback) {
-			crud.create(generalLedger, callback);
+		create: function (generalLedger, callback, lean) {
+			crud.create(generalLedger, callback, lean);
 		},
 
 		/**
@@ -49,8 +49,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		get: function (generalLedgerID, query, callback) {
-			crud.get(generalLedgerID, query, callback);
+		get: function (generalLedgerID, query, callback, lean) {
+			crud.get(generalLedgerID, query, callback, lean);
 		},
 
 		/**
@@ -65,8 +65,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		list: function (query, callback) {
-			crud.list(query, callback);
+		list: function (query, callback, lean) {
+			crud.list(query, callback, lean);
 		},
 
 		/**
@@ -84,8 +84,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		update: function (generalLedgerID, update, callback) {
-			crud.update(generalLedgerID, update, callback);
+		update: function (generalLedgerID, update, callback, lean) {
+			crud.update(generalLedgerID, update, callback, lean);
 		},
 
 		/**
@@ -102,8 +102,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		delete: function (query, callback) {
-			crud.delete(query, callback);
+		delete: function (query, callback, lean) {
+			crud.delete(query, callback, lean);
 		},
 
 		/**

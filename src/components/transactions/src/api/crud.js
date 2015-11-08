@@ -8,7 +8,74 @@ module.exports = function (options, imports, emitter) {
 	var logger = imports.logger.get('Transactions API');
 	var Transaction = require('../model').get();
 
-	var create = function (data, callback) {
+	// ------------------------------------------------------------------------
+
+	function transformToPlainObject(object) {
+		var item = null;
+		if (object) {
+			if (object.toObject) {
+				item = object.toObject();
+			} else {
+				item = object;
+			}
+			item.id = object._id.toString();
+			delete item._id;
+			delete item.__v;
+			if (object.splits) {
+				var splits = [];
+				for (var i = 0; i < object.splits.length; i++) {
+					var split = object.splits[i];
+					var itemSplit;
+					if (split.toObject) {
+						itemSplit = split.toObject();
+					} else {
+						itemSplit = split;
+					}
+					if (split.account.toString) {
+						itemSplit.account = split.account.toString();
+					}
+					delete itemSplit._id;
+					delete itemSplit.__v;
+					if (split.amount) {
+						if (split.amount[0].toObject) {
+							itemSplit.amount = split.amount[0].toObject();
+						} else {
+							itemSplit.amount = split.amount[0];
+						}
+						delete itemSplit.amount._id;
+						delete itemSplit.amount.__v;
+					}
+					splits.push(itemSplit);
+				}
+				item.splits = splits;
+			}
+		}
+		return item;
+	}
+
+	function transformObject(item) {
+		var object = null;
+		if (item) {
+			object = item;
+			if (item.id && !item._id) {
+				object._id = item.id;
+				delete object.id;
+			}
+			// TODO Transform transaction
+			if (object.splits) {
+				for (var split in object.splits) {
+					if (split.amount && !_.isArray(split.amount)) {
+						split.amount = [split.amount];
+					}
+				}
+			}
+		}
+		return object;
+	}
+
+	// ------------------------------------------------------------------------
+
+	var create = function (data, callback, lean) {
 		logger.info('Creating a new transaction');
 
 		if (!data) {
@@ -16,6 +83,8 @@ module.exports = function (options, imports, emitter) {
 			return;
 		}
 
+		lean = lean || false;
+		data = transformObject(data);
 		var transaction = new Transaction(data);
 		transaction.save(function (err, createdItem) {
 			if (err) {
@@ -25,17 +94,23 @@ module.exports = function (options, imports, emitter) {
 				callback(err);
 			} else {
 				logger.info('Transaction creation successful');
+				if (lean) {
+					createdItem = transformToPlainObject(createdItem);
+				}
 				callback(null, createdItem);
 				emitter.emitCreated(createdItem);
 			}
 		});
 	};
 
-	var get = function (id, query, callback) {
+	var get = function (id, query, callback, lean) {
 		logger.info('Getting a specific transaction');
+
+		lean = lean || false;
 		Transaction
 			.findById(id)
 			.select(query.selection)
+			.lean(lean)
 			.exec(function (err, item) {
 				if (err) {
 					// TODO Check error type
@@ -48,17 +123,23 @@ module.exports = function (options, imports, emitter) {
 					} else {
 						logger.info('Success of getting the transaction', id);
 					}
+					if (lean) {
+						item = transformToPlainObject(item);
+					}
 					callback(null, item);
 				}
 			});
 	};
 
-	var list = function (query, callback) {
+	var list = function (query, callback, lean) {
 		logger.info('Getting a list of transactions');
+
+		lean = lean || false;
 		Transaction
 			.find(query.conditions)
 			.sort(query.order)
 			.select(query.selection)
+			.lean(lean)
 			.exec(function (err, items) {
 				if (err) {
 					// TODO Check error type
@@ -71,13 +152,21 @@ module.exports = function (options, imports, emitter) {
 					} else {
 						logger.info('Success of getting transactions');
 					}
+					if (lean) {
+						items = items.map(function (item) {
+							return transformToPlainObject(item);
+						});
+					}
 					callback(null, items);
 				}
 			});
 	};
 
-	var update = function (id, data, callback) {
+	var update = function (id, data, callback, lean) {
 		logger.info('Updating a specific transaction');
+
+		lean = lean || false;
+		data = transformObject(data);
 		Transaction
 			.findByIdAndUpdate(id, data)
 			.exec(function (err, updatedItem) {
@@ -88,13 +177,16 @@ module.exports = function (options, imports, emitter) {
 					callback(err);
 				} else {
 					logger.info('The transaction', id, 'has been successfully updated');
+					if (lean) {
+						updatedItem = transformToPlainObject(updatedItem);
+					}
 					callback(null, updatedItem);
 					emitter.emitUpdated(updatedItem);
 				}
 			});
 	};
 
-	var deleteTransactions = function (query, callback) {
+	var deleteTransactions = function (query, callback, lean) {
 		logger.info('Deleting a specific transaction');
 
 		if (!query.conditions) {
@@ -102,6 +194,7 @@ module.exports = function (options, imports, emitter) {
 			return;
 		}
 
+		lean = lean || false;
 		Transaction
 			.remove(query.conditions)
 			.exec(function (err, deletedItem) {
@@ -112,6 +205,9 @@ module.exports = function (options, imports, emitter) {
 					callback(err);
 				} else {
 					logger.info('Transaction deletion successful');
+					if (lean) {
+						deletedItem = transformToPlainObject(deletedItem);
+					}
 					callback(null, deletedItem);
 					emitter.emitDeleted(deletedItem);
 				}

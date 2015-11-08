@@ -31,8 +31,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		create: function (transaction, callback) {
-			crud.create(transaction, callback);
+		create: function (transaction, callback, lean) {
+			crud.create(transaction, callback, lean);
 		},
 
 		/**
@@ -48,8 +48,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		get: function (transactionID, query, callback) {
-			crud.get(transactionID, query, callback);
+		get: function (transactionID, query, callback, lean) {
+			crud.get(transactionID, query, callback, lean);
 		},
 
 		/**
@@ -64,8 +64,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		list: function (query, callback) {
-			crud.list(query, callback);
+		list: function (query, callback, lean) {
+			crud.list(query, callback, lean);
 		},
 
 		/**
@@ -83,8 +83,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		update: function (transactionID, update, callback) {
-			crud.update(transactionID, update, callback);
+		update: function (transactionID, update, callback, lean) {
+			crud.update(transactionID, update, callback, lean);
 		},
 
 		/**
@@ -101,8 +101,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		delete: function (query, callback) {
-			crud.delete(query, callback);
+		delete: function (query, callback, lean) {
+			crud.delete(query, callback, lean);
 		},
 
 		// TODO Update the doc

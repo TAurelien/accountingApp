@@ -5,41 +5,61 @@ module.exports = function (options, imports, api) {
 	var logger = imports.logger.get('Accounts ctrl - REST API');
 	var restRouter = imports.restApi;
 
+	// ------------------------------------------------------------------------
+
+	function getQueryFromRequest(req) {
+		var query = {
+			conditions: null,
+			order: null,
+			selection: null
+		};
+
+		if (!req) {
+			return query;
+		}
+
+		if (req.query.generalLedgerId) {
+			query.conditions = {
+				generalLedger: req.query.generalLedgerId
+			};
+		}
+
+		// TODO Handle request's queries
+
+		return query;
+	}
+
+	// ------------------------------------------------------------------------
+
 	restRouter.addRoute('/accounts', function (accountsRoute) {
 
 		accountsRoute.get(function (req, res) {
+			logger.info('Getting accounts by REST API');
 
-			// TODO deal with the query
-			var query = {
-				conditions: null,
-				order: null,
-				selection: null
-			};
-			logger.debug('Getting accounts by REST API');
+			var query = getQueryFromRequest(req);
 			api.list(query, function (err, items) {
 				if (err) {
-					res.send(err);
+					// TODO handle error type
+					restRouter.sendResponse(res, 400, false, 'Error', err);
 				} else {
-					res.json(items);
+					restRouter.sendResponse(res, 200, true, 'Accounts found', items);
 				}
-			});
+			}, true);
 
 		});
 
 		accountsRoute.post(function (req, res) {
+			logger.info('Creating account by REST API');
 
-			logger.debug('Creating account by REST API');
 			var data = req.body;
-			logger.debug(data);
-			api.create(data, function (err) {
+			api.create(data, function (err, createdItem) {
 				if (err) {
-					res.send(err);
+					// TODO handle error type
+					restRouter.sendResponse(res, 400, false, 'Error', err);
 				} else {
-					res.json({
-						message: 'Account created'
-					});
+					restRouter.sendResponse(res, 201, true, 'Account created', createdItem);
 				}
-			});
+			}, true);
 		});
 
 	});
@@ -47,57 +67,54 @@ module.exports = function (options, imports, api) {
 	restRouter.addRoute('/accounts/:account_id', function (accountRoute) {
 
 		accountRoute.get(function (req, res) {
+			logger.info('Getting an account by REST API');
 
-			logger.debug('Getting an account by REST API');
 			var id = req.params.account_id;
-			var query = {
-				selection: null
-			};
+			var query = getQueryFromRequest(req);
 			api.get(id, query, function (err, item) {
 				if (err) {
-					res.send(err);
+					// TODO handle error type
+					restRouter.sendResponse(res, 400, false, 'Error', err);
 				} else {
-					res.json(item);
+					restRouter.sendResponse(res, 200, true, 'Account found', item);
 				}
-			});
+			}, true);
 
 		});
 
 		accountRoute.put(function (req, res) {
+			logger.info('Updating an account by REST API');
 
-			logger.debug('Updating an account by REST API');
 			var id = req.params.account_id;
 			var data = req.body;
-			api.update(id, data, function (err) {
+			api.update(id, data, function (err, updatedItem) {
 				if (err) {
-					res.send(err);
+					// TODO handle error type
+					restRouter.sendResponse(res, 400, false, 'Error', err);
 				} else {
-					res.json({
-						message: 'Account updated'
-					});
+					restRouter.sendResponse(res, 200, true, 'Account updated', updatedItem);
 				}
-			});
+			}, true);
 
 		});
 
 		accountRoute.delete(function (req, res) {
+			logger.info('Deleting an account by REST API');
 
-			logger.debug('Deleting an account by REST API');
 			var id = req.params.account_id;
 			var query = {
 				conditions: {
 					_id: id
 				}
 			};
-			api.delete(query, function (err) {
+			api.delete(query, function (err, deletedItem) {
 				if (err) {
-					res.send(err);
+					// TODO handle error type
+					restRouter.sendResponse(res, 400, false, 'Error', err);
 				} else {
-					res.json({
-						message: 'Account deleted'
-					});
+					restRouter.sendResponse(res, 200, true, 'Account deleted', deletedItem);
 				}
-			});
+			}, true);
 
 		});
 
