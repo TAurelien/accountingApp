@@ -41,7 +41,9 @@
 			"exclude_folders": [
 				"*.git*",
 				"*bin*",
-				"*node_modules*"
+				"*node_modules*",
+				"*assets*",
+				"*doc*"
 			],
 			"render_include_folder": false
 		},
