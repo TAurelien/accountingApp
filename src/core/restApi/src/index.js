@@ -18,6 +18,14 @@ module.exports = function setup(options, imports, register) {
 		next();
 	});
 
+	var sendResponse = function (res, status, success, message, data) {
+		res.status(status).json({
+			success: success,
+			message: message,
+			data: data
+		});
+	};
+
 	var addRoute = function (route, callback) {
 		logger.debug('Defining a new route for', route);
 		// TODO Deal with missing /
@@ -36,6 +44,7 @@ module.exports = function setup(options, imports, register) {
 
 		restApi: {
 			addRoute: addRoute,
+			sendResponse: sendResponse,
 			preDBConnectionConfig: registerAPIRoutes
 		}
 
