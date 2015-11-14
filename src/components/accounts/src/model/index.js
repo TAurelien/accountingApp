@@ -86,6 +86,7 @@ module.exports.define = function (options, imports, emitter) {
 			enum: currencies
 		},
 
+		// TODO To remove
 		placeholder: {
 			type: Boolean,
 			default: false
@@ -96,24 +97,13 @@ module.exports.define = function (options, imports, emitter) {
 			default: false
 		},
 
+		// TODO To remove
 		parent: {
 			type: Schema.ObjectId,
 			ref: modelName
 		},
 
-		// TODO: Add the path
-
-		balance: [AmountSchema],
-
-		ownBalance: [AmountSchema],
-
-		childBalance: [AmountSchema],
-
-		level: {
-			type: Number,
-			default: 0,
-			min: 0
-		},
+		balance: AmountSchema,
 
 		meta: {
 			creationDate: Date,
@@ -124,21 +114,67 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
+	var transform = function (doc, ret, options) {
+		delete ret._id;
+		if (ret.balance) {
+			delete ret.balance._id;
+		}
+		if (ret.globalBalance) {
+			delete ret.globalBalance._id;
+		}
+		if (ret.childBalance) {
+			delete ret.childBalance._id;
+		}
+		if (doc.generalLedger.toString) {
+			ret.generalLedger = doc.generalLedger.toString();
+		}
+	};
+
+	AccountSchema.set('toJSON', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transform
+	});
+
+	AccountSchema.set('toObject', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transform
+	});
+
 	// Pre processing =========================================================
 
 	AccountSchema.pre('save', function (next) {
-
-		// meta management ----------------------------------------------------
+		if (!this.meta) {
+			this.meta = {};
+		}
 		var today = new Date();
 		if (!this.meta.creationDate) {
 			this.meta.creationDate = today;
 		}
 		this.meta.updateDate = today;
+		next();
+	});
 
-		// level management ---------------------------------------------------
-		// TODO (2) Define the level management while pre-saving an account
+	AccountSchema.pre('update', function (next) {
+		var today = new Date();
+		this.findOneAndUpdate({}, {
+			meta: {
+				updateDate: today
+			}
+		});
+		next();
+	});
 
-		// Process the save ---------------------------------------------------
+	AccountSchema.pre('findOneAndUpdate', function (next) {
+		var today = new Date();
+		this.findOneAndUpdate({}, {
+			meta: {
+				updateDate: today
+			}
+		});
 		next();
 	});
 

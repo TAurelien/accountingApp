@@ -65,7 +65,7 @@ module.exports.define = function (options, imports, emitter) {
 			default: false
 		},
 
-		netWorth: [AmountSchema],
+		netWorth: AmountSchema,
 
 		settings: {
 
@@ -88,18 +88,51 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
+	var transform = function (doc, ret, options) {
+		delete ret._id;
+		if (ret.netWorth) {
+			delete ret.netWorth._id;
+		}
+	};
+
+	GeneralLedgerSchema.set('toObject', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transform
+	});
+
 	// Pre processing =========================================================
 
 	GeneralLedgerSchema.pre('save', function (next) {
-
-		// meta management ----------------------------------------------------
-		var today = new Date();
-		if (!this.meta.created) {
-			this.meta.created = today;
+		if (!this.meta) {
+			this.meta = {};
 		}
-		this.meta.updated = today;
+		var today = new Date();
+		if (!this.meta.creationDate) {
+			this.meta.creationDate = today;
+		}
+		this.meta.updateDate = today;
+		next();
+	});
 
-		// Process the save ---------------------------------------------------
+	GeneralLedgerSchema.pre('update', function (next) {
+		var today = new Date();
+		this.findOneAndUpdate({}, {
+			meta: {
+				updateDate: today
+			}
+		});
+		next();
+	});
+
+	GeneralLedgerSchema.pre('findOneAndUpdate', function (next) {
+		var today = new Date();
+		this.findOneAndUpdate({}, {
+			meta: {
+				updateDate: today
+			}
+		});
 		next();
 	});
 

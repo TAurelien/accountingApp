@@ -50,7 +50,7 @@ module.exports.define = function (options, imports, emitter) {
 			ref: accountModelName
 		},
 
-		amount: [AmountSchema],
+		amount: AmountSchema,
 
 		currency: {
 			type: String,
@@ -82,6 +82,30 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
+	var transformSplit = function (doc, ret, options) {
+		delete ret._id;
+		if (ret.amount) {
+			delete ret.amount._id;
+		}
+		if (ret.account.toString) {
+			ret.account = ret.account.toString();
+		}
+	};
+
+	SplitSchema.set('toObject', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transformSplit
+	});
+
+	SplitSchema.set('toJSON', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transformSplit
+	});
+
 	// Transaction schema definition ------------------------------------------
 	var TransactionSchema = new Schema({
 
@@ -103,18 +127,63 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
+	var transformTransaction = function (doc, ret, options) {
+		delete ret._id;
+		if (ret.splits) {
+			for (var i = 0; i < ret.splits.length; i++) {
+				var split = ret.splits[i];
+				if (split.toObject) {
+					ret.splits[i] = split.toObject();
+				}
+			}
+		}
+	};
+
+	TransactionSchema.set('toJSON', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transformTransaction
+	});
+
+	TransactionSchema.set('toObject', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transformTransaction
+	});
+
 	// Pre processing =========================================================
 
 	TransactionSchema.pre('save', function (next) {
-
-		// meta management ----------------------------------------------------
+		if (!this.meta) {
+			this.meta = {};
+		}
 		var today = new Date();
 		if (!this.meta.creationDate) {
 			this.meta.creationDate = today;
 		}
 		this.meta.updateDate = today;
+		next();
+	});
 
-		// Process the save ---------------------------------------------------
+	TransactionSchema.pre('update', function (next) {
+		var today = new Date();
+		this.findOneAndUpdate({}, {
+			meta: {
+				updateDate: today
+			}
+		});
+		next();
+	});
+
+	TransactionSchema.pre('findOneAndUpdate', function (next) {
+		var today = new Date();
+		this.findOneAndUpdate({}, {
+			meta: {
+				updateDate: today
+			}
+		});
 		next();
 	});
 
