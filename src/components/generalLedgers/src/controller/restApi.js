@@ -96,12 +96,7 @@ module.exports = function (options, imports, api) {
 			logger.info('Deleting a general ledger by REST API');
 
 			var id = req.params.generalLedger_id;
-			var query = {
-				conditions: {
-					_id: id
-				}
-			};
-			api.delete(query, function (err, deletedItem) {
+			api.delete(id, function (err, deletedItem) {
 				if (err) {
 					// TODO handle error type
 					restRouter.sendResponse(res, 400, false, 'Error', err);

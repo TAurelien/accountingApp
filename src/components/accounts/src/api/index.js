@@ -91,7 +91,7 @@ module.exports = function (options, imports, emitter) {
 		/**
 		 *  Delete specific account.
 		 *
-		 *  @param    {Object}    query     The query to find the accounts to delete. Only the query.conditions is used and is mandatory.
+		 *  @param    {Object}    id        The id of the accounts to delete.
 		 *  @param    {Function}  callback  The callback function.
 		 *
 		 *  @fires    Accounts#accounts.delete
@@ -102,8 +102,8 @@ module.exports = function (options, imports, emitter) {
 		 *  @version  1.0.0
 		 *  @since    1.0.0
 		 */
-		delete: function (query, callback, lean) {
-			crud.delete(query, callback, lean);
+		delete: function (id, callback, lean) {
+			crud.delete(id, callback, lean);
 		},
 
 		// TODO Update the doc

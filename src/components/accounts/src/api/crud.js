@@ -10,45 +10,6 @@ module.exports = function (options, imports, emitter) {
 
 	// ------------------------------------------------------------------------
 
-	function transformToPlainObject(object) {
-		var item = null;
-		if (object) {
-			if (object.toObject) {
-				item = object.toObject();
-			} else {
-				item = object;
-			}
-			item.id = object._id.toString();
-			delete item._id;
-			delete item.__v;
-			if (object.generalLedger.toString) {
-				item.generalLedger = object.generalLedger.toString();
-			}
-			if (object.balance) {
-				if (object.balance[0].toObject) {
-					item.balance = object.balance[0].toObject();
-				} else {
-					item.balance = object.balance[0];
-				}
-			}
-			if (object.ownBalance) {
-				if (object.ownBalance[0].toObject) {
-					item.ownBalance = object.ownBalance[0].toObject();
-				} else {
-					item.ownBalance = object.ownBalance[0];
-				}
-			}
-			if (object.childBalance) {
-				if (object.childBalance[0].toObject) {
-					item.childBalance = object.childBalance[0].toObject();
-				} else {
-					item.childBalance = object.childBalance[0];
-				}
-			}
-		}
-		return item;
-	}
-
 	function transformObject(item) {
 		var object = null;
 		if (item) {
@@ -56,15 +17,6 @@ module.exports = function (options, imports, emitter) {
 			if (item.id && !item._id) {
 				object._id = item.id;
 				delete object.id;
-			}
-			if (item.balance && !_.isArray(item.balance)) {
-				object.balance = [item.balance];
-			}
-			if (item.ownBalance && !_.isArray(item.ownBalance)) {
-				object.ownBalance = [item.ownBalance];
-			}
-			if (item.childBalance && !_.isArray(item.childBalance)) {
-				object.childBalance = [item.childBalance];
 			}
 		}
 		return object;
@@ -82,8 +34,7 @@ module.exports = function (options, imports, emitter) {
 
 		lean = lean || false;
 		data = transformObject(data);
-		var account = new Account(data);
-		account.save(function (err, createdItem) {
+		Account.create(data, function (err, createdItem) {
 			if (err) {
 				// TODO Check error type
 				logger.error('Account creation failed');
@@ -92,7 +43,7 @@ module.exports = function (options, imports, emitter) {
 			} else {
 				logger.info('Account creation successful');
 				if (lean) {
-					createdItem = transformToPlainObject(createdItem);
+					createdItem = createdItem.toObject();
 				}
 				callback(null, createdItem);
 				emitter.emitCreated(createdItem);
@@ -107,7 +58,6 @@ module.exports = function (options, imports, emitter) {
 		Account
 			.findById(id)
 			.select(query.selection)
-			.lean(lean)
 			.exec(function (err, item) {
 				if (err) {
 					// TODO Check error type
@@ -121,7 +71,7 @@ module.exports = function (options, imports, emitter) {
 						logger.info('Success of getting the account', id);
 					}
 					if (lean) {
-						item = transformToPlainObject(item);
+						item = item.toObject();
 					}
 					callback(null, item);
 				}
@@ -136,7 +86,6 @@ module.exports = function (options, imports, emitter) {
 			.find(query.conditions)
 			.sort(query.order)
 			.select(query.selection)
-			.lean(lean)
 			.exec(function (err, items) {
 				if (err) {
 					// TODO Check error type
@@ -151,7 +100,7 @@ module.exports = function (options, imports, emitter) {
 					}
 					if (lean) {
 						items = items.map(function (item) {
-							return transformToPlainObject(item);
+							return item.toObject();
 						});
 					}
 					callback(null, items);
@@ -165,7 +114,9 @@ module.exports = function (options, imports, emitter) {
 		lean = lean || false;
 		data = transformObject(data);
 		Account
-			.findByIdAndUpdate(id, data)
+			.findByIdAndUpdate(id, data, {
+				new: true
+			})
 			.exec(function (err, updatedItem) {
 				if (err) {
 					// TODO Check error type
@@ -175,7 +126,7 @@ module.exports = function (options, imports, emitter) {
 				} else {
 					logger.info('The account', id, 'has been successfully updated');
 					if (lean) {
-						updatedItem = transformToPlainObject(updatedItem);
+						updatedItem = updatedItem.toObject();
 					}
 					callback(null, updatedItem);
 					emitter.emitUpdated(updatedItem);
@@ -183,17 +134,17 @@ module.exports = function (options, imports, emitter) {
 			});
 	};
 
-	var deleteAccount = function (query, callback, lean) {
+	var deleteAccount = function (id, callback, lean) {
 		logger.info('Deleting a specific account');
 
-		if (!query.conditions) {
-			callback(new Error('Conditions are not defined'));
+		if (!id) {
+			callback(new Error('Id is not defined'));
 			return;
 		}
 
 		lean = lean || false;
 		Account
-			.remove(query.conditions)
+			.findByIdAndRemove(id)
 			.exec(function (err, deletedItem) {
 				if (err) {
 					// TODO Check error type
@@ -203,7 +154,7 @@ module.exports = function (options, imports, emitter) {
 				} else {
 					logger.info('Account deletion successful');
 					if (lean) {
-						deletedItem = transformToPlainObject(deletedItem);
+						deletedItem = deletedItem.toObject();
 					}
 					callback(null, deletedItem);
 					emitter.emitDeleted(deletedItem);

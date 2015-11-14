@@ -108,12 +108,7 @@ module.exports = function (options, imports, api) {
 			logger.debug('Deleting a transaction by REST API');
 
 			var id = req.params.transaction_id;
-			var query = {
-				conditions: {
-					_id: id
-				}
-			};
-			api.delete(query, function (err, deletedItem) {
+			api.delete(id, function (err, deletedItem) {
 				if (err) {
 					// TODO handle error type
 					restRouter.sendResponse(res, 400, false, 'Error', err);

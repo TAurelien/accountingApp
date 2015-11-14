@@ -10,28 +10,6 @@ module.exports = function (options, imports, emitter) {
 
 	// ------------------------------------------------------------------------
 
-	function transformToPlainObject(object) {
-		var item = null;
-		if (object) {
-			if (object.toObject) {
-				item = object.toObject();
-			} else {
-				item = object;
-			}
-			item.id = object._id.toString();
-			delete item._id;
-			delete item.__v;
-			if (object.netWorth) {
-				if (object.netWorth[0].toObject) {
-					item.netWorth = object.netWorth[0].toObject();
-				} else {
-					item.netWorth = object.netWorth[0];
-				}
-			}
-		}
-		return item;
-	}
-
 	function transformObject(item) {
 		var object = null;
 		if (item) {
@@ -39,9 +17,6 @@ module.exports = function (options, imports, emitter) {
 			if (item.id && !item._id) {
 				object._id = item.id;
 				delete object.id;
-			}
-			if (item.netWorth && !_.isArray(item.netWorth)) {
-				object.netWorth = [item.netWorth];
 			}
 		}
 		return object;
@@ -59,8 +34,7 @@ module.exports = function (options, imports, emitter) {
 
 		lean = lean || false;
 		data = transformObject(data);
-		var generalLedger = new GeneralLedger(data);
-		generalLedger.save(function (err, createdItem) {
+		GeneralLedger.create(data, function (err, createdItem) {
 			if (err) {
 				// TODO Check error type
 				logger.error('General ledger creation failed');
@@ -69,7 +43,7 @@ module.exports = function (options, imports, emitter) {
 			} else {
 				logger.info('General ledger creation successful');
 				if (lean) {
-					createdItem = transformToPlainObject(createdItem);
+					createdItem = createdItem.toObject();
 				}
 				callback(null, createdItem);
 				emitter.emitCreated(createdItem);
@@ -84,7 +58,6 @@ module.exports = function (options, imports, emitter) {
 		GeneralLedger
 			.findById(id)
 			.select(query.selection)
-			.lean(lean)
 			.exec(function (err, item) {
 				if (err) {
 					// TODO Check error type
@@ -98,7 +71,7 @@ module.exports = function (options, imports, emitter) {
 						logger.info('Success of getting the general ledger', id);
 					}
 					if (lean) {
-						item = transformToPlainObject(item);
+						item = item.toObject();
 					}
 					callback(null, item);
 				}
@@ -113,7 +86,6 @@ module.exports = function (options, imports, emitter) {
 			.find(query.conditions)
 			.sort(query.order)
 			.select(query.selection)
-			.lean(lean)
 			.exec(function (err, items) {
 				if (err) {
 					// TODO Check error type
@@ -128,7 +100,7 @@ module.exports = function (options, imports, emitter) {
 					}
 					if (lean) {
 						items = items.map(function (item) {
-							return transformToPlainObject(item);
+							return item.toObject();
 						});
 					}
 					callback(null, items);
@@ -142,7 +114,9 @@ module.exports = function (options, imports, emitter) {
 		lean = lean || false;
 		data = transformObject(data);
 		GeneralLedger
-			.findByIdAndUpdate(id, data)
+			.findByIdAndUpdate(id, data, {
+				new: true
+			})
 			.exec(function (err, updatedItem) {
 				if (err) {
 					// TODO Check error type
@@ -152,7 +126,7 @@ module.exports = function (options, imports, emitter) {
 				} else {
 					logger.info('The general ledger', id, 'has been successfully updated');
 					if (lean) {
-						updatedItem = transformToPlainObject(updatedItem);
+						updatedItem = updatedItem.toObject();
 					}
 					callback(null, updatedItem);
 					emitter.emitUpdated(updatedItem);
@@ -160,17 +134,17 @@ module.exports = function (options, imports, emitter) {
 			});
 	};
 
-	var deleteGeneralLedger = function (query, callback, lean) {
+	var deleteGeneralLedger = function (id, callback, lean) {
 		logger.info('Deleting a specific general ledger');
 
-		if (!query.conditions) {
-			callback(new Error('Conditions are not defined'));
+		if (!id) {
+			callback(new Error('Id is not defined'));
 			return;
 		}
 
 		lean = lean || false;
 		GeneralLedger
-			.remove(query.conditions)
+			.findByIdAndRemove(id)
 			.exec(function (err, deletedItem) {
 				if (err) {
 					// TODO Check error type
@@ -180,7 +154,7 @@ module.exports = function (options, imports, emitter) {
 				} else {
 					logger.info('General ledger deletion successful');
 					if (lean) {
-						deletedItem = transformToPlainObject(deletedItem);
+						deletedItem = deletedItem.toObject();
 					}
 					callback(null, deletedItem);
 					emitter.emitDeleted(deletedItem);

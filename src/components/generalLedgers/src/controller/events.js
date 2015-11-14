@@ -20,7 +20,7 @@ module.exports = function (options, imports) {
 	Accounts.on(Accounts.events.DELETED, function (deletedItem) {
 		logger.info('Handling a', Accounts.events.DELETED, 'event');
 		logger.debug('An account has been deleted, I should update the corresponding general ledger');
-		logger.debug(deletedItem.id);
+		logger.debug(deletedItem);
 	});
 
 	Accounts.on(Accounts.events.BALANCE_CHANGED, function (item) {
