@@ -10,6 +10,8 @@ module.exports = function setup(options, imports, register) {
 	console.log();
 	console.log('Registering the Express core module ...');
 
+	var logger = imports.logger.get('Express App');
+
 	var app = express();
 
 	// get all data/stuff of the body (POST) parameters
@@ -35,8 +37,6 @@ module.exports = function setup(options, imports, register) {
 
 	var start = function (port, callback) {
 
-		var logger = imports.logger.get('Express App');
-
 		if (_.isFunction(port)) {
 			callback = port;
 			port = options.port || 8080;
@@ -46,15 +46,46 @@ module.exports = function setup(options, imports, register) {
 		server.listen(port, callback());
 	};
 
+	var addPublicFolder = function (path, mountPath) {
+		if (mountPath) {
+			app.use(mountPath, express.static(path));
+		} else {
+			app.use(express.static(path));
+		}
+	};
+
+	var routes = [];
+
+	var addRoute = function (route, router, order) {
+		if (!order) {
+			order = 0;
+		}
+		routes.push({
+			route: route,
+			router: router,
+			order: order
+		});
+	};
+
+	var registerRoutes = function () {
+		_.map(_.sortByOrder(routes, ['order'], ['asc']), function (item) {
+			app.use(item.route, item.router);
+		});
+	};
+
 	// Register --------------
 
 	register(null, {
 
 		express: {
+			addPublicFolder: addPublicFolder,
+			addRoute: addRoute,
 			app: app,
 			express: express,
 			server: server,
-			start: start
+			start: start,
+			postSuccessDBConnectionConfig: registerRoutes,
+			postFailureDBConnectionConfig: registerRoutes
 		}
 
 	});

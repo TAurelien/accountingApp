@@ -3,18 +3,21 @@
  */
 'use strict';
 
+var _ = require("lodash");
+
 module.exports = function setup(options, imports, register) {
 	console.log();
 	console.log('Registering the REST API core module ...');
 
 	var logger = imports.logger.get('REST API');
 
-	var app = imports.express.app;
-	var express = imports.express.express;
+	var server = imports.express;
+	var express = server.express;
 
 	var apiRouter = express.Router();
 
 	apiRouter.use(function (req, res, next) {
+		// TODO Deal with authentication
 		next();
 	});
 
@@ -27,15 +30,16 @@ module.exports = function setup(options, imports, register) {
 	};
 
 	var addRoute = function (route, callback) {
-		logger.debug('Defining a new route for', route);
-		// TODO Deal with missing /
+		if (!_.startsWith(route, '/')) {
+			route = '/' + route;
+		}
 		var newRoute = apiRouter.route(route);
 		callback(newRoute);
 	};
 
 	var registerAPIRoutes = function () {
 		logger.info('Registering REST API routes');
-		app.use('/api', apiRouter);
+		server.addRoute('/api', apiRouter);
 	};
 
 	// Register --------------
