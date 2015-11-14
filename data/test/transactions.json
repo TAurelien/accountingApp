@@ -16,11 +16,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c112"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55040efc6064a6a42e171191"
@@ -29,11 +29,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -53,11 +53,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c112"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b5e"
@@ -66,11 +66,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c116"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -90,11 +90,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c122"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 300000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b63"
@@ -103,11 +103,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -300000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -127,11 +127,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -65000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b68"
@@ -140,11 +140,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c123"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 65000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -164,11 +164,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b6d"
@@ -177,11 +177,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c125"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -201,11 +201,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b72"
@@ -214,11 +214,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c116"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -100000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -238,11 +238,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 80000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b77"
@@ -251,11 +251,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c128"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -80000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -275,11 +275,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 5000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b7c"
@@ -288,11 +288,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c129"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -5000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -312,11 +312,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c11f"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 900000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b81"
@@ -325,11 +325,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c118"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -900000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -349,11 +349,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 15000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b86"
@@ -362,11 +362,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c12a"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -15000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -386,11 +386,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 15000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b8b"
@@ -399,11 +399,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c11f"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -15000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -423,11 +423,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c11d"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 5000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b90"
@@ -436,11 +436,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c12c"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -5000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -460,11 +460,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c11c"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 40000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b95"
@@ -473,11 +473,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c12c"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -40000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 
@@ -497,11 +497,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c115"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": 5000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}, {
 			"_id": {
 				"$oid": "55045a189b6c6da81f1a1b9a"
@@ -510,11 +510,11 @@
 				"$oid": "54eef4ba4326bb0c13b2c12c"
 			},
 			"currency": "EUR",
-			"amount": [{
+			"amount": {
 				"value": -5000,
 				"scale": 100,
 				"currency": "EUR"
-			}]
+			}
 		}]
 	},
 

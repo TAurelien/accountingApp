@@ -7,11 +7,11 @@
 		"name": "Dev test",
 		"description": "testing general ledger",
 		"closed": false,
-		"netWorth": [{
+		"netWorth": {
 			"value": 515000,
 			"scale": 100,
 			"currency": "EUR"
-		}],
+		},
 		"settings": {
 			"defaultCurrency": "EUR"
 		}
