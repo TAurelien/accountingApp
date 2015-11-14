@@ -56,6 +56,10 @@ module.exports = function (options, imports) {
 			enum: currencies
 		}
 
+	}, {
+		id: false,
+		_id: false,
+		versionKey: false
 	});
 
 	// Pre processing =========================================================
