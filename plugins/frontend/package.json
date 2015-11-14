@@ -1,0 +1,14 @@
+{
+	"name": "frontend",
+	"version": "0.0.1",
+	"description": "",
+	"main": "src/index.js",
+	"plugin": {
+		"consumes": [
+			"logger", "express", "io",
+			"nomenclatures"
+		],
+		"provides": ["frontend"]
+	},
+	"dependencies": {}
+}

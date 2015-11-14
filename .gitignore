@@ -4,11 +4,10 @@
 npm-debug.log
 .idea/
 
-node_modules/
+**/node_modules/
 bin/
 doc/
 releases/
-plugins/
 **/properties.json
 
 *.sublime-workspace

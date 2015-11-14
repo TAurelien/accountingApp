@@ -1,0 +1,18 @@
+<div data-ng-controller="generalLedgers.infoCtrl as generalLedgers">
+	<h3>
+		<div class="info-indent">
+			<a data-ui-sref="generalLedgers.list">
+				<i class="fa fa-angle-left"></i>
+			</a>
+			<span> </span>
+			<a data-ui-sref="generalLedgers.accounts.list({generalLedgerId: generalLedgers.generalLedger.id })">
+				{{ generalLedgers.generalLedger.name }}
+			</a>
+			<span class="pull-right" data-ng-class="generalLedgers.generalLedger.netWorth.value < 0 ? 'text-danger' : 'text-success'">{{ generalLedgers.generalLedger.netWorth | AmountFormat }}</span>
+			
+		</div>
+		<div class="info-indent">
+			<span class="hidden-xs small">{{ generalLedgers.generalLedger.description }}</span>
+		</div>
+	</h3>
+</div>

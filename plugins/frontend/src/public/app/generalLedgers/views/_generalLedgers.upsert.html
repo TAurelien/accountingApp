@@ -1,0 +1,36 @@
+<div data-ng-controller="generalLedger.upsertCtrl as generalLedgerUpsert">
+
+	<h4 data-ng-if="generalLedgerUpsert.isCreation">Creating a new general ledger</h4>
+	<h4 data-ng-if="!generalLedgerUpsert.isCreation">Updating the general ledger {{ generalLedgerUpsert.name }}</h4>
+
+	<div>
+		<form data-ng-submit="generalLedgerUpsert.upsert()">
+
+			<div class="form-group">
+				<label>Name</label>
+				<input type="text" class="form-control" data-ng-model="generalLedgerUpsert.data.name">
+			</div>
+
+			<div class="form-group">
+				<label>Description</label>
+				<input type="text" class="form-control" data-ng-model="generalLedgerUpsert.data.description">
+			</div>
+
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" data-ng-model="generalLedgerUpsert.data.closed">Closed
+				</label>
+			</div>
+
+			<div class="form-group">
+				<label>Currency</label>
+				<select class="form-control" data-ng-model="generalLedgerUpsert.data.settings.defaultCurrency" data-ng-options="currency.code as currency.code for currency in generalLedgerUpsert.currencies"></select>
+			</div>
+
+			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>
+			<button type="submit" class="btn btn-success pull-right"><span data-ng-if="generalLedgerUpsert.isCreation">Create</span><span data-ng-if="!generalLedgerUpsert.isCreation">Update</span></button>
+
+		</form>
+	</div>
+
+</div>

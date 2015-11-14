@@ -1,0 +1,81 @@
+<div data-ng-controller="transactions.upsertCtrl as transactionsUpsert" style="margin-top:20px;">
+
+	<h4 data-ng-if="transactionsUpsert.isCreation">Creating a new transaction</h4>
+	<h4 data-ng-if="!transactionsUpsert.isCreation">Updating the transaction</h4>
+
+
+	<div>
+		<form data-ng-submit="transactionsUpsert.upsert()">
+
+			<div class="row">
+
+				<div class="form-group col-xs-6 col-sm-6 col-md-4 col-lg-4">
+					<label class="sr-only">Value date</label>
+					<input type="date" class="form-control" data-ng-model="transactionsUpsert.data.valueDate" placeholder="Value date">
+				</div>
+
+				<div class="form-group col-xs-12 col-sm-12 col-md-8 col-lg-8">
+					<label class="sr-only">Description</label>
+					<input type="text" class="form-control" data-ng-model="transactionsUpsert.data.description" placeholder="Description">
+				</div>
+
+			</div>
+
+			<div class="form-group">
+				<label class="sr-only">Splits</label>
+
+				<fieldset data-ng-repeat="split in transactionsUpsert.data.splits" class="row">
+
+					<div class="col-xs-1 split-remove">
+						<button type="button" class="close" aria-label="Close" data-ng-click="transactionsUpsert.removeSplit($index)" data-ng-if="transactionsUpsert.data.splits.length > 2">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+
+					<div class="col-xs-11">
+
+						<div class="row">
+
+							<div class="form-group col-xs-12 col-sm-4 col-md-6 col-lg-6">
+								<label>Account</label>
+								<select class="form-control" data-ng-model="split.account"  data-ng-options="account.id as account.name for account in transactionsUpsert.accounts"></select>
+							</div>
+
+							<div class="form-group col-xs-6 col-sm-4 col-md-3 col-lg-3">
+								<label>Debit</label>
+								<div class="input-group">
+									<div class="input-group-addon">€</div>
+									<input type="number" class="form-control" data-ng-model="split.debit">
+								</div>
+							</div>
+
+							<div class="form-group col-xs-6 col-sm-4 col-md-3 col-lg-3">
+								<label>Credit</label>
+								<div class="input-group">
+									<div class="input-group-addon">€</div>
+									<input type="number" class="form-control" data-ng-model="split.credit">
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+
+				</fieldset>
+
+				<div>
+					<button type="button" data-ng-click="transactionsUpsert.addSplit()" class="btn btn-default">Add a split</button>
+				</div>
+
+			</div>
+
+			<hr/>
+
+			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>
+			<button type="submit" class="btn btn-success pull-right"><span data-ng-if="transactionsUpsert.isCreation">Create</span><span data-ng-if="!transactionsUpsert.isCreation">Update</span></button>
+
+		</form>
+	</div>
+
+</div>

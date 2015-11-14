@@ -1,0 +1,16 @@
+<div data-ng-controller="accounts.deleteCtrl as accountDelete">
+
+	<h4>Deleting the account {{ accountDelete.name }}</h4>
+
+	<h5>Do you really want to delete the account?</h5>
+
+	<div>
+		<form data-ng-submit="accountDelete.delete()">
+
+			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>
+			<button type="submit" class="btn btn-danger pull-right"><span>delete</span></button>
+
+		</form>
+	</div>
+
+</div>

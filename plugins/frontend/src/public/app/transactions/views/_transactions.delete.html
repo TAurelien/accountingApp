@@ -1,0 +1,16 @@
+<div data-ng-controller="transactions.deleteCtrl as transactionDelete">
+
+	<h4>Deleting the transaction {{ transactionDelete.name }}</h4>
+
+	<h5>Do you really want to delete the transaction?</h5>
+
+	<div>
+		<form data-ng-submit="transactionDelete.delete()">
+
+			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>
+			<button type="submit" class="btn btn-danger pull-right"><span>delete</span></button>
+
+		</form>
+	</div>
+
+</div>

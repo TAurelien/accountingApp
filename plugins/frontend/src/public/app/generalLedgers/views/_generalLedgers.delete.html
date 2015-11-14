@@ -1,0 +1,16 @@
+<div data-ng-controller="generalLedger.deleteCtrl as generalLedgerDelete">
+
+	<h4>Deleting the general ledger {{ generalLedgerDelete.name }}</h4>
+
+	<h5>Do you really want to delete the general ledger?</h5>
+
+	<div>
+		<form data-ng-submit="generalLedgerDelete.delete()">
+
+			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>
+			<button type="submit" class="btn btn-danger pull-right"><span>delete</span></button>
+
+		</form>
+	</div>
+
+</div>
