@@ -23,7 +23,6 @@ module.exports = function (options, imports, emitter) {
 		} else if (_.isObject(input)) {
 			type = 'query';
 		}
-		logger.debug('Input of type', type);
 		return type;
 	};
 
@@ -32,14 +31,13 @@ module.exports = function (options, imports, emitter) {
 		if (!_.isNull(account)) {
 			var accountID = account.id;
 			var type = account.type;
-			logger.info('Getting balance of account', accountID);
+			logger.info('Getting balance by object of account', accountID);
 
 			Transaction.getAmount(accountID, function (err, amount) {
 				if (err) {
-					logger.error(''); // TODO Log
+					logger.error('Getting the balance of the account', accountID, 'failed');
 					callback(err);
 				} else {
-					logger.debug('Computed balance for', accountID, amount);
 					if (type === 'asset' | type === 'expense') {
 						amount.value = -amount.value;
 					}
@@ -55,8 +53,7 @@ module.exports = function (options, imports, emitter) {
 	};
 
 	var getBalanceById = function (accountID, callback) {
-
-		logger.debug(''); // TODO Log
+		logger.info('Getting balance by id of account', accountID);
 
 		var query = {
 			conditions: null,
@@ -75,8 +72,7 @@ module.exports = function (options, imports, emitter) {
 	};
 
 	var getBalanceByArray = function (accountArray, callback) {
-
-		logger.debug('');
+		logger.info('Getting balance by array of account');
 
 		var type;
 
@@ -86,7 +82,7 @@ module.exports = function (options, imports, emitter) {
 			type = checkInput(accountArray[0]);
 
 			if (type !== 'id' && type !== 'mongooseObject') {
-				logger.debug('Invalid argument, the array\'s items should be id or mongoose object');
+				logger.error('Invalid argument, the array\'s items should be id or mongoose object');
 				callback(new Error('Invalid arguments'));
 				return;
 			}
@@ -134,8 +130,7 @@ module.exports = function (options, imports, emitter) {
 	};
 
 	var getBalanceByQuery = function (query, callback) {
-
-		logger.debug(''); // TODO Log
+		logger.info('Getting balance by query of account');
 
 		crud.list(query, function (err, accounts) {
 			if (err) {
@@ -148,18 +143,10 @@ module.exports = function (options, imports, emitter) {
 
 	};
 
-	var getBalance = function (account, includeChilds, callback) {
-
-		logger.debug('');
-
-		if (_.isFunction(includeChilds)) {
-			callback = includeChilds;
-			includeChilds = false;
-		}
+	var getBalance = function (account, callback) {
+		logger.info('Getting balance of account');
 
 		var type = checkInput(account);
-
-		// TODO take into account the includeChilds
 
 		switch (type) {
 
