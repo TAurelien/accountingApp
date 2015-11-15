@@ -22,7 +22,6 @@ module.exports = function (options, imports, emitter) {
 		} else if (_.isObject(input)) {
 			type = 'query';
 		}
-		logger.debug('Input of type', type);
 		return type;
 	};
 
@@ -35,10 +34,11 @@ module.exports = function (options, imports, emitter) {
 			var transactionAmount = new Amount();
 
 			_.forEach(transaction.splits, function (split) {
-				if (split.account + '' === accountID + '') {
+				if (split.account.toString() === accountID) {
+					// TODO Create an Amount constructor from a split object
 					var splitAmount = new Amount();
-					splitAmount.value = split.amount[0].value;
-					splitAmount.scale = split.amount[0].scale;
+					splitAmount.value = split.amount.value;
+					splitAmount.scale = split.amount.scale;
 					splitAmount.currency = split.currency;
 					try {
 						transactionAmount.add(splitAmount);
@@ -48,7 +48,6 @@ module.exports = function (options, imports, emitter) {
 					}
 				}
 			});
-			logger.debug('Computed amount of transaction (' + transactionID + '):', transactionAmount);
 			callback(null, transactionAmount);
 		} else {
 			logger.error('');
@@ -58,7 +57,7 @@ module.exports = function (options, imports, emitter) {
 
 	var getAmountById = function (accountID, transactionID, callback) {
 
-		logger.debug('Getting amount by id(' + transactionID + ') for account', accountID);
+		logger.info('Getting amount by id(' + transactionID + ') for account', accountID);
 
 		var query = {
 			conditions: null,
@@ -77,7 +76,7 @@ module.exports = function (options, imports, emitter) {
 
 	var getAmountByArray = function (accountID, transactionArray, callback) {
 
-		logger.debug('Getting the amount by array for account', accountID);
+		logger.info('Getting the amount by array for account', accountID);
 
 		var type;
 
@@ -87,7 +86,7 @@ module.exports = function (options, imports, emitter) {
 			type = checkInput(transactionArray[0]);
 
 			if (type !== 'id' && type !== 'mongooseObject') {
-				logger.debug('Invalid argument, the array\'s items should be id or mongoose object for account', accountID);
+				logger.error('Invalid argument, the array\'s items should be id or mongoose object for account', accountID);
 				callback(new Error('Invalid arguments'));
 				return;
 			}
@@ -136,7 +135,7 @@ module.exports = function (options, imports, emitter) {
 
 	var getAmountByQuery = function (accountID, query, callback) {
 
-		logger.debug('Getting the amount by query for account', accountID);
+		logger.info('Getting the amount by query for account', accountID);
 
 		crud.list(query, function (err, transactions) {
 			if (err) {
@@ -150,7 +149,7 @@ module.exports = function (options, imports, emitter) {
 
 	var getAmount = function (accountID, transaction, callback) {
 
-		logger.debug('Getting the amount of transaction(s) for account', accountID);
+		logger.info('Getting the amount of transaction(s) for account', accountID);
 
 		if (_.isFunction(transaction)) {
 			callback = transaction;
