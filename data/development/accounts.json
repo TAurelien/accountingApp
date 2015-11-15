@@ -11,20 +11,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": null,
-		"level": 0,
-		"globalBalance": {
-			"value": 200000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 200000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -44,20 +32,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eeeffbc1db710c291be44b",
-		"level": 1,
-		"globalBalance": {
-			"value": 200000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 200000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -77,20 +53,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": null,
-		"level": 0,
-		"globalBalance": {
-			"value": 1445000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 1445000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -110,20 +74,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c113",
-		"level": 1,
-		"globalBalance": {
-			"value": 545000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 545000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -143,20 +95,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c114",
-		"level": 2,
-		"globalBalance": {
-			"value": 345000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 345000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -176,20 +116,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c114",
-		"level": 2,
-		"globalBalance": {
-			"value": 200000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 200000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -209,20 +137,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c113",
-		"level": 1,
-		"globalBalance": {
-			"value": 900000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 900000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -242,20 +158,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c117",
-		"level": 2,
-		"globalBalance": {
-			"value": 900000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 900000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -275,19 +179,7 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c117",
-		"level": 2,
-		"globalBalance": {
-			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
-			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
 			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
@@ -308,20 +200,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": null,
-		"level": 0,
-		"globalBalance": {
-			"value": 930000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 930000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -341,20 +221,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c11a",
-		"level": 1,
-		"globalBalance": {
-			"value": 45000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 45000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -374,20 +242,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c11b",
-		"level": 2,
-		"globalBalance": {
-			"value": 40000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 40000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -407,20 +263,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c11b",
-		"level": 2,
-		"globalBalance": {
-			"value": 5000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 5000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -440,20 +284,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c11a",
-		"level": 1,
-		"globalBalance": {
-			"value": 885000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 885000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -473,20 +305,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c11e",
-		"level": 2,
-		"globalBalance": {
-			"value": 885000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 885000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -506,20 +326,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": null,
-		"level": 0,
-		"globalBalance": {
-			"value": 465000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 465000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -539,20 +347,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c120",
-		"level": 1,
-		"globalBalance": {
-			"value": 365000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 365000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -572,20 +368,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c121",
-		"level": 2,
-		"globalBalance": {
-			"value": 300000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 300000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -605,20 +389,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c121",
-		"level": 2,
-		"globalBalance": {
-			"value": 65000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 65000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -638,20 +410,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c120",
-		"level": 1,
-		"globalBalance": {
-			"value": 100000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 100000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -671,20 +431,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c124",
-		"level": 2,
-		"globalBalance": {
-			"value": 100000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 100000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -704,20 +452,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": null,
-		"level": 0,
-		"globalBalance": {
-			"value": 150000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 150000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -737,20 +473,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c126",
-		"level": 1,
-		"globalBalance": {
-			"value": 100000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 100000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -770,20 +494,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c127",
-		"level": 2,
-		"globalBalance": {
-			"value": 80000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 80000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -803,20 +515,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c127",
-		"level": 2,
-		"globalBalance": {
-			"value": 5000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 5000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -836,20 +536,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c127",
-		"level": 2,
-		"globalBalance": {
-			"value": 15000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 15000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -869,20 +557,8 @@
 		"currency": "EUR",
 		"placeholder": true,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c126",
-		"level": 1,
-		"globalBalance": {
-			"value": 50000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 0,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 50000,
 			"scale": 100,
 			"currency": "EUR"
 		},
@@ -902,20 +578,8 @@
 		"currency": "EUR",
 		"placeholder": false,
 		"closed": false,
-		"parent": "54eef4ba4326bb0c13b2c12b",
-		"level": 2,
-		"globalBalance": {
-			"value": 50000,
-			"scale": 100,
-			"currency": "EUR"
-		},
 		"balance": {
 			"value": 50000,
-			"scale": 100,
-			"currency": "EUR"
-		},
-		"childBalance": {
-			"value": 0,
 			"scale": 100,
 			"currency": "EUR"
 		},
