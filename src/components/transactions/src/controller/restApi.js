@@ -38,7 +38,7 @@ module.exports = function (options, imports, api) {
 	restRouter.addRoute('/transactions', function (transactionsRoute) {
 
 		transactionsRoute.get(function (req, res) {
-			logger.debug('Getting transactions by REST API');
+			logger.info('Getting a list of transactions by REST API');
 
 			var query = getQueryFromRequest(req);
 			api.list(query, function (err, items) {
@@ -53,7 +53,7 @@ module.exports = function (options, imports, api) {
 		});
 
 		transactionsRoute.post(function (req, res) {
-			logger.debug('Creating transaction by REST API');
+			logger.info('Creating a transaction by REST API');
 
 			var data = req.body;
 			api.create(data, function (err, createdItem) {
@@ -71,7 +71,7 @@ module.exports = function (options, imports, api) {
 	restRouter.addRoute('/transactions/:transaction_id', function (transactionRoute) {
 
 		transactionRoute.get(function (req, res) {
-			logger.debug('Getting a transaction by REST API');
+			logger.info('Getting a transaction by REST API');
 
 			var id = req.params.transaction_id;
 			var query = {
@@ -89,7 +89,7 @@ module.exports = function (options, imports, api) {
 		});
 
 		transactionRoute.put(function (req, res) {
-			logger.debug('Updating a transaction by REST API');
+			logger.info('Updating a transaction by REST API');
 
 			var id = req.params.transaction_id;
 			var data = req.body;
@@ -105,7 +105,7 @@ module.exports = function (options, imports, api) {
 		});
 
 		transactionRoute.delete(function (req, res) {
-			logger.debug('Deleting a transaction by REST API');
+			logger.info('Deleting a transaction by REST API');
 
 			var id = req.params.transaction_id;
 			api.delete(id, function (err, deletedItem) {
