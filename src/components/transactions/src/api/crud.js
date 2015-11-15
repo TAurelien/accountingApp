@@ -10,20 +10,6 @@ module.exports = function (options, imports, emitter) {
 
 	// ------------------------------------------------------------------------
 
-	function transformObject(item) {
-		var object = null;
-		if (item) {
-			object = item;
-			if (item.id && !item._id) {
-				object._id = item.id;
-				delete object.id;
-			}
-		}
-		return object;
-	}
-
-	// ------------------------------------------------------------------------
-
 	var create = function (data, callback, lean) {
 		logger.info('Creating a new transaction');
 
@@ -33,7 +19,6 @@ module.exports = function (options, imports, emitter) {
 		}
 
 		lean = lean || false;
-		data = transformObject(data);
 		Transaction.create(data, function (err, createdItem) {
 			if (err) {
 				// TODO Check error type
@@ -112,7 +97,6 @@ module.exports = function (options, imports, emitter) {
 		logger.info('Updating a specific transaction');
 
 		lean = lean || false;
-		data = transformObject(data);
 		Transaction
 			.findByIdAndUpdate(id, data, {
 				new: true
@@ -141,7 +125,6 @@ module.exports = function (options, imports, emitter) {
 			callback(new Error('Id is not defined'));
 			return;
 		}
-
 		lean = lean || false;
 		Transaction
 			.findByIdAndRemove(id)
