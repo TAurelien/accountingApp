@@ -16,65 +16,44 @@ module.exports = function (options, imports, emitter) {
 
 		var generalLedgerID = generalLedger.id;
 
-		var queryAsset = {};
-		queryAsset.conditions = {
-			generalLedger: generalLedgerID,
-			type: 'asset'
-		};
-		queryAsset.order = null;
-		queryAsset.selection = {
-			type: 1
-		};
-
-		var queryLiability = {};
-		queryLiability.conditions = {
-			generalLedger: generalLedgerID,
-			type: 'liability'
-		};
-		queryLiability.order = null;
-		queryLiability.selection = {
-			type: 1
-		};
-
 		var netWorth = new Amount();
 
-		async.parallel([
-			function (asyncCallback) {
-				Account.getBalance(queryAsset, function (err, balance) {
-					if (err) {
-						logger.error('');
-						asyncCallback(err);
-					} else {
-						try {
-							netWorth.add(balance);
-						} catch (err) {
-							logger.error('');
-							logger.error(err);
-						}
-						asyncCallback(null);
-					}
-				});
+		// ====================================================================
+
+		var query = {
+			conditions: {
+				generalLedger: generalLedgerID,
+				$or: [{
+					type: 'asset'
+				}, {
+					type: 'liability'
+				}]
 			},
-			function (asyncCallback) {
-				Account.getBalance(queryLiability, function (err, balance) {
-					if (err) {
-						logger.error('');
-						asyncCallback(err);
-					} else {
-						try {
-							netWorth.subtract(balance);
-						} catch (err) {
-							logger.error('');
-							logger.error(err);
-						}
-						asyncCallback(null);
-					}
-				});
-			}
-		], function (err) {
+			order: null,
+			selection: null
+		};
+
+		Account.list(query, function (err, accounts) {
 			if (err) {
 				logger.error('');
+				callback(err);
 			} else {
+				_.forEach(accounts, function (account) {
+					try {
+						var balance = new Amount();
+						balance.value = account.balance.value;
+						balance.scale = account.balance.scale;
+						balance.currency = account.balance.currency;
+						if (account.type === 'asset') {
+							netWorth.add(balance);
+						} else if (account.type === 'liability') {
+							netWorth.subtract(balance);
+						}
+					} catch (err) {
+						logger.error('');
+						logger.error(err);
+					}
+				});
 				callback(null, netWorth, generalLedgerID);
 			}
 		});
