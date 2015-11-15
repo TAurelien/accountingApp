@@ -62,7 +62,8 @@ module.exports.define = function (options, imports, emitter) {
 
 		closed: {
 			type: Boolean,
-			default: false
+			default: false,
+			index: true
 		},
 
 		netWorth: AmountSchema,

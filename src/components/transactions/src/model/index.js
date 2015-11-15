@@ -48,7 +48,8 @@ module.exports.define = function (options, imports, emitter) {
 		account: {
 			type: Schema.ObjectId,
 			ref: accountModelName,
-			required: true
+			required: true,
+			index: true
 		},
 
 		amount: AmountSchema,
@@ -74,12 +75,19 @@ module.exports.define = function (options, imports, emitter) {
 		reconciliationState: {
 			type: String,
 			trim: true,
-			default: ''
+			default: '',
+			index: true
 		},
 
-		reconciliationDate: Date,
+		reconciliationDate: {
+			type: Date,
+			index: true
+		},
 
-		accountDate: Date
+		accountDate: {
+			type: Date,
+			index: true
+		}
 
 	});
 
@@ -107,7 +115,10 @@ module.exports.define = function (options, imports, emitter) {
 			trim: true
 		},
 
-		valueDate: Date,
+		valueDate: {
+			type: Date,
+			index: true
+		},
 
 		splits: [SplitSchema],
 

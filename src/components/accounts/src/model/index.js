@@ -48,7 +48,8 @@ module.exports.define = function (options, imports, emitter) {
 		generalLedger: {
 			type: Schema.ObjectId,
 			ref: generalLedgerModelName,
-			required: true
+			required: true,
+			index: true
 		},
 
 		name: {
@@ -69,7 +70,8 @@ module.exports.define = function (options, imports, emitter) {
 			trim: true,
 			default: '',
 			required: true,
-			enum: accountTypes
+			enum: accountTypes,
+			index: true
 		},
 
 		code: {
@@ -94,7 +96,8 @@ module.exports.define = function (options, imports, emitter) {
 
 		closed: {
 			type: Boolean,
-			default: false
+			default: false,
+			index: true
 		},
 
 		balance: AmountSchema,
