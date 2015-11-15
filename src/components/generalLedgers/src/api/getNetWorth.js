@@ -14,55 +14,59 @@ module.exports = function (options, imports, emitter) {
 
 	var getNetWorthByObject = function (generalLedger, callback) {
 
-		var generalLedgerID = generalLedger.id;
+		if (!_.isNull(generalLedger)) {
+			var generalLedgerID = generalLedger.id;
+			logger.info('Getting net worth by object of general ledger', generalLedgerID);
 
-		var netWorth = new Amount();
+			var netWorth = new Amount();
 
-		// ====================================================================
+			var query = {
+				conditions: {
+					generalLedger: generalLedgerID,
+					$or: [{
+						type: 'asset'
+					}, {
+						type: 'liability'
+					}]
+				},
+				order: null,
+				selection: null
+			};
 
-		var query = {
-			conditions: {
-				generalLedger: generalLedgerID,
-				$or: [{
-					type: 'asset'
-				}, {
-					type: 'liability'
-				}]
-			},
-			order: null,
-			selection: null
-		};
-
-		Account.list(query, function (err, accounts) {
-			if (err) {
-				logger.error('');
-				callback(err);
-			} else {
-				_.forEach(accounts, function (account) {
-					try {
-						var balance = new Amount();
-						balance.value = account.balance.value;
-						balance.scale = account.balance.scale;
-						balance.currency = account.balance.currency;
-						if (account.type === 'asset') {
-							netWorth.add(balance);
-						} else if (account.type === 'liability') {
-							netWorth.subtract(balance);
+			Account.list(query, function (err, accounts) {
+				if (err) {
+					logger.error('');
+					callback(err);
+				} else {
+					_.forEach(accounts, function (account) {
+						try {
+							var balance = new Amount();
+							balance.value = account.balance.value;
+							balance.scale = account.balance.scale;
+							balance.currency = account.balance.currency;
+							if (account.type === 'asset') {
+								netWorth.add(balance);
+							} else if (account.type === 'liability') {
+								netWorth.subtract(balance);
+							}
+						} catch (err) {
+							logger.error('');
+							logger.error(err);
 						}
-					} catch (err) {
-						logger.error('');
-						logger.error(err);
-					}
-				});
-				callback(null, netWorth, generalLedgerID);
-			}
-		});
+					});
+					callback(null, netWorth, generalLedgerID);
+				}
+			});
+
+		} else {
+			logger.error(''); // TODO Log
+			callback(new Error('')); // TODO Define error
+		}
 
 	};
 
 	var getNetWorthById = function (generalLedgerID, callback) {
-
-		logger.debug(''); // TODO Log
+		logger.info('Getting net worth by id of general ledger', generalLedgerID);
 
 		var query = {
 			conditions: null,
@@ -81,6 +85,7 @@ module.exports = function (options, imports, emitter) {
 	};
 
 	var getNetWorth = function (generalLedger, callback) {
+		logger.info('Getting net worth of general ledger');
 
 		if (_.isString(generalLedger)) {
 			getNetWorthById(generalLedger, callback);

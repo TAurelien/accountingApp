@@ -8,6 +8,28 @@ module.exports = function (options, imports, api) {
 	var logger = imports.logger.get('Accounts ctrl - Events');
 	var Transactions = imports.transactions;
 
+	var delay = options.updateDelay || 50;
+
+	var updateBalance = _.wrap(
+		_.memoize(
+			function () {
+				return _.debounce(function (accountID, callback) {
+					api.updateBalance(accountID, function (err) {
+						if (err) {
+							logger.error('The update of the balance of the account (' + accountID + ') impacted by the transaction has failed');
+						} else {
+							logger.info('The balance of the account (' + accountID + ') impacted by the transaction has been successfully updated');
+						}
+						callback(err);
+					});
+				}, delay);
+			}
+		),
+		function (func, accountID, callback) {
+			return func(accountID)(accountID, callback);
+		}
+	);
+
 	var handleTransaction = function (transaction) {
 		var accounts = [];
 		if (transaction && transaction.splits) {
@@ -18,14 +40,10 @@ module.exports = function (options, imports, api) {
 				}
 			});
 		}
-		logger.debug('Async update of accounts', accounts); // TODO Remove the logger.debug
 		async.each(
 			accounts,
 			function (accountID, asyncCallback) {
-				logger.debug('Updating the balance of the account', accountID); // TODO Remove the logger.debug
-				api.updateBalance(accountID, function (err) {
-					asyncCallback(err);
-				});
+				updateBalance(accountID, asyncCallback);
 			},
 			function (err) {
 				if (err) {
