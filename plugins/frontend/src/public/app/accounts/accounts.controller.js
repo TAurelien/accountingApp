@@ -21,13 +21,17 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 				});
 
 			var handleUpdate = function (updatedItem) {
+				console.log('Account update'); // TODO Remove console.log
 				if (id === updatedItem.id) {
+					console.log('handling account update of', updatedItem.id); // TODO Remove console.log
 					ctrl.account = updatedItem;
 				}
 			};
 
 			var handleBalanceChange = function (updatedItem) {
+				console.log('Account balance update'); // TODO Remove console.log
 				if (id === updatedItem.id) {
+					console.log('handling account balance update of', updatedItem.id); // TODO Remove console.log
 					ctrl.account = updatedItem;
 				}
 			};
@@ -148,26 +152,7 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 		if (ctrl.isCreation) {
 
 			ctrl.data = {
-				generalLedger: generalLedgerId,
-				balance: {
-					currency: 'EUR',
-					quantity: 1,
-					scale: 100,
-					value: 0
-				},
-				ownBalance: {
-					currency: 'EUR',
-					quantity: 1,
-					scale: 100,
-					value: 0
-				},
-				childBalance: {
-					currency: 'EUR',
-					quantity: 1,
-					scale: 100,
-					value: 0
-				}
-
+				generalLedger: generalLedgerId
 			};
 
 		} else {

@@ -16,6 +16,7 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 					ctrl.list = [];
 					for (var i = 0; i < response.data.length; i++) {
 						var transaction = response.data[i];
+						transaction.valueDate = new Date(transaction.valueDate);
 						for (var j = 0; j < transaction.splits.length; j++) {
 							var split = transaction.splits[j];
 							if (ctrl.accountId === split.account) {
@@ -124,6 +125,7 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 			Transactions.get(id)
 				.success(function (response) {
 					ctrl.data = response.data;
+					ctrl.data.valueDate = new Date(ctrl.data.valueDate);
 					for (var j = 0; j < ctrl.data.splits.length; j++) {
 						var split = ctrl.data.splits[j];
 						if (split.amount.value < 0) {
@@ -170,8 +172,10 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 				if (split.credit) {
 					amount.value = split.credit * amount.scale;
 					delete split.credit;
+					delete split.debit;
 				} else if (split.debit) {
 					amount.value = -1 * split.debit * amount.scale;
+					delete split.credit;
 					delete split.debit;
 				}
 				split.amount = amount;
@@ -231,7 +235,7 @@ transactionsModule.controller('transactions.deleteCtrl', ['$stateParams', '$stat
 			});
 
 		ctrl.delete = function () {
-			Transactions.delete(ctrl.creationData)
+			Transactions.delete(id)
 				.success(function (response) {
 					$state.go('^.list');
 				})
