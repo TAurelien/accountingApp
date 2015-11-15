@@ -22,6 +22,6 @@ module.exports = function (options, imports, emitter, Accounts) {
 
 	//Backend events management ===============================================
 
-	require('./events')(options, imports);
+	require('./events')(options, imports, api);
 
 };
