@@ -14,6 +14,7 @@ var async = require('async');
 
 module.exports = function (options, imports, emitter) {
 
+	var logger = imports.logger.get('General Ledgers API');
 	var crud = require('./crud')(options, imports, emitter);
 
 	return {
@@ -33,6 +34,12 @@ module.exports = function (options, imports, emitter) {
 		 *  @since    1.0.0
 		 */
 		create: function (generalLedger, callback, lean) {
+			generalLedger.netWorth = {
+				currency: generalLedger.settings.defaultCurrency || options.defaultCurrency,
+				quantity: 1,
+				scale: 100,
+				value: 0
+			};
 			crud.create(generalLedger, callback, lean);
 		},
 
@@ -85,6 +92,9 @@ module.exports = function (options, imports, emitter) {
 		 *  @since    1.0.0
 		 */
 		update: function (generalLedgerID, update, callback, lean) {
+			if (update.netWorth) {
+				delete update.netWorth;
+			}
 			crud.update(generalLedgerID, update, callback, lean);
 		},
 
@@ -121,6 +131,34 @@ module.exports = function (options, imports, emitter) {
 		getNetWorth: function (generalLedger, callback) {
 			var getNetWorth = require('./getNetWorth')(options, imports, emitter);
 			getNetWorth(generalLedger, callback);
+		},
+
+		updateNetWorth: function (generalLedgerID, callback, lean) {
+			logger.info('Updating the net worth of a general ledger');
+			var getNetWorth = require('./getNetWorth')(options, imports, emitter);
+			getNetWorth(generalLedgerID, function (err, netWorth) {
+				if (err) {
+					logger.error('Cannot get the net worth of the general ledger', generalLedgerID);
+					callback(err);
+				} else {
+					var update = {
+						netWorth: netWorth
+					};
+					crud.update(generalLedgerID, update, function (err, updatedItem) {
+						if (err) {
+							logger.error('Cannot update the net worth of the general ledger', generalLedgerID);
+							callback(err);
+						} else {
+							logger.info('Net worth of the general ledger', generalLedgerID, 'updated successfully');
+							if (lean) {
+								updatedItem = updatedItem.toObject();
+							}
+							callback(null, updatedItem);
+							emitter.emitNetWorthChanged(updatedItem);
+						}
+					}, lean);
+				}
+			});
 		}
 
 	};
