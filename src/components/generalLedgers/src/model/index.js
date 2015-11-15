@@ -88,14 +88,16 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
-	var transform = function (doc, ret, options) {
-		delete ret._id;
-		if (ret.netWorth) {
-			delete ret.netWorth._id;
-		}
-	};
+	var transform = function (doc, ret, options) {};
 
 	GeneralLedgerSchema.set('toObject', {
+		getters: true,
+		versionKey: false,
+		retainKeyOrder: true,
+		transform: transform
+	});
+
+	GeneralLedgerSchema.set('toJSON', {
 		getters: true,
 		versionKey: false,
 		retainKeyOrder: true,

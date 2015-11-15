@@ -97,12 +97,6 @@ module.exports.define = function (options, imports, emitter) {
 			default: false
 		},
 
-		// TODO To remove
-		parent: {
-			type: Schema.ObjectId,
-			ref: modelName
-		},
-
 		balance: AmountSchema,
 
 		meta: {
@@ -114,21 +108,7 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
-	var transform = function (doc, ret, options) {
-		delete ret._id;
-		if (ret.balance) {
-			delete ret.balance._id;
-		}
-		if (ret.globalBalance) {
-			delete ret.globalBalance._id;
-		}
-		if (ret.childBalance) {
-			delete ret.childBalance._id;
-		}
-		if (doc.generalLedger.toString) {
-			ret.generalLedger = doc.generalLedger.toString();
-		}
-	};
+	var transform = function (doc, ret, options) {};
 
 	AccountSchema.set('toJSON', {
 		getters: true,

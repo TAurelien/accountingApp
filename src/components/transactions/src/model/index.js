@@ -47,7 +47,8 @@ module.exports.define = function (options, imports, emitter) {
 
 		account: {
 			type: Schema.ObjectId,
-			ref: accountModelName
+			ref: accountModelName,
+			required: true
 		},
 
 		amount: AmountSchema,
@@ -82,15 +83,7 @@ module.exports.define = function (options, imports, emitter) {
 
 	});
 
-	var transformSplit = function (doc, ret, options) {
-		delete ret._id;
-		if (ret.amount) {
-			delete ret.amount._id;
-		}
-		if (ret.account.toString) {
-			ret.account = ret.account.toString();
-		}
-	};
+	var transformSplit = function (doc, ret, options) {};
 
 	SplitSchema.set('toObject', {
 		getters: true,
@@ -128,7 +121,6 @@ module.exports.define = function (options, imports, emitter) {
 	});
 
 	var transformTransaction = function (doc, ret, options) {
-		delete ret._id;
 		if (ret.splits) {
 			for (var i = 0; i < ret.splits.length; i++) {
 				var split = ret.splits[i];
