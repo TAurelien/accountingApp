@@ -21,17 +21,13 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 				});
 
 			var handleUpdate = function (updatedItem) {
-				console.log('Account update'); // TODO Remove console.log
 				if (id === updatedItem.id) {
-					console.log('handling account update of', updatedItem.id); // TODO Remove console.log
 					ctrl.account = updatedItem;
 				}
 			};
 
 			var handleBalanceChange = function (updatedItem) {
-				console.log('Account balance update'); // TODO Remove console.log
 				if (id === updatedItem.id) {
-					console.log('handling account balance update of', updatedItem.id); // TODO Remove console.log
 					ctrl.account = updatedItem;
 				}
 			};

@@ -20,18 +20,13 @@ generalLedgersModule.controller('generalLedgers.infoCtrl', ['$stateParams', 'Gen
 				});
 
 			var handleUpdate = function (updatedItem) {
-				console.log('General ledger update '); // TODO Remove console.log
 				if (id === updatedItem.id) {
-					console.log('handling General ledger update of', updatedItem.id); // TODO Remove console.log
 					ctrl.generalLedger = updatedItem;
 				}
 			};
 
 			var handleNetWorthChange = function (updatedItem) {
-				console.log('General ledger net worth update'); // TODO Remove console.log
-				console.log(updatedItem); // TODO Remove console.log
 				if (id === updatedItem.id) {
-					console.log('handling General ledger net worth update of', updatedItem.id); // TODO Remove console.log
 					ctrl.generalLedger = updatedItem;
 				}
 			};
