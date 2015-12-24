@@ -2,7 +2,7 @@
 'use strict';
 
 transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transactions', '$scope',
-	function ($stateParams, Transactions, $scope) {
+	function($stateParams, Transactions, $scope) {
 
 		var ctrl = this;
 		ctrl.wait = true;
@@ -10,9 +10,9 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 		ctrl.accountId = $stateParams.accountId;
 		ctrl.list = [];
 
-		var refreshList = _.debounce(function () {
+		var refreshList = _.debounce(function() {
 			Transactions.list(ctrl.accountId)
-				.success(function (response) {
+				.success(function(response) {
 					ctrl.list = [];
 					for (var i = 0; i < response.data.length; i++) {
 						var transaction = response.data[i];
@@ -38,22 +38,22 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 					}
 					ctrl.wait = false;
 				})
-				.error(function (response) {
+				.error(function(response) {
 					console.log(response);
 				});
 		}, 50);
 
 		refreshList();
 
-		var handleCreation = function (createdItem) {
+		var handleCreation = function(createdItem) {
 			refreshList();
 		};
 
-		var handleUpdate = function (ûpdateditem) {
+		var handleUpdate = function(ûpdateditem) {
 			refreshList();
 		};
 
-		var handleDeletion = function (createdItem) {
+		var handleDeletion = function(createdItem) {
 			refreshList();
 		};
 
@@ -61,7 +61,7 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 		Transactions.on(Transactions.events.UPDATED, handleUpdate);
 		Transactions.on(Transactions.events.DELETED, handleDeletion);
 
-		$scope.$on('$destroy', function () {
+		$scope.$on('$destroy', function() {
 			Transactions.removeListener(Transactions.events.CREATED, handleCreation);
 			Transactions.removeListener(Transactions.events.UPDATED, handleUpdate);
 			Transactions.removeListener(Transactions.events.DELETED, handleDeletion);
@@ -70,8 +70,9 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 	}
 ]);
 
-transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateParams', '$state', 'Transactions', 'Accounts', '$scope',
-	function (Currencies, $stateParams, $state, Transactions, Accounts, $scope) {
+transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateParams', '$state',
+	'Transactions', 'Accounts', '$scope',
+	function(Currencies, $stateParams, $state, Transactions, Accounts, $scope) {
 
 		var ctrl = this;
 		var id = $stateParams.transactionId;
@@ -80,28 +81,42 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		ctrl.currencies = Currencies.list();
 		ctrl.accounts = [];
 		ctrl.isCreation = (id) ? false : true;
+		if (id) {
+			ctrl.isCreation = false;
+			if ($state.current.data && $state.current.data.duplicate) {
+				ctrl.isUpdate = false;
+				ctrl.isDuplicate = true;
+			} else {
+				ctrl.isUpdate = true;
+				ctrl.isDuplicate = false;
+			}
+		} else {
+			ctrl.isCreation = true;
+			ctrl.isUpdate = false;
+			ctrl.isDuplicate = false;
+		}
 
-		var refreshAccountList = _.debounce(function () {
+		var refreshAccountList = _.debounce(function() {
 			Accounts.list(generalLedgerId)
-				.success(function (response) {
+				.success(function(response) {
 					ctrl.accounts = response.data;
 				})
-				.error(function (response) {
+				.error(function(response) {
 					console.log(response);
 				});
 		}, 50);
 
 		refreshAccountList();
 
-		var handleCreation = function (createdItem) {
+		var handleCreation = function(createdItem) {
 			refreshAccountList();
 		};
 
-		var handleUpdate = function (updatedItem) {
+		var handleUpdate = function(updatedItem) {
 			refreshAccountList();
 		};
 
-		var handleDeletion = function (deletedItem) {
+		var handleDeletion = function(deletedItem) {
 			refreshAccountList();
 		};
 
@@ -123,8 +138,10 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		} else {
 
 			Transactions.get(id)
-				.success(function (response) {
+				.success(function(response) {
 					ctrl.data = response.data;
+					delete ctrl.data._id;
+					delete ctrl.data.id;
 					ctrl.data.valueDate = new Date(ctrl.data.valueDate);
 					for (var j = 0; j < ctrl.data.splits.length; j++) {
 						var split = ctrl.data.splits[j];
@@ -138,18 +155,18 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 						delete split.amount;
 					}
 				})
-				.error(function (response) {
+				.error(function(response) {
 					console.log(response);
 				});
 
-			var handleTransactionUpdate = function (updatedItem) {
+			var handleTransactionUpdate = function(updatedItem) {
 				if (id === updatedItem.id) {
 					// TODO Handle concurrent update
 				}
 			};
 
 			Transactions.on(Transactions.events.UPDATED, handleTransactionUpdate);
-			$scope.$on('$destroy', function () {
+			$scope.$on('$destroy', function() {
 				Transactions.removeListener(Transactions.events.UPDATED, handleTransactionUpdate);
 			});
 
@@ -160,7 +177,7 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 			$state.go('^.list');
 		}
 
-		ctrl.upsert = function () {
+		ctrl.upsert = function() {
 
 			for (var i = 0; i < ctrl.data.splits.length; i++) {
 				var split = ctrl.data.splits[i];
@@ -181,37 +198,37 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 				split.amount = amount;
 			}
 
-			if (ctrl.isCreation) {
+			if (ctrl.isCreation || ctrl.isDuplicate) {
 				Transactions.create(ctrl.data)
-					.success(function (response) {
+					.success(function(response) {
 						closeView();
 					})
-					.error(function (response) {
+					.error(function(response) {
 						console.log(response);
 					});
 			} else {
 				Transactions.update(id, ctrl.data)
-					.success(function (response) {
+					.success(function(response) {
 						closeView();
 					})
-					.error(function (response) {
+					.error(function(response) {
 						console.log(response);
 					});
 			}
 
 		};
 
-		ctrl.addSplit = function () {
+		ctrl.addSplit = function() {
 			ctrl.data.splits.push({});
 		};
 
-		ctrl.removeSplit = function (index) {
+		ctrl.removeSplit = function(index) {
 			if (ctrl.data.splits.length > 2) {
 				ctrl.data.splits.splice(index, 1);
 			}
 		};
 
-		$scope.$on('$destroy', function () {
+		$scope.$on('$destroy', function() {
 			Accounts.removeListener(Accounts.events.CREATED, handleCreation);
 			Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
 			Accounts.removeListener(Accounts.events.DELETED, handleDeletion);
@@ -221,25 +238,25 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 ]);
 
 transactionsModule.controller('transactions.deleteCtrl', ['$stateParams', '$state', 'Transactions',
-	function ($stateParams, $state, Transactions) {
+	function($stateParams, $state, Transactions) {
 
 		var ctrl = this;
 		var id = $stateParams.transactionId;
 
 		Transactions.get(id)
-			.success(function (response) {
+			.success(function(response) {
 				ctrl.name = response.data.name;
 			})
-			.error(function (response) {
+			.error(function(response) {
 				console.log(response);
 			});
 
-		ctrl.delete = function () {
+		ctrl.delete = function() {
 			Transactions.delete(id)
-				.success(function (response) {
+				.success(function(response) {
 					$state.go('^.list');
 				})
-				.error(function (response) {
+				.error(function(response) {
 					console.log(response);
 				});
 		};

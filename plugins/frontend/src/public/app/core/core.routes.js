@@ -2,7 +2,7 @@
 
 app.config(
 	['$stateProvider', '$urlRouterProvider', '$locationProvider',
-		function ($stateProvider, $urlRouterProvider, $locationProvider) {
+		function($stateProvider, $urlRouterProvider, $locationProvider) {
 
 			$urlRouterProvider.otherwise('/');
 
@@ -90,6 +90,13 @@ app.config(
 			$stateProvider.state('generalLedgers.accounts.transactions.update', {
 				url: '/:transactionId/update',
 				templateUrl: 'app/transactions/views/_transactions.upsert.html'
+			});
+			$stateProvider.state('generalLedgers.accounts.transactions.duplicate', {
+				url: '/:transactionId/duplicate',
+				templateUrl: 'app/transactions/views/_transactions.upsert.html',
+				data: {
+					duplicate: true
+				}
 			});
 			$stateProvider.state('generalLedgers.accounts.transactions.delete', {
 				url: '/:transactionId/delete',

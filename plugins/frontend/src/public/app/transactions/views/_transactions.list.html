@@ -3,8 +3,8 @@
 		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
-					<th style="width:7em;">
-						<spa class="sr-only">Controls</span>
+					<th style="width:9em;">
+						<span class="sr-only">Controls</span>
 					</th>
 					<th>
 						<span>Date</span>
@@ -37,10 +37,11 @@
 						<span>No transaction</span>
 					</td>
 				</tr>
-				<tr data-ng-repeat="transaction in transactionsList.list">
+				<tr data-ng-repeat="transaction in transactionsList.list | orderBy:'date'">
 					<td>
 						<div class="btn-group btn-group-sm">
 							<a data-ui-sref="^.update({transactionId: transaction.id })" class="btn btn-default" role="button"><i class="fa fa-edit"></i><span class="sr-only">Update</span></a>
+							<a data-ui-sref="^.duplicate({transactionId: transaction.id })" class="btn btn-default" role="button"><i class="fa fa-files-o"></i><span class="sr-only">Duplicate</span></a>
 							<a data-ui-sref="^.delete({transactionId: transaction.id })" class="btn btn-danger" role="button"><i class="fa fa-remove"></i><span class="sr-only">Delete</span></a>
 						</div>
 					</td>
