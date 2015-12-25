@@ -166,7 +166,7 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 				})
 				.error(function(response) {
 					console.log(response);
-				})
+				});
 		}
 
 		function closeView() {
