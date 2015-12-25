@@ -1,0 +1,26 @@
+body {
+	padding-top: 70px;
+}
+
+.info-indent {
+	padding-left: 0;
+}
+
+.split-remove {
+	padding-top: 30px;
+}
+
+.account-breadcrumb {
+	list-style: none;
+}
+.account-breadcrumb > li {
+	display: inline-block;
+}
+.account-breadcrumb > li + li:before {
+	content: "/\00a0";
+	padding: 0 5px;
+	color: #cccccc;
+}
+.account-breadcrumb > .active {
+	color: #777777;
+}
