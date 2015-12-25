@@ -5,6 +5,9 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 	function($stateParams, Transactions, $scope) {
 
 		var ctrl = this;
+		ctrl.query = '';
+		ctrl.sortType = 'date';
+		ctrl.sortReverse = false;
 		ctrl.wait = true;
 
 		ctrl.accountId = $stateParams.accountId;

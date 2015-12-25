@@ -1,23 +1,50 @@
 <div data-ng-controller="generalLedgers.listCtrl as generalLedgersList">
 
+	<form>
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-search"></i></div>
+				<input type="text" class="form-control" data-ng-model="generalLedgersList.query" placeholder="Search general ledgers">
+			</div>
+		</div>
+	</form>
+
 	<div>
 		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
 					<th style="width:7em;">
-						<spa class="sr-only">Controls</span>
+						<span class="sr-only">Controls</span>
 					</th>
 					<th>
-						<span>Name</span>
+						<a href="#" data-ng-click="generalLedgersList.sortType = 'name'; generalLedgersList.sortReverse = !generalLedgersList.sortReverse">
+							<span>Name</span>
+							<span data-ng-show="generalLedgersList.sortType == 'name' && !generalLedgersList.sortReverse" class="fa fa-caret-down"></span>
+							<span data-ng-show="generalLedgersList.sortType == 'name' && generalLedgersList.sortReverse" class="fa fa-caret-up"></span>
+						</a>
 					</th>
 					<th class="hidden-xs">
-						<span>Description</span>
+						<a href="#" data-ng-click="generalLedgersList.sortType = 'description'; generalLedgersList.sortReverse = !generalLedgersList.sortReverse">
+							<span>Description</span>
+							<span data-ng-show="generalLedgersList.sortType == 'description' && !generalLedgersList.sortReverse" class="fa fa-caret-down"></span>
+							<span data-ng-show="generalLedgersList.sortType == 'description' && generalLedgersList.sortReverse" class="fa fa-caret-up"></span>
+						</a>
 					</th>
 					<th class="hidden-xs text-center">
-						<span>Closed</span>
+						<a href="#" data-ng-click="generalLedgersList.sortType = 'closed'; generalLedgersList.sortReverse = !generalLedgersList.sortReverse">
+							<span>Closed</span>
+							<span data-ng-show="generalLedgersList.sortType == 'closed' && !generalLedgersList.sortReverse" class="fa fa-caret-down"></span>
+							<span data-ng-show="generalLedgersList.sortType == 'closed' && generalLedgersList.sortReverse" class="fa fa-caret-up"></span>
+						</a>
 					</th>
 					<th>
-						<span class="pull-right">Net worth</span>
+						<a href="#" data-ng-click="generalLedgersList.sortType = 'balance'; generalLedgersList.sortReverse = !generalLedgersList.sortReverse">
+							<span class="pull-right">
+								<span>Net worth</span>
+								<span data-ng-show="generalLedgersList.sortType == 'balance' && !generalLedgersList.sortReverse" class="fa fa-caret-down"></span>
+								<span data-ng-show="generalLedgersList.sortType == 'balance' && generalLedgersList.sortReverse" class="fa fa-caret-up"></span>
+							</span>
+						</a>
 					</th>
 				</tr>
 			</thead>
@@ -32,7 +59,7 @@
 						<span>No general ledger</span>
 					</td>
 				</tr>
-				<tr data-ng-repeat="ledger in generalLedgersList.list" style="vertical-align:middle;">
+				<tr data-ng-repeat="ledger in generalLedgersList.list | orderBy:generalLedgersList.sortType:generalLedgersList.sortReverse | filter:generalLedgersList.query" style="vertical-align:middle;">
 					<td>
 						<div class="btn-group btn-group-sm">
 							<a data-ui-sref="^.update({generalLedgerId: ledger.id })" class="btn btn-default" role="button"><i class="fa fa-edit"></i><span class="sr-only">Update</span></a>
