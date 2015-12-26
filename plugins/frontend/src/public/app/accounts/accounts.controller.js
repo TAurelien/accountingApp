@@ -20,13 +20,13 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 					console.error(response);
 				});
 
-			var unRegistereUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+			var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.account = updatedItem;
 				}
 			});
 
-			var unRegistereBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
+			var unregisterBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
 				updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.account = updatedItem;
@@ -34,8 +34,8 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 			});
 
 			$scope.$on('$destroy', function() {
-				unRegistereUpdatedEvent();
-				unRegistereBalanceChangedEvent();
+				unregisterUpdatedEvent();
+				unregisterBalanceChangedEvent();
 			});
 
 		}
@@ -68,28 +68,28 @@ accountsModule.controller('accounts.listCtrl', ['$stateParams', 'Accounts', '$sc
 
 		refreshList();
 
-		var unRegistereCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
 			refreshList();
 		});
 
-		var unRegistereUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
 			refreshList();
 		});
 
-		var unRegistereDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
 			refreshList();
 		});
 
-		var unRegistereBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
+		var unregisterBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
 			updatedItem) {
 			refreshList();
 		});
 
 		$scope.$on('$destroy', function() {
-			unRegistereCreatedEvent();
-			unRegistereUpdatedEvent();
-			unRegistereDeletedEvent();
-			unRegistereBalanceChangedEvent();
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
+			unregisterBalanceChangedEvent();
 		});
 
 	}
@@ -121,18 +121,18 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 
 		refreshAccountList();
 
-		var unRegistereCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
 			refreshAccountList();
 		});
 
-		var unRegistereUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
 			refreshAccountList();
 			if (id === updatedItem.id) {
 				// TODO Handle concurrent update
 			}
 		});
 
-		var unRegistereDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
 			refreshAccountList();
 			if (id === deletedItem.id) {
 				// TODO Handle concurrent update/delete
@@ -185,9 +185,9 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 		};
 
 		$scope.$on('$destroy', function() {
-			unRegistereCreatedEvent();
-			unRegistereUpdatedEvent();
-			unRegistereDeletedEvent();
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
 		});
 
 	}
