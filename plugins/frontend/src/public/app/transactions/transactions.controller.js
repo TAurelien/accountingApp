@@ -42,7 +42,7 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 					ctrl.wait = false;
 				})
 				.error(function(response) {
-					console.log(response);
+					console.error(response);
 				});
 		}, 50);
 
@@ -100,32 +100,34 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		}
 
 		var refreshAccountList = _.debounce(function() {
-			Accounts.list(generalLedgerId)
-				.success(function(response) {
-					ctrl.accounts = response.data;
-				})
-				.error(function(response) {
-					console.log(response);
+			Accounts.list(generalLedgerId).then(
+				function(accounts) {
+					ctrl.accounts = accounts;
+				},
+				function(response) {
+					console.error(response);
 				});
 		}, 50);
 
 		refreshAccountList();
 
-		var handleCreation = function(createdItem) {
+		var unRegistereCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
 			refreshAccountList();
-		};
+		});
 
-		var handleUpdate = function(updatedItem) {
+		var unRegistereUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
 			refreshAccountList();
-		};
+			if (id === updatedItem.id) {
+				// TODO Handle concurrent update
+			}
+		});
 
-		var handleDeletion = function(deletedItem) {
+		var unRegistereDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
 			refreshAccountList();
-		};
-
-		Accounts.on(Accounts.events.CREATED, handleCreation);
-		Accounts.on(Accounts.events.UPDATED, handleUpdate);
-		Accounts.on(Accounts.events.DELETED, handleDeletion);
+			if (id === deletedItem.id) {
+				// TODO Handle concurrent update/delete
+			}
+		});
 
 		if (ctrl.isCreation) {
 
@@ -232,9 +234,9 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		};
 
 		$scope.$on('$destroy', function() {
-			Accounts.removeListener(Accounts.events.CREATED, handleCreation);
-			Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
-			Accounts.removeListener(Accounts.events.DELETED, handleDeletion);
+			unRegistereCreatedEvent();
+			unRegistereUpdatedEvent();
+			unRegistereDeletedEvent();
 		});
 
 	}
