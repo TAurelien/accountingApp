@@ -12,32 +12,31 @@ generalLedgersModule.controller('generalLedgers.infoCtrl', ['$stateParams', 'Gen
 
 		if (id) {
 
-			GeneralLedgers.get(id)
-				.success(function(response) {
-					ctrl.generalLedger = response.data;
-				})
-				.error(function(response) {
-					console.log(response);
+			GeneralLedgers.get(id).then(
+				function(generalLedger) {
+					ctrl.generalLedger = generalLedger;
+				},
+				function(response) {
+					console.error(response);
 				});
 
-			var handleUpdate = function(updatedItem) {
+			var unregisterUpdatedEvent = GeneralLedgers.on(GeneralLedgers.events.UPDATED, function(event,
+				updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.generalLedger = updatedItem;
 				}
-			};
+			});
 
-			var handleNetWorthChange = function(updatedItem) {
-				if (id === updatedItem.id) {
-					ctrl.generalLedger = updatedItem;
-				}
-			};
-
-			GeneralLedgers.on(GeneralLedgers.events.UPDATED, handleUpdate);
-			GeneralLedgers.on(GeneralLedgers.events.NET_WORTH_CHANGED, handleNetWorthChange);
+			var unregisterNetWorthChangedEvent = GeneralLedgers.on(GeneralLedgers.events.NET_WORTH_CHANGED,
+				function(event, updatedItem) {
+					if (id === updatedItem.id) {
+						ctrl.generalLedger = updatedItem;
+					}
+				});
 
 			$scope.$on('$destroy', function() {
-				GeneralLedgers.removeListener(GeneralLedgers.events.UPDATED, handleUpdate);
-				GeneralLedgers.removeListener(GeneralLedgers.events.NET_WORTH_CHANGED, handleNetWorthChange);
+				unregisterUpdatedEvent();
+				unregisterNetWorthChangedEvent();
 			});
 
 		}
@@ -56,44 +55,43 @@ generalLedgersModule.controller('generalLedgers.listCtrl', ['GeneralLedgers', '$
 		ctrl.list = [];
 
 		var refreshList = _.debounce(function() {
-			GeneralLedgers.list()
-				.success(function(response) {
-					ctrl.list = response.data;
+			GeneralLedgers.list().then(
+				function(generalLedgers) {
+					ctrl.list = generalLedgers;
 					ctrl.wait = false;
-				})
-				.error(function(response) {
+				},
+				function(response) {
 					console.log(response);
 				});
 		}, 50);
 
 		refreshList();
 
-		var handleCreation = function(createdItem) {
+		var unregisterCreatedEvent = GeneralLedgers.on(GeneralLedgers.events.CREATED, function(
+			event, createdItem) {
 			refreshList();
-		};
+		});
 
-		var handleUpdate = function(updatedItem) {
+		var unregisterUpdatedEvent = GeneralLedgers.on(GeneralLedgers.events.UPDATED, function(
+			event, updatedItem) {
 			refreshList();
-		};
+		});
 
-		var handleDeletion = function(deletedItem) {
+		var unregisterDeletedEvent = GeneralLedgers.on(GeneralLedgers.events.DELETED, function(
+			event, deletedItem) {
 			refreshList();
-		};
+		});
 
-		var handleNetWorthChange = function(updatedItem) {
-			refreshList();
-		};
-
-		GeneralLedgers.on(GeneralLedgers.events.CREATED, handleCreation);
-		GeneralLedgers.on(GeneralLedgers.events.UPDATED, handleUpdate);
-		GeneralLedgers.on(GeneralLedgers.events.DELETED, handleDeletion);
-		GeneralLedgers.on(GeneralLedgers.events.NET_WORTH_CHANGED, handleNetWorthChange);
+		var unregisterNetWorthChangedEvent = GeneralLedgers.on(GeneralLedgers.events.NET_WORTH_CHANGED,
+			function(event, updatedItem) {
+				refreshList();
+			});
 
 		$scope.$on('$destroy', function() {
-			GeneralLedgers.removeListener(GeneralLedgers.events.CREATED, handleCreation);
-			GeneralLedgers.removeListener(GeneralLedgers.events.UPDATED, handleUpdate);
-			GeneralLedgers.removeListener(GeneralLedgers.events.DELETED, handleDeletion);
-			GeneralLedgers.removeListener(GeneralLedgers.events.NET_WORTH_CHANGED, handleNetWorthChange);
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
+			unregisterNetWorthChangedEvent();
 		});
 
 	}
@@ -111,25 +109,25 @@ generalLedgersModule.controller('generalLedger.upsertCtrl', ['GeneralLedgers', '
 
 		if (!ctrl.isCreation) {
 
-			GeneralLedgers.get(id)
-				.success(function(response) {
-					ctrl.data = response.data;
-					ctrl.name = response.data.name;
+			GeneralLedgers.get(id).then(
+				function(generalLedger) {
+					ctrl.data = generalLedger;
+					ctrl.name = generalLedger.name;
 					delete ctrl.data.netWorth;
-				})
-				.error(function(response) {
+				},
+				function(response) {
 					console.log(response);
 				});
 
-			var handleUpdate = function(updatedItem) {
+			var unregisterUpdatedEvent = GeneralLedgers.on(GeneralLedgers.events.UPDATED, function(
+				event, updatedItem) {
 				if (id === updatedItem.id) {
 					// TODO Handle concurrent update
 				}
-			};
+			});
 
-			GeneralLedgers.on(GeneralLedgers.events.UPDATED, handleUpdate);
 			$scope.$on('$destroy', function() {
-				GeneralLedgers.removeListener(GeneralLedgers.events.UPDATED, handleUpdate);
+				unregisterUpdatedEvent();
 			});
 
 		}
@@ -141,19 +139,19 @@ generalLedgersModule.controller('generalLedger.upsertCtrl', ['GeneralLedgers', '
 
 		ctrl.upsert = function() {
 			if (ctrl.isCreation) {
-				GeneralLedgers.create(ctrl.data)
-					.success(function(response) {
+				GeneralLedgers.create(ctrl.data).then(
+					function(createdGeneralLedger) {
 						closeView();
-					})
-					.error(function(response) {
+					},
+					function(response) {
 						console.log(response);
 					});
 			} else {
-				GeneralLedgers.update(id, ctrl.data)
-					.success(function(response) {
+				GeneralLedgers.update(id, ctrl.data).then(
+					function(updatedGeneralLedger) {
 						closeView();
-					})
-					.error(function(response) {
+					},
+					function(response) {
 						console.log(response);
 					});
 			}
@@ -169,20 +167,20 @@ generalLedgersModule.controller('generalLedger.deleteCtrl', ['GeneralLedgers', '
 		var ctrl = this;
 		var id = $stateParams.generalLedgerId;
 
-		GeneralLedgers.get(id)
-			.success(function(response) {
-				ctrl.name = response.data.name;
-			})
-			.error(function(response) {
+		GeneralLedgers.get(id).then(
+			function(generalLedger) {
+				ctrl.name = generalLedger.name;
+			},
+			function(response) {
 				console.log(response);
 			});
 
 		ctrl.delete = function() {
-			GeneralLedgers.delete(id)
-				.success(function(response) {
+			GeneralLedgers.delete(id).then(
+				function(deletedGeneralLedger) {
 					$state.go('^.list');
-				})
-				.error(function(response) {
+				},
+				function(response) {
 					console.log(response);
 				});
 		};
