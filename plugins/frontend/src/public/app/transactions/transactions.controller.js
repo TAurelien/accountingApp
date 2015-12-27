@@ -48,15 +48,18 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 
 		refreshList();
 
-		var unregisterCreatedEvent = Transactions.on(Transactions.events.CREATED, function(createdItem) {
+		var unregisterCreatedEvent = Transactions.on(Transactions.events.CREATED, function(event,
+			createdItem) {
 			refreshList();
 		});
 
-		var unregisterUpdatedEvent = Transactions.on(Transactions.events.UPDATED, function(ûpdateditem) {
+		var unregisterUpdatedEvent = Transactions.on(Transactions.events.UPDATED, function(event,
+			updateditem) {
 			refreshList();
 		});
 
-		var unregisterDeletedEvent = Transactions.on(Transactions.events.DELETED, function(createdItem) {
+		var unregisterDeletedEvent = Transactions.on(Transactions.events.DELETED, function(event,
+			createdItem) {
 			refreshList();
 		});
 
@@ -107,18 +110,18 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 
 		refreshAccountList();
 
-		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshAccountList();
 		});
 
-		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshAccountList();
 			if (id === updatedItem.id) {
 				// TODO Handle concurrent update
 			}
 		});
 
-		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshAccountList();
 			if (id === deletedItem.id) {
 				// TODO Handle concurrent update/delete
@@ -160,14 +163,16 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 					console.error(response);
 				});
 
-			var unregisterUpdatedEvent = Transactions.on(Transactions.events.UPDATED, function(updatedItem) {
+			var unregisterUpdatedTransactionEvent = Transactions.on(Transactions.events.UPDATED, function(
+				event,
+				updatedItem) {
 				if (id === updatedItem.id) {
 					// TODO Handle concurrent update
 				}
 			});
 
 			$scope.$on('$destroy', function() {
-				unregisterUpdatedEvent();
+				unregisterUpdatedTransactionEvent();
 			});
 
 		}

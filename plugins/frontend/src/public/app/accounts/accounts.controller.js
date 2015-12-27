@@ -20,14 +20,14 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 					console.error(response);
 				});
 
-			var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+			var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.account = updatedItem;
 				}
 			});
 
 			var unregisterBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
-				updatedItem) {
+				event, updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.account = updatedItem;
 				}
@@ -68,20 +68,20 @@ accountsModule.controller('accounts.listCtrl', ['$stateParams', 'Accounts', '$sc
 
 		refreshList();
 
-		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshList();
 		});
 
-		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshList();
 		});
 
-		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshList();
 		});
 
 		var unregisterBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
-			updatedItem) {
+			event, updatedItem) {
 			refreshList();
 		});
 
@@ -121,18 +121,18 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 
 		refreshAccountList();
 
-		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshAccountList();
 		});
 
-		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshAccountList();
 			if (id === updatedItem.id) {
 				// TODO Handle concurrent update
 			}
 		});
 
-		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshAccountList();
 			if (id === deletedItem.id) {
 				// TODO Handle concurrent update/delete
