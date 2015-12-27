@@ -14,11 +14,11 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 		ctrl.list = [];
 
 		var refreshList = _.debounce(function() {
-			Transactions.list(ctrl.accountId)
-				.success(function(response) {
+			Transactions.list(ctrl.accountId).then(
+				function(transactions) {
 					ctrl.list = [];
-					for (var i = 0; i < response.data.length; i++) {
-						var transaction = response.data[i];
+					for (var i = 0; i < transactions.length; i++) {
+						var transaction = transactions[i];
 						transaction.valueDate = new Date(transaction.valueDate);
 						for (var j = 0; j < transaction.splits.length; j++) {
 							var split = transaction.splits[j];
@@ -40,34 +40,33 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 						}
 					}
 					ctrl.wait = false;
-				})
-				.error(function(response) {
-					console.log(response);
+				},
+				function(response) {
+					console.error(response);
 				});
 		}, 50);
 
 		refreshList();
 
-		var handleCreation = function(createdItem) {
+		var unregisterCreatedEvent = Transactions.on(Transactions.events.CREATED, function(event,
+			createdItem) {
 			refreshList();
-		};
+		});
 
-		var handleUpdate = function(ûpdateditem) {
+		var unregisterUpdatedEvent = Transactions.on(Transactions.events.UPDATED, function(event,
+			updateditem) {
 			refreshList();
-		};
+		});
 
-		var handleDeletion = function(createdItem) {
+		var unregisterDeletedEvent = Transactions.on(Transactions.events.DELETED, function(event,
+			createdItem) {
 			refreshList();
-		};
-
-		Transactions.on(Transactions.events.CREATED, handleCreation);
-		Transactions.on(Transactions.events.UPDATED, handleUpdate);
-		Transactions.on(Transactions.events.DELETED, handleDeletion);
+		});
 
 		$scope.$on('$destroy', function() {
-			Transactions.removeListener(Transactions.events.CREATED, handleCreation);
-			Transactions.removeListener(Transactions.events.UPDATED, handleUpdate);
-			Transactions.removeListener(Transactions.events.DELETED, handleDeletion);
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
 		});
 
 	}
@@ -100,32 +99,34 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		}
 
 		var refreshAccountList = _.debounce(function() {
-			Accounts.list(generalLedgerId)
-				.success(function(response) {
-					ctrl.accounts = response.data;
-				})
-				.error(function(response) {
-					console.log(response);
+			Accounts.list(generalLedgerId).then(
+				function(accounts) {
+					ctrl.accounts = accounts;
+				},
+				function(response) {
+					console.error(response);
 				});
 		}, 50);
 
 		refreshAccountList();
 
-		var handleCreation = function(createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshAccountList();
-		};
+		});
 
-		var handleUpdate = function(updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshAccountList();
-		};
+			if (id === updatedItem.id) {
+				// TODO Handle concurrent update
+			}
+		});
 
-		var handleDeletion = function(deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshAccountList();
-		};
-
-		Accounts.on(Accounts.events.CREATED, handleCreation);
-		Accounts.on(Accounts.events.UPDATED, handleUpdate);
-		Accounts.on(Accounts.events.DELETED, handleDeletion);
+			if (id === deletedItem.id) {
+				// TODO Handle concurrent update/delete
+			}
+		});
 
 		if (ctrl.isCreation) {
 
@@ -140,9 +141,9 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 
 		} else {
 
-			Transactions.get(id)
-				.success(function(response) {
-					ctrl.data = response.data;
+			Transactions.get(id).then(
+				function(account) {
+					ctrl.data = account;
 					delete ctrl.data._id;
 					delete ctrl.data.id;
 					ctrl.data.valueDate = new Date(ctrl.data.valueDate);
@@ -157,20 +158,21 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 						}
 						delete split.amount;
 					}
-				})
-				.error(function(response) {
-					console.log(response);
+				},
+				function(response) {
+					console.error(response);
 				});
 
-			var handleTransactionUpdate = function(updatedItem) {
+			var unregisterUpdatedTransactionEvent = Transactions.on(Transactions.events.UPDATED, function(
+				event,
+				updatedItem) {
 				if (id === updatedItem.id) {
 					// TODO Handle concurrent update
 				}
-			};
+			});
 
-			Transactions.on(Transactions.events.UPDATED, handleTransactionUpdate);
 			$scope.$on('$destroy', function() {
-				Transactions.removeListener(Transactions.events.UPDATED, handleTransactionUpdate);
+				unregisterUpdatedTransactionEvent();
 			});
 
 		}
@@ -202,20 +204,20 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 			}
 
 			if (ctrl.isCreation || ctrl.isDuplicate) {
-				Transactions.create(ctrl.data)
-					.success(function(response) {
+				Transactions.create(ctrl.data).then(
+					function(createdTransaction) {
 						closeView();
-					})
-					.error(function(response) {
-						console.log(response);
+					},
+					function(response) {
+						console.error(response);
 					});
 			} else {
-				Transactions.update(id, ctrl.data)
-					.success(function(response) {
+				Transactions.update(id, ctrl.data).then(
+					function(updatedTransaction) {
 						closeView();
-					})
-					.error(function(response) {
-						console.log(response);
+					},
+					function(response) {
+						console.error(response);
 					});
 			}
 
@@ -232,9 +234,9 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		};
 
 		$scope.$on('$destroy', function() {
-			Accounts.removeListener(Accounts.events.CREATED, handleCreation);
-			Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
-			Accounts.removeListener(Accounts.events.DELETED, handleDeletion);
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
 		});
 
 	}
@@ -246,21 +248,21 @@ transactionsModule.controller('transactions.deleteCtrl', ['$stateParams', '$stat
 		var ctrl = this;
 		var id = $stateParams.transactionId;
 
-		Transactions.get(id)
-			.success(function(response) {
-				ctrl.name = response.data.name;
-			})
-			.error(function(response) {
-				console.log(response);
+		Transactions.get(id).then(
+			function(transaction) {
+				ctrl.name = transaction.name;
+			},
+			function(response) {
+				console.error(response);
 			});
 
 		ctrl.delete = function() {
-			Transactions.delete(id)
-				.success(function(response) {
+			Transactions.delete(id).then(
+				function(deletedTransaction) {
 					$state.go('^.list');
-				})
-				.error(function(response) {
-					console.log(response);
+				},
+				function(response) {
+					console.error(response);
 				});
 		};
 
