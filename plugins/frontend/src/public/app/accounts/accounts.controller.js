@@ -7,6 +7,14 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 		var ctrl = this;
 		ctrl.account = null;
 
+		ctrl.formatOptions = {
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+
 		var id = $stateParams.accountId;
 		var generalLedgerId = $stateParams.generalLedgerId;
 
@@ -15,6 +23,11 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 			Accounts.get(id).then(
 				function(account) {
 					ctrl.account = account;
+
+					if (ctrl.account.type === 'expense' || ctrl.account.type === 'liability') {
+						ctrl.formatOptions.classes.positive = 'text-danger';
+						ctrl.formatOptions.classes.negative = 'text-success';
+					}
 
 					// TODO Deal with acount charts in breadcrumbs
 					ctrl.account.paths = [];
@@ -60,6 +73,21 @@ accountsModule.controller('accounts.listCtrl', ['$stateParams', 'Accounts', '$sc
 		ctrl.sortReverse = false;
 		ctrl.list = [];
 
+		var formatOptions = {
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+		var formatOptionsInverse = {
+			classes: {
+				positive: 'text-danger',
+				negative: 'text-success',
+				zero: 'text-success'
+			}
+		};
+
 		var generalLedgerId = $stateParams.generalLedgerId;
 
 		var refreshList = _.debounce(function() {
@@ -67,6 +95,13 @@ accountsModule.controller('accounts.listCtrl', ['$stateParams', 'Accounts', '$sc
 				function(accounts) {
 					ctrl.list = accounts;
 					ctrl.wait = false;
+					angular.forEach(ctrl.list, function(account) {
+						if (account.type === 'liability' || account.type === 'expense') {
+							account.formatOptions = formatOptionsInverse;
+						} else {
+							account.formatOptions = formatOptions;
+						}
+					});
 				},
 				function(response) {
 					console.error(response);

@@ -105,13 +105,13 @@
 						</span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
-						<span class="pull-right">{{ transaction.debit | AmountFormat:true }}</span>
+						<span class="pull-right" data-ng-bind-html="transaction.debit | AmountFormat:transactionsList.debitFormatOptions"></span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
-						<span class="pull-right">{{ transaction.credit | AmountFormat:true }}</span>
+						<span class="pull-right" data-ng-bind-html="transaction.credit | AmountFormat:transactionsList.creditFormatOptions"></span>
 					</td>
 					<td class="hidden-sm hidden-md hidden-lg" style="vertical-align:middle;">
-						<span class="pull-right">{{ transaction.amount | AmountFormat:false:true }}</span>
+						<span class="pull-right" data-ng-bind-html="transaction.amount | AmountFormat:transactionsList.amountFormatOptions"></span>
 					</td>
 				</tr>
 			</tbody>

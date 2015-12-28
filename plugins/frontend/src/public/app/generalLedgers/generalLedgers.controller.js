@@ -8,6 +8,14 @@ generalLedgersModule.controller('generalLedgers.infoCtrl', ['$stateParams', 'Gen
 		var ctrl = this;
 		ctrl.generalLedger = null;
 
+		ctrl.formatOptions = {
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+
 		var id = $stateParams.generalLedgerId;
 
 		if (id) {
@@ -53,6 +61,14 @@ generalLedgersModule.controller('generalLedgers.listCtrl', ['GeneralLedgers', '$
 		ctrl.sortReverse = false;
 		ctrl.wait = true;
 		ctrl.list = [];
+
+		ctrl.formatOptions = {
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
 
 		var refreshList = _.debounce(function() {
 			GeneralLedgers.list().then(

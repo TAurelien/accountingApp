@@ -14,7 +14,7 @@
 				</ol>
 			</div>
 			<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-				<span class="pull-right" data-ng-class="accounts.account.balance.value < 0 ? 'text-danger' : 'text-success'">{{ accounts.account.balance | AmountFormat }}</span>
+				<span class="pull-right" data-ng-bind-html="accounts.account.balance | AmountFormat:accounts.formatOptions"></span>
 			</div>
 		</div>
 		<div class="info-indent">

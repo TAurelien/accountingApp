@@ -11,7 +11,52 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 		ctrl.sortReverse = false;
 		ctrl.wait = true;
 
+		ctrl.amountFormatOptions = {
+			absolue: false,
+			inverse: true,
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+		ctrl.creditFormatOptions = {
+			absolue: true,
+			inverse: false,
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+		ctrl.debitFormatOptions = {
+			absolue: true,
+			inverse: false,
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+
 		ctrl.accountId = $stateParams.accountId;
+		Accounts.get(ctrl.accountId).then(
+			function(account) {
+				ctrl.account = account;
+				if (ctrl.account.type === 'asset' || ctrl.account.type === 'liability') {
+					ctrl.amountFormatOptions.classes.positive = 'text-danger';
+					ctrl.amountFormatOptions.classes.negative = 'text-success';
+					ctrl.creditFormatOptions.classes.positive = 'text-danger';
+					ctrl.creditFormatOptions.classes.negative = 'text-success';
+					ctrl.debitFormatOptions.classes.positive = 'text-danger';
+					ctrl.debitFormatOptions.classes.negative = 'text-success';
+				}
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
+
 		ctrl.generalLedgerId = $stateParams.generalLedgerId;
 		ctrl.list = [];
 

@@ -78,7 +78,7 @@
 						<input type="checkbox" data-ng-model="ledger.closed" disabled>
 					</td>
 					<td style="vertical-align:middle;">
-						<span class="pull-right" data-ng-class="ledger.netWorth.value < 0 ? 'text-danger' : 'text-success'">{{ ledger.netWorth | AmountFormat }}</span>
+						<span class="pull-right" data-ng-bind-html="ledger.netWorth | AmountFormat:generalLedgersList.formatOptions"></span>
 					</td>
 				</tr>
 			</tbody>

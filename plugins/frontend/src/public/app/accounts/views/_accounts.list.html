@@ -78,7 +78,7 @@
 						<input type="checkbox" data-ng-model="account.closed" disabled>
 					</td>
 					<td style="vertical-align:middle;">
-						<span class="pull-right" data-ng-class="account.balance.value < 0 ? 'text-danger' : 'text-success'">{{ account.balance | AmountFormat }}</span>
+						<span class="pull-right" data-ng-bind-html="account.balance | AmountFormat:account.formatOptions"></span>
 					</td>
 				</tr>
 			</tbody>
