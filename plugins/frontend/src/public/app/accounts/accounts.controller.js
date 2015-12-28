@@ -15,6 +15,13 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 			Accounts.get(id).then(
 				function(account) {
 					ctrl.account = account;
+
+					// TODO Deal with acount charts in breadcrumbs
+					ctrl.account.paths = [];
+					ctrl.account.paths.push({
+						name: ctrl.account.name,
+						current: true
+					});
 				},
 				function(response) {
 					console.error(response);
@@ -105,21 +112,22 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 		var generalLedgerId = $stateParams.generalLedgerId;
 
 		ctrl.isCreation = (id) ? false : true;
-		ctrl.currencies = Currencies.list();
-		ctrl.accountTypes = AccountTypes.list();
-		ctrl.accounts = [];
-
-		var refreshAccountList = _.debounce(function() {
-			Accounts.list(generalLedgerId).then(
-				function(accounts) {
-					ctrl.accounts = accounts;
-				},
-				function(response) {
-					console.error(response);
-				});
-		}, 50);
-
-		refreshAccountList();
+		Currencies.list().then(
+			function(currencies) {
+				ctrl.currencies = currencies;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
+		AccountTypes.list().then(
+			function(types) {
+				ctrl.accountTypes = types;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
 
 		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshAccountList();

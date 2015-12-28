@@ -103,9 +103,17 @@ generalLedgersModule.controller('generalLedger.upsertCtrl', ['GeneralLedgers', '
 
 		var ctrl = this;
 		ctrl.data = {};
-		ctrl.currencies = Currencies.list();
 		var id = $stateParams.generalLedgerId;
 		ctrl.isCreation = (id) ? false : true;
+
+		Currencies.list().then(
+			function(currencies) {
+				ctrl.currencies = currencies;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
 
 		if (!ctrl.isCreation) {
 

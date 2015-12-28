@@ -97,7 +97,12 @@
 						<span>{{ transaction.description }}</span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
-						<span></span>
+						<a data-ng-show="transaction.account.id" data-ui-sref="^.list({ accountId: transaction.account.id })">
+							{{ transaction.account.name }}
+						</a>
+						<span data-ng-show="!transaction.account.id">
+							{{ transaction.account.name }}
+						</span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
 						<span class="pull-right">{{ transaction.debit | AmountFormat:true }}</span>

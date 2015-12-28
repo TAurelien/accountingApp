@@ -1,10 +1,18 @@
 'use strict';
 
-amountModule.factory('AmountFormatter', ['Currencies', function (Currencies) {
+amountModule.factory('AmountFormatter', ['Currencies', function(Currencies) {
 
-	var currencies = Currencies.all();
+	var currencies = [];
+	Currencies.all().then(
+		function(allCurrencies) {
+			currencies = allCurrencies;
+		},
+		function(response) {
+			console.error(response);
+		}
+	);
 
-	var getSymbol = function (currency) {
+	var getSymbol = function(currency) {
 		if (currencies[currency]) {
 			return currencies[currency].symbol;
 		} else {
@@ -24,9 +32,9 @@ amountModule.factory('AmountFormatter', ['Currencies', function (Currencies) {
 
 	var defaultSettings = {
 		formats: {
-			positive: "%s%v",
-			negative: "%s(%v)",
-			zero: "%s%v",
+			positive: "%s %v",
+			negative: "%s (%v)",
+			zero: "%s %v",
 			error: "-"
 		},
 		precision: 2,
@@ -75,7 +83,8 @@ amountModule.factory('AmountFormatter', ['Currencies', function (Currencies) {
 		formatedNumber += negative;
 		formatedNumber += mod ? base.substr(0, mod) + thousand : "";
 		formatedNumber += base.substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + thousand);
-		formatedNumber += (usePrecision ? decimal + toFixed(Math.abs(number), usePrecision).split('.')[1] : "");
+		formatedNumber += (usePrecision ? decimal + toFixed(Math.abs(number), usePrecision).split('.')[
+			1] : "");
 
 		return formatedNumber;
 
@@ -83,7 +92,7 @@ amountModule.factory('AmountFormatter', ['Currencies', function (Currencies) {
 
 	var factory = {};
 
-	factory.format = function (amount, precision, decimal, thousand, format) {
+	factory.format = function(amount, precision, decimal, thousand, format) {
 
 		var formats = checkCurrencyFormat(format);
 

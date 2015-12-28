@@ -1,6 +1,6 @@
 'use strict';
 
-currenciesModule.factory('Currencies', function() {
+currenciesModule.factory('Currencies', ['$q', function($q) {
 
 	var factory = {};
 
@@ -25,13 +25,17 @@ currenciesModule.factory('Currencies', function() {
 	}];
 
 	factory.all = function() {
-		return currencies;
+		var deferred = $q.defer();
+		deferred.resolve(currencies);
+		return deferred.promise;
 	};
 
 	factory.list = function() {
-		return currenciesArray;
+		var deferred = $q.defer();
+		deferred.resolve(currenciesArray);
+		return deferred.promise;
 	};
 
 	return factory;
 
-});
+}]);

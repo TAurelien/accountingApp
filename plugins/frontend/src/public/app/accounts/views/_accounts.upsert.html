@@ -18,7 +18,7 @@
 
 			<div class="form-group">
 				<label>Type</label>
-				<select class="form-control" data-ng-model="accountsUpsert.data.type" data-ng-options="type.code as type.code for type in accountsUpsert.accountTypes"></select>
+				<select class="form-control" data-ng-model="accountsUpsert.data.type" data-ng-options="type.code as type.name for type in accountsUpsert.accountTypes"></select>
 			</div>
 
 			<div class="form-group">
@@ -41,11 +41,6 @@
 				<label>
 					<input type="checkbox" data-ng-model="accountsUpsert.data.closed">Closed
 				</label>
-			</div>
-
-			<div class="form-group">
-				<label>Parent</label>
-				<select class="form-control" data-ng-model="accountsUpsert.data.parent" data-ng-options="account.id as account.name for account in accountsUpsert.accounts"></select>
 			</div>
 
 			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>

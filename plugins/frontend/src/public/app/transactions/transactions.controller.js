@@ -1,8 +1,9 @@
 /* jshint undef: false */
 'use strict';
 
-transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transactions', '$scope',
-	function($stateParams, Transactions, $scope) {
+transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transactions', 'Accounts',
+	'$scope',
+	function($stateParams, Transactions, Accounts, $scope) {
 
 		var ctrl = this;
 		ctrl.query = '';
@@ -11,6 +12,7 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 		ctrl.wait = true;
 
 		ctrl.accountId = $stateParams.accountId;
+		ctrl.generalLedgerId = $stateParams.generalLedgerId;
 		ctrl.list = [];
 
 		var refreshList = _.debounce(function() {
@@ -20,10 +22,12 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 					for (var i = 0; i < transactions.length; i++) {
 						var transaction = transactions[i];
 						transaction.valueDate = new Date(transaction.valueDate);
+						var transacs = [];
+						var account = null;
 						for (var j = 0; j < transaction.splits.length; j++) {
+							var transac = {};
 							var split = transaction.splits[j];
 							if (ctrl.accountId === split.account) {
-								var transac = {};
 								transac.id = transaction.id;
 								transac.date = transaction.valueDate;
 								transac.description = transaction.description;
@@ -35,11 +39,43 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 									transac.credit = split.amount;
 									transac.debit = null;
 								}
+								transacs.push(transac);
+							} else {
+								if (account) {
+									account = {
+										name: '[Several accounts]'
+									};
+								} else {
+									account = {
+										id: split.account,
+										name: split.account
+									};
+								}
+							}
+						}
+						if (transacs.length > 0) {
+							for (var k = 0; k < transacs.length; k++) {
+								var transac = transacs[k];
+								transac.account = account;
 								ctrl.list.push(transac);
 							}
 						}
 					}
 					ctrl.wait = false;
+					Accounts.list(ctrl.generalLedgerId).then(
+						function(accounts) {
+							for (var i = 0; i < ctrl.list.length; i++) {
+								var accountId = ctrl.list[i].account.id;
+								if (accountId) {
+									var name = _.result(_.find(accounts, 'id', accountId), 'name');
+									ctrl.list[i].account.name = name;
+								}
+							}
+						},
+						function(response) {
+							console.error(response);
+						}
+					);
 				},
 				function(response) {
 					console.error(response);
@@ -80,7 +116,15 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 		var id = $stateParams.transactionId;
 		var generalLedgerId = $stateParams.generalLedgerId;
 		var accountId = $stateParams.accountId;
-		ctrl.currencies = Currencies.list();
+		Currencies.list().then(
+			function(currencies) {
+				ctrl.currencies = currencies;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
+
 		ctrl.accounts = [];
 		ctrl.isCreation = (id) ? false : true;
 		if (id) {
