@@ -1,8 +1,8 @@
 <div data-ng-controller="transactions.upsertCtrl as transactionsUpsert" style="margin-top:20px;">
 
 	<h4 data-ng-if="transactionsUpsert.isCreation">Creating a new transaction</h4>
-	<h4 data-ng-if="!transactionsUpsert.isCreation">Updating the transaction</h4>
-
+	<h4 data-ng-if="transactionsUpsert.isUpdate">Updating the transaction</h4>
+	<h4 data-ng-if="transactionsUpsert.isDuplicate">Duplicating the transaction</h4>
 
 	<div>
 		<form data-ng-submit="transactionsUpsert.upsert()">
@@ -73,7 +73,11 @@
 			<hr/>
 
 			<a data-ui-sref="^.list" class="btn btn-default" role="button">Cancel</a>
-			<button type="submit" class="btn btn-success pull-right"><span data-ng-if="transactionsUpsert.isCreation">Create</span><span data-ng-if="!transactionsUpsert.isCreation">Update</span></button>
+			<button type="submit" class="btn btn-success pull-right">
+				<span data-ng-if="transactionsUpsert.isCreation">Create</span>
+				<span data-ng-if="transactionsUpsert.isUpdate">Update</span>
+				<span data-ng-if="transactionsUpsert.isDuplicate">Duplicate</span>
+			</button>
 
 		</form>
 	</div>

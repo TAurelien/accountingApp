@@ -8,8 +8,8 @@
 			<a data-ui-sref="generalLedgers.accounts.list({generalLedgerId: generalLedgers.generalLedger.id })">
 				{{ generalLedgers.generalLedger.name }}
 			</a>
-			<span class="pull-right" data-ng-class="generalLedgers.generalLedger.netWorth.value < 0 ? 'text-danger' : 'text-success'">{{ generalLedgers.generalLedger.netWorth | AmountFormat }}</span>
-			
+			<span class="pull-right" data-ng-bind-html="generalLedgers.generalLedger.netWorth | AmountFormat:generalLedgers.formatOptions"></span>
+
 		</div>
 		<div class="info-indent">
 			<span class="hidden-xs small">{{ generalLedgers.generalLedger.description }}</span>

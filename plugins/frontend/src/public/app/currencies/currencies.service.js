@@ -1,6 +1,6 @@
 'use strict';
 
-currenciesModule.factory('Currencies', function () {
+currenciesModule.factory('Currencies', ['$q', function($q) {
 
 	var factory = {};
 
@@ -14,7 +14,7 @@ currenciesModule.factory('Currencies', function () {
 			code: 'USD',
 			symbol: '$'
 		}
-	}
+	};
 
 	var currenciesArray = [{
 		code: 'EUR',
@@ -24,14 +24,18 @@ currenciesModule.factory('Currencies', function () {
 		symbol: '$'
 	}];
 
-	factory.all = function () {
-		return currencies;
+	factory.all = function() {
+		var deferred = $q.defer();
+		deferred.resolve(currencies);
+		return deferred.promise;
 	};
 
-	factory.list = function () {
-		return currenciesArray;
+	factory.list = function() {
+		var deferred = $q.defer();
+		deferred.resolve(currenciesArray);
+		return deferred.promise;
 	};
 
 	return factory;
 
-});
+}]);

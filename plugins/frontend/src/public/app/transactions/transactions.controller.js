@@ -1,26 +1,78 @@
 /* jshint undef: false */
 'use strict';
 
-transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transactions', '$scope',
-	function ($stateParams, Transactions, $scope) {
+transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transactions', 'Accounts',
+	'$scope',
+	function($stateParams, Transactions, Accounts, $scope) {
 
 		var ctrl = this;
+		ctrl.query = '';
+		ctrl.sortType = 'date';
+		ctrl.sortReverse = false;
 		ctrl.wait = true;
 
+		ctrl.amountFormatOptions = {
+			absolue: false,
+			inverse: true,
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+		ctrl.creditFormatOptions = {
+			absolue: true,
+			inverse: false,
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+		ctrl.debitFormatOptions = {
+			absolue: true,
+			inverse: false,
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+
 		ctrl.accountId = $stateParams.accountId;
+		Accounts.get(ctrl.accountId).then(
+			function(account) {
+				ctrl.account = account;
+				if (ctrl.account.type === 'asset' || ctrl.account.type === 'liability') {
+					ctrl.amountFormatOptions.classes.positive = 'text-danger';
+					ctrl.amountFormatOptions.classes.negative = 'text-success';
+					ctrl.creditFormatOptions.classes.positive = 'text-danger';
+					ctrl.creditFormatOptions.classes.negative = 'text-success';
+					ctrl.debitFormatOptions.classes.positive = 'text-danger';
+					ctrl.debitFormatOptions.classes.negative = 'text-success';
+				}
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
+
+		ctrl.generalLedgerId = $stateParams.generalLedgerId;
 		ctrl.list = [];
 
-		var refreshList = _.debounce(function () {
-			Transactions.list(ctrl.accountId)
-				.success(function (response) {
+		var refreshList = _.debounce(function() {
+			Transactions.list(ctrl.accountId).then(
+				function(transactions) {
 					ctrl.list = [];
-					for (var i = 0; i < response.data.length; i++) {
-						var transaction = response.data[i];
+					for (var i = 0; i < transactions.length; i++) {
+						var transaction = transactions[i];
 						transaction.valueDate = new Date(transaction.valueDate);
+						var transacs = [];
+						var account = null;
 						for (var j = 0; j < transaction.splits.length; j++) {
+							var transac = {};
 							var split = transaction.splits[j];
 							if (ctrl.accountId === split.account) {
-								var transac = {};
 								transac.id = transaction.id;
 								transac.date = transaction.valueDate;
 								transac.description = transaction.description;
@@ -32,82 +84,138 @@ transactionsModule.controller('transactions.listCtrl', ['$stateParams', 'Transac
 									transac.credit = split.amount;
 									transac.debit = null;
 								}
+								transacs.push(transac);
+							} else {
+								if (account) {
+									account = {
+										name: '[Several accounts]'
+									};
+								} else {
+									account = {
+										id: split.account,
+										name: split.account
+									};
+								}
+							}
+						}
+						if (transacs.length > 0) {
+							for (var k = 0; k < transacs.length; k++) {
+								var transac = transacs[k];
+								transac.account = account;
 								ctrl.list.push(transac);
 							}
 						}
 					}
 					ctrl.wait = false;
-				})
-				.error(function (response) {
-					console.log(response);
+					Accounts.list(ctrl.generalLedgerId).then(
+						function(accounts) {
+							for (var i = 0; i < ctrl.list.length; i++) {
+								var accountId = ctrl.list[i].account.id;
+								if (accountId) {
+									var name = _.result(_.find(accounts, 'id', accountId), 'name');
+									ctrl.list[i].account.name = name;
+								}
+							}
+						},
+						function(response) {
+							console.error(response);
+						}
+					);
+				},
+				function(response) {
+					console.error(response);
 				});
 		}, 50);
 
 		refreshList();
 
-		var handleCreation = function (createdItem) {
+		var unregisterCreatedEvent = Transactions.on(Transactions.events.CREATED, function(event,
+			createdItem) {
 			refreshList();
-		};
+		});
 
-		var handleUpdate = function (ûpdateditem) {
+		var unregisterUpdatedEvent = Transactions.on(Transactions.events.UPDATED, function(event,
+			updateditem) {
 			refreshList();
-		};
+		});
 
-		var handleDeletion = function (createdItem) {
+		var unregisterDeletedEvent = Transactions.on(Transactions.events.DELETED, function(event,
+			createdItem) {
 			refreshList();
-		};
+		});
 
-		Transactions.on(Transactions.events.CREATED, handleCreation);
-		Transactions.on(Transactions.events.UPDATED, handleUpdate);
-		Transactions.on(Transactions.events.DELETED, handleDeletion);
-
-		$scope.$on('$destroy', function () {
-			Transactions.removeListener(Transactions.events.CREATED, handleCreation);
-			Transactions.removeListener(Transactions.events.UPDATED, handleUpdate);
-			Transactions.removeListener(Transactions.events.DELETED, handleDeletion);
+		$scope.$on('$destroy', function() {
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
 		});
 
 	}
 ]);
 
-transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateParams', '$state', 'Transactions', 'Accounts', '$scope',
-	function (Currencies, $stateParams, $state, Transactions, Accounts, $scope) {
+transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateParams', '$state',
+	'Transactions', 'Accounts', '$scope',
+	function(Currencies, $stateParams, $state, Transactions, Accounts, $scope) {
 
 		var ctrl = this;
 		var id = $stateParams.transactionId;
 		var generalLedgerId = $stateParams.generalLedgerId;
 		var accountId = $stateParams.accountId;
-		ctrl.currencies = Currencies.list();
+		Currencies.list().then(
+			function(currencies) {
+				ctrl.currencies = currencies;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
+
 		ctrl.accounts = [];
 		ctrl.isCreation = (id) ? false : true;
+		if (id) {
+			ctrl.isCreation = false;
+			if ($state.current.data && $state.current.data.duplicate) {
+				ctrl.isUpdate = false;
+				ctrl.isDuplicate = true;
+			} else {
+				ctrl.isUpdate = true;
+				ctrl.isDuplicate = false;
+			}
+		} else {
+			ctrl.isCreation = true;
+			ctrl.isUpdate = false;
+			ctrl.isDuplicate = false;
+		}
 
-		var refreshAccountList = _.debounce(function () {
-			Accounts.list(generalLedgerId)
-				.success(function (response) {
-					ctrl.accounts = response.data;
-				})
-				.error(function (response) {
-					console.log(response);
+		var refreshAccountList = _.debounce(function() {
+			Accounts.list(generalLedgerId).then(
+				function(accounts) {
+					ctrl.accounts = accounts;
+				},
+				function(response) {
+					console.error(response);
 				});
 		}, 50);
 
 		refreshAccountList();
 
-		var handleCreation = function (createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshAccountList();
-		};
+		});
 
-		var handleUpdate = function (updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshAccountList();
-		};
+			if (id === updatedItem.id) {
+				// TODO Handle concurrent update
+			}
+		});
 
-		var handleDeletion = function (deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshAccountList();
-		};
-
-		Accounts.on(Accounts.events.CREATED, handleCreation);
-		Accounts.on(Accounts.events.UPDATED, handleUpdate);
-		Accounts.on(Accounts.events.DELETED, handleDeletion);
+			if (id === deletedItem.id) {
+				// TODO Handle concurrent update/delete
+			}
+		});
 
 		if (ctrl.isCreation) {
 
@@ -122,9 +230,11 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 
 		} else {
 
-			Transactions.get(id)
-				.success(function (response) {
-					ctrl.data = response.data;
+			Transactions.get(id).then(
+				function(account) {
+					ctrl.data = account;
+					delete ctrl.data._id;
+					delete ctrl.data.id;
 					ctrl.data.valueDate = new Date(ctrl.data.valueDate);
 					for (var j = 0; j < ctrl.data.splits.length; j++) {
 						var split = ctrl.data.splits[j];
@@ -137,20 +247,21 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 						}
 						delete split.amount;
 					}
-				})
-				.error(function (response) {
-					console.log(response);
+				},
+				function(response) {
+					console.error(response);
 				});
 
-			var handleTransactionUpdate = function (updatedItem) {
+			var unregisterUpdatedTransactionEvent = Transactions.on(Transactions.events.UPDATED, function(
+				event,
+				updatedItem) {
 				if (id === updatedItem.id) {
 					// TODO Handle concurrent update
 				}
-			};
+			});
 
-			Transactions.on(Transactions.events.UPDATED, handleTransactionUpdate);
-			$scope.$on('$destroy', function () {
-				Transactions.removeListener(Transactions.events.UPDATED, handleTransactionUpdate);
+			$scope.$on('$destroy', function() {
+				unregisterUpdatedTransactionEvent();
 			});
 
 		}
@@ -160,7 +271,7 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 			$state.go('^.list');
 		}
 
-		ctrl.upsert = function () {
+		ctrl.upsert = function() {
 
 			for (var i = 0; i < ctrl.data.splits.length; i++) {
 				var split = ctrl.data.splits[i];
@@ -181,66 +292,66 @@ transactionsModule.controller('transactions.upsertCtrl', ['Currencies', '$stateP
 				split.amount = amount;
 			}
 
-			if (ctrl.isCreation) {
-				Transactions.create(ctrl.data)
-					.success(function (response) {
+			if (ctrl.isCreation || ctrl.isDuplicate) {
+				Transactions.create(ctrl.data).then(
+					function(createdTransaction) {
 						closeView();
-					})
-					.error(function (response) {
-						console.log(response);
+					},
+					function(response) {
+						console.error(response);
 					});
 			} else {
-				Transactions.update(id, ctrl.data)
-					.success(function (response) {
+				Transactions.update(id, ctrl.data).then(
+					function(updatedTransaction) {
 						closeView();
-					})
-					.error(function (response) {
-						console.log(response);
+					},
+					function(response) {
+						console.error(response);
 					});
 			}
 
 		};
 
-		ctrl.addSplit = function () {
+		ctrl.addSplit = function() {
 			ctrl.data.splits.push({});
 		};
 
-		ctrl.removeSplit = function (index) {
+		ctrl.removeSplit = function(index) {
 			if (ctrl.data.splits.length > 2) {
 				ctrl.data.splits.splice(index, 1);
 			}
 		};
 
-		$scope.$on('$destroy', function () {
-			Accounts.removeListener(Accounts.events.CREATED, handleCreation);
-			Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
-			Accounts.removeListener(Accounts.events.DELETED, handleDeletion);
+		$scope.$on('$destroy', function() {
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
 		});
 
 	}
 ]);
 
 transactionsModule.controller('transactions.deleteCtrl', ['$stateParams', '$state', 'Transactions',
-	function ($stateParams, $state, Transactions) {
+	function($stateParams, $state, Transactions) {
 
 		var ctrl = this;
 		var id = $stateParams.transactionId;
 
-		Transactions.get(id)
-			.success(function (response) {
-				ctrl.name = response.data.name;
-			})
-			.error(function (response) {
-				console.log(response);
+		Transactions.get(id).then(
+			function(transaction) {
+				ctrl.name = transaction.name;
+			},
+			function(response) {
+				console.error(response);
 			});
 
-		ctrl.delete = function () {
-			Transactions.delete(id)
-				.success(function (response) {
+		ctrl.delete = function() {
+			Transactions.delete(id).then(
+				function(deletedTransaction) {
 					$state.go('^.list');
-				})
-				.error(function (response) {
-					console.log(response);
+				},
+				function(response) {
+					console.error(response);
 				});
 		};
 

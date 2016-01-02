@@ -2,42 +2,60 @@
 'use strict';
 
 accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$scope',
-	function ($stateParams, Accounts, $scope) {
+	function($stateParams, Accounts, $scope) {
 
 		var ctrl = this;
 		ctrl.account = null;
+
+		ctrl.formatOptions = {
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
 
 		var id = $stateParams.accountId;
 		var generalLedgerId = $stateParams.generalLedgerId;
 
 		if (id) {
 
-			Accounts.get(id)
-				.success(function (response) {
-					ctrl.account = response.data;
-				})
-				.error(function (response) {
-					console.log(response);
+			Accounts.get(id).then(
+				function(account) {
+					ctrl.account = account;
+
+					if (ctrl.account.type === 'expense' || ctrl.account.type === 'liability') {
+						ctrl.formatOptions.classes.positive = 'text-danger';
+						ctrl.formatOptions.classes.negative = 'text-success';
+					}
+
+					// TODO Deal with acount charts in breadcrumbs
+					ctrl.account.paths = [];
+					ctrl.account.paths.push({
+						name: ctrl.account.name,
+						current: true
+					});
+				},
+				function(response) {
+					console.error(response);
 				});
 
-			var handleUpdate = function (updatedItem) {
+			var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.account = updatedItem;
 				}
-			};
+			});
 
-			var handleBalanceChange = function (updatedItem) {
+			var unregisterBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
+				event, updatedItem) {
 				if (id === updatedItem.id) {
 					ctrl.account = updatedItem;
 				}
-			};
+			});
 
-			Accounts.on(Accounts.events.UPDATED, handleUpdate);
-			Accounts.on(Accounts.events.BALANCE_CHANGED, handleBalanceChange);
-
-			$scope.$on('$destroy', function () {
-				Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
-				Accounts.removeListener(Accounts.events.BALANCE_CHANGED, handleBalanceChange);
+			$scope.$on('$destroy', function() {
+				unregisterUpdatedEvent();
+				unregisterBalanceChangedEvent();
 			});
 
 		}
@@ -46,60 +64,82 @@ accountsModule.controller('accounts.infoCtrl', ['$stateParams', 'Accounts', '$sc
 ]);
 
 accountsModule.controller('accounts.listCtrl', ['$stateParams', 'Accounts', '$scope',
-	function ($stateParams, Accounts, $scope) {
+	function($stateParams, Accounts, $scope) {
 
 		var ctrl = this;
 		ctrl.wait = true;
+		ctrl.query = '';
+		ctrl.sortType = 'name';
+		ctrl.sortReverse = false;
 		ctrl.list = [];
+
+		var formatOptions = {
+			classes: {
+				positive: 'text-success',
+				negative: 'text-danger',
+				zero: 'text-success'
+			}
+		};
+		var formatOptionsInverse = {
+			classes: {
+				positive: 'text-danger',
+				negative: 'text-success',
+				zero: 'text-success'
+			}
+		};
 
 		var generalLedgerId = $stateParams.generalLedgerId;
 
-		var refreshList = _.debounce(function () {
-			Accounts.list(generalLedgerId)
-				.success(function (response) {
-					ctrl.list = response.data;
+		var refreshList = _.debounce(function() {
+			Accounts.list(generalLedgerId).then(
+				function(accounts) {
+					ctrl.list = accounts;
 					ctrl.wait = false;
-				})
-				.error(function (response) {
-					console.log(response);
+					angular.forEach(ctrl.list, function(account) {
+						if (account.type === 'liability' || account.type === 'expense') {
+							account.formatOptions = formatOptionsInverse;
+						} else {
+							account.formatOptions = formatOptions;
+						}
+					});
+				},
+				function(response) {
+					console.error(response);
 				});
 		}, 50);
 
 		refreshList();
 
-		var handleCreation = function (createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshList();
-		};
+		});
 
-		var handleUpdate = function (updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshList();
-		};
+		});
 
-		var handleDeletion = function (deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshList();
-		};
+		});
 
-		var handleBalanceChange = function (updatedItem) {
+		var unregisterBalanceChangedEvent = Accounts.on(Accounts.events.BALANCE_CHANGED, function(
+			event, updatedItem) {
 			refreshList();
-		};
+		});
 
-		Accounts.on(Accounts.events.CREATED, handleCreation);
-		Accounts.on(Accounts.events.UPDATED, handleUpdate);
-		Accounts.on(Accounts.events.DELETED, handleDeletion);
-		Accounts.on(Accounts.events.BALANCE_CHANGED, handleBalanceChange);
-
-		$scope.$on('$destroy', function () {
-			Accounts.removeListener(Accounts.events.CREATED, handleCreation);
-			Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
-			Accounts.removeListener(Accounts.events.DELETED, handleDeletion);
-			Accounts.removeListener(Accounts.events.BALANCE_CHANGED, handleBalanceChange);
+		$scope.$on('$destroy', function() {
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
+			unregisterBalanceChangedEvent();
 		});
 
 	}
 ]);
 
-accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 'Accounts', '$stateParams', '$state', '$scope',
-	function (Currencies, AccountTypes, Accounts, $stateParams, $state, $scope) {
+accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 'Accounts',
+	'$stateParams', '$state', '$scope',
+	function(Currencies, AccountTypes, Accounts, $stateParams, $state, $scope) {
 
 		var ctrl = this;
 		ctrl.data = {};
@@ -107,43 +147,40 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 		var generalLedgerId = $stateParams.generalLedgerId;
 
 		ctrl.isCreation = (id) ? false : true;
-		ctrl.currencies = Currencies.list();
-		ctrl.accountTypes = AccountTypes.list();
-		ctrl.accounts = [];
+		Currencies.list().then(
+			function(currencies) {
+				ctrl.currencies = currencies;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
+		AccountTypes.list().then(
+			function(types) {
+				ctrl.accountTypes = types;
+			},
+			function(response) {
+				console.error(response);
+			}
+		);
 
-		var refreshAccountList = _.debounce(function () {
-			Accounts.list(generalLedgerId)
-				.success(function (response) {
-					ctrl.accounts = response.data;
-				})
-				.error(function (response) {
-					console.log(response);
-				});
-		}, 50);
-
-		refreshAccountList();
-
-		var handleCreation = function (createdItem) {
+		var unregisterCreatedEvent = Accounts.on(Accounts.events.CREATED, function(event, createdItem) {
 			refreshAccountList();
-		};
+		});
 
-		var handleUpdate = function (updatedItem) {
+		var unregisterUpdatedEvent = Accounts.on(Accounts.events.UPDATED, function(event, updatedItem) {
 			refreshAccountList();
 			if (id === updatedItem.id) {
 				// TODO Handle concurrent update
 			}
-		};
+		});
 
-		var handleDeletion = function (deletedItem) {
+		var unregisterDeletedEvent = Accounts.on(Accounts.events.DELETED, function(event, deletedItem) {
 			refreshAccountList();
 			if (id === deletedItem.id) {
 				// TODO Handle concurrent update/delete
 			}
-		};
-
-		Accounts.on(Accounts.events.CREATED, handleCreation);
-		Accounts.on(Accounts.events.UPDATED, handleUpdate);
-		Accounts.on(Accounts.events.DELETED, handleDeletion);
+		});
 
 		if (ctrl.isCreation) {
 
@@ -152,17 +189,17 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 			};
 
 		} else {
-			Accounts.get(id)
-				.success(function (response) {
-					ctrl.data = response.data;
-					ctrl.name = response.data.name;
+			Accounts.get(id).then(
+				function(account) {
+					ctrl.data = account;
+					ctrl.name = account.name;
 					delete ctrl.data.balance;
 					delete ctrl.data.ownBalance;
 					delete ctrl.data.childBalance;
-				})
-				.error(function (response) {
-					console.log(response);
-				})
+				},
+				function(response) {
+					console.error(response);
+				});
 		}
 
 		function closeView() {
@@ -170,56 +207,56 @@ accountsModule.controller('accounts.upsertCtrl', ['Currencies', 'AccountTypes', 
 			$state.go('^.list');
 		}
 
-		ctrl.upsert = function () {
+		ctrl.upsert = function() {
 			if (ctrl.isCreation) {
-				Accounts.create(ctrl.data)
-					.success(function (response) {
+				Accounts.create(ctrl.data).then(
+					function(createdAccount) {
 						closeView();
-					})
-					.error(function (response) {
-						console.log(response);
+					},
+					function(response) {
+						console.error(response);
 					});
 			} else {
-				Accounts.update(id, ctrl.data)
-					.success(function (response) {
+				Accounts.update(id, ctrl.data).then(
+					function(updatedAccount) {
 						closeView();
-					})
-					.error(function (response) {
-						console.log(response);
+					},
+					function(response) {
+						console.error(response);
 					});
 			}
 		};
 
-		$scope.$on('$destroy', function () {
-			Accounts.removeListener(Accounts.events.CREATED, handleCreation);
-			Accounts.removeListener(Accounts.events.UPDATED, handleUpdate);
-			Accounts.removeListener(Accounts.events.DELETED, handleDeletion);
+		$scope.$on('$destroy', function() {
+			unregisterCreatedEvent();
+			unregisterUpdatedEvent();
+			unregisterDeletedEvent();
 		});
 
 	}
 ]);
 
 accountsModule.controller('accounts.deleteCtrl', ['Accounts', '$state', '$stateParams',
-	function (Accounts, $state, $stateParams) {
+	function(Accounts, $state, $stateParams) {
 
 		var ctrl = this;
 		var id = $stateParams.accountId;
 
-		Accounts.get(id)
-			.success(function (response) {
-				ctrl.name = response.data.name;
-			})
-			.error(function (response) {
-				console.log(response);
+		Accounts.get(id).then(
+			function(account) {
+				ctrl.name = account.name;
+			},
+			function(response) {
+				console.error(response);
 			});
 
-		ctrl.delete = function () {
-			Accounts.delete(id)
-				.success(function (response) {
+		ctrl.delete = function() {
+			Accounts.delete(id).then(
+				function(deletedAccount) {
 					$state.go('^.list');
-				})
-				.error(function (response) {
-					console.log(response);
+				},
+				function(response) {
+					console.error(response);
 				});
 		};
 

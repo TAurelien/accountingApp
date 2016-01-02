@@ -3,19 +3,18 @@
 		<div class="row">
 			<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
 				<ol class="account-breadcrumb info-indent">
-					<li>
-						<span class="small">Path</span>
-					</li>
-					<li>
-						<span class="small">To</span>
-					</li>
-					<li class="active">
-						<span>{{ accounts.account.name }}</span>
+					<li data-ng-repeat="path in accounts.account.paths" data-ng-class="{ 'active': path.current, 'small': !path.current }">
+						<a data-ng-show="path.id" data-ui-sref="^.transactions.list({ accountId: path.id })">
+							{{ path.name }}
+						</a>
+						<span data-ng-show="!path.id">
+							{{ path.name }}
+						</span>
 					</li>
 				</ol>
 			</div>
 			<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-				<span class="pull-right" data-ng-class="accounts.account.balance.value < 0 ? 'text-danger' : 'text-success'">{{ accounts.account.balance | AmountFormat }}</span>
+				<span class="pull-right" data-ng-bind-html="accounts.account.balance | AmountFormat:accounts.formatOptions"></span>
 			</div>
 		</div>
 		<div class="info-indent">

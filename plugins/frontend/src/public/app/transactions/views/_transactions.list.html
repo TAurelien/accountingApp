@@ -1,28 +1,68 @@
 <div data-ng-controller="transactions.listCtrl as transactionsList">
+
+	<form>
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon"><i class="fa fa-search"></i></div>
+				<input type="text" class="form-control" data-ng-model="transactionsList.query" placeholder="Search transactions">
+			</div>
+		</div>
+	</form>
+
 	<div>
 		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
-					<th style="width:7em;">
-						<spa class="sr-only">Controls</span>
+					<th style="width:9em;">
+						<span class="sr-only">Controls</span>
 					</th>
 					<th>
-						<span>Date</span>
+						<a href="#" data-ng-click="transactionsList.sortType = 'date'; transactionsList.sortReverse = !transactionsList.sortReverse">
+							<span>Date</span>
+							<span data-ng-show="transactionsList.sortType == 'date' && !transactionsList.sortReverse" class="fa fa-caret-down"></span>
+							<span data-ng-show="transactionsList.sortType == 'date' && transactionsList.sortReverse" class="fa fa-caret-up"></span>
+						</a>
 					</th>
 					<th>
-						<span>Description</span>
+						<a href="#" data-ng-click="transactionsList.sortType = 'description'; transactionsList.sortReverse = !transactionsList.sortReverse">
+							<span>Description</span>
+							<span data-ng-show="transactionsList.sortType == 'description' && !transactionsList.sortReverse" class="fa fa-caret-down"></span>
+							<span data-ng-show="transactionsList.sortType == 'description' && transactionsList.sortReverse" class="fa fa-caret-up"></span>
+						</a>
 					</th>
 					<th class="hidden-xs">
-						<span>Account</span>
+						<a href="#" data-ng-click="transactionsList.sortType = 'account'; transactionsList.sortReverse = !transactionsList.sortReverse">
+							<span>Account</span>
+							<span data-ng-show="transactionsList.sortType == 'account' && !transactionsList.sortReverse" class="fa fa-caret-down"></span>
+							<span data-ng-show="transactionsList.sortType == 'account' && transactionsList.sortReverse" class="fa fa-caret-up"></span>
+						</a>
 					</th>
 					<th class="hidden-xs">
-						<span class="pull-right">Debit</span>
+						<a href="#" data-ng-click="transactionsList.sortType = 'amount'; transactionsList.sortReverse = !transactionsList.sortReverse">
+							<span class="pull-right">
+								<span>Debit</span>
+								<span data-ng-show="transactionsList.sortType == 'amount' && !transactionsList.sortReverse" class="fa fa-caret-down"></span>
+								<span data-ng-show="transactionsList.sortType == 'amount' && transactionsList.sortReverse" class="fa fa-caret-up"></span>
+							</span>
+						</a>
 					</th>
 					<th class="hidden-xs">
-						<span class="pull-right">Credit</span>
+						<a href="#" data-ng-click="transactionsList.sortType = 'amount'; transactionsList.sortReverse = !transactionsList.sortReverse">
+							<span class="pull-right">
+								<span>Credit</span>
+								<span data-ng-show="transactionsList.sortType == 'amount' && !transactionsList.sortReverse" class="fa fa-caret-down"></span>
+								<span data-ng-show="transactionsList.sortType == 'amount' && transactionsList.sortReverse" class="fa fa-caret-up"></span>
+							</span>
+						</a>
 					</th>
 					<th class="hidden-sm hidden-md hidden-lg">
-						<span class="pull-right">Amount</span>
+						<a href="#" data-ng-click="transactionsList.sortType = 'amount'; transactionsList.sortReverse = !transactionsList.sortReverse">
+							<span class="pull-right">
+								<span>Amount</span>
+								<span data-ng-show="transactionsList.sortType == 'amount' && !transactionsList.sortReverse" class="fa fa-caret-down"></span>
+								<span data-ng-show="transactionsList.sortType == 'amount' && transactionsList.sortReverse" class="fa fa-caret-up"></span>
+							</span>
+						</a>
 					</th>
 				</tr>
 			</thead>
@@ -37,10 +77,11 @@
 						<span>No transaction</span>
 					</td>
 				</tr>
-				<tr data-ng-repeat="transaction in transactionsList.list">
+				<tr data-ng-repeat="transaction in transactionsList.list | orderBy:transactionsList.sortType:transactionsList.sortReverse | filter:transactionsList.query">
 					<td>
 						<div class="btn-group btn-group-sm">
 							<a data-ui-sref="^.update({transactionId: transaction.id })" class="btn btn-default" role="button"><i class="fa fa-edit"></i><span class="sr-only">Update</span></a>
+							<a data-ui-sref="^.duplicate({transactionId: transaction.id })" class="btn btn-default" role="button"><i class="fa fa-files-o"></i><span class="sr-only">Duplicate</span></a>
 							<a data-ui-sref="^.delete({transactionId: transaction.id })" class="btn btn-danger" role="button"><i class="fa fa-remove"></i><span class="sr-only">Delete</span></a>
 						</div>
 					</td>
@@ -56,16 +97,21 @@
 						<span>{{ transaction.description }}</span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
-						<span></span>
+						<a data-ng-show="transaction.account.id" data-ui-sref="^.list({ accountId: transaction.account.id })">
+							{{ transaction.account.name }}
+						</a>
+						<span data-ng-show="!transaction.account.id">
+							{{ transaction.account.name }}
+						</span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
-						<span class="pull-right">{{ transaction.debit | AmountFormat:true }}</span>
+						<span class="pull-right" data-ng-bind-html="transaction.debit | AmountFormat:transactionsList.debitFormatOptions"></span>
 					</td>
 					<td class="hidden-xs" style="vertical-align:middle;">
-						<span class="pull-right">{{ transaction.credit | AmountFormat:true }}</span>
+						<span class="pull-right" data-ng-bind-html="transaction.credit | AmountFormat:transactionsList.creditFormatOptions"></span>
 					</td>
 					<td class="hidden-sm hidden-md hidden-lg" style="vertical-align:middle;">
-						<span class="pull-right">{{ transaction.amount | AmountFormat:false:true }}</span>
+						<span class="pull-right" data-ng-bind-html="transaction.amount | AmountFormat:transactionsList.amountFormatOptions"></span>
 					</td>
 				</tr>
 			</tbody>
